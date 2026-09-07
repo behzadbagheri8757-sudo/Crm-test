@@ -1,0 +1,313 @@
+/* ============================================================
+   BAGHERI VISUAL GRAMMAR — FOUNDATION v1
+   Phase 1: shared visual language only.
+   No business logic, data, navigation, or workflow changes.
+   ============================================================ */
+
+:root{
+  /* Semantic color roles */
+  --vg-color-bg:#F5F7FA;
+  --vg-color-surface:#FFFFFF;
+  --vg-color-surface-soft:#F7F8FA;
+  --vg-color-text:#1F2937;
+  --vg-color-text-secondary:#4B5563;
+  --vg-color-text-muted:#667085;
+  --vg-color-border:rgba(31,41,55,.075);
+  --vg-color-divider:rgba(31,41,55,.055);
+  --vg-color-primary:#0070D2;
+  --vg-color-primary-soft:#E8F2FC;
+  --vg-color-success:#00A068;
+  --vg-color-success-soft:#E8F7F2;
+  --vg-color-warning:#F5A131;
+  --vg-color-warning-soft:#FFF3DF;
+  --vg-color-danger:#FA3946;
+  --vg-color-danger-soft:#FFF0EC;
+
+  /* Semantic spacing: relationship, group, section, module */
+  --vg-space-tight:6px;
+  --vg-space-related:10px;
+  --vg-space-group:16px;
+  --vg-space-section:24px;
+  --vg-space-module:32px;
+
+  /* Surface grammar */
+  --vg-radius-control:10px;
+  --vg-radius-group:14px;
+  --vg-radius-raised:16px;
+  --vg-radius-pill:999px;
+  --vg-shadow-group:0 2px 10px rgba(31,41,55,.045);
+  --vg-shadow-raised:0 6px 20px rgba(31,41,55,.075);
+  --vg-shadow-overlay:0 12px 32px rgba(31,41,55,.12);
+  --vg-highlight-top:inset 0 1px 0 rgba(255,255,255,.72);
+
+  /* Typography roles */
+  --vg-type-page:1.05rem;
+  --vg-type-section:.88rem;
+  --vg-type-primary:1.12rem;
+  --vg-type-secondary:.92rem;
+  --vg-type-label:.70rem;
+  --vg-type-meta:.64rem;
+  --vg-type-action:.88rem;
+
+  --vg-weight-regular:400;
+  --vg-weight-medium:500;
+  --vg-weight-label:600;
+  --vg-weight-title:700;
+  --vg-weight-value:800;
+  --vg-weight-emphasis:900;
+
+  --vg-control-height:44px;
+}
+
+/* ---------- Base environment ---------- */
+html{background:var(--vg-color-bg);}
+body{
+  background:var(--vg-color-bg);
+  color:var(--vg-color-text);
+  font-variant-numeric:tabular-nums;
+}
+
+/* ---------- Page identity: quiet, structural ---------- */
+h2.section-title{
+  color:var(--vg-color-text);
+  font-size:var(--vg-type-page);
+  font-weight:var(--vg-weight-title);
+  line-height:1.3;
+  letter-spacing:-.18px;
+}
+h2.section-title::after{
+  border-bottom-color:var(--vg-color-divider);
+}
+h3.sub-title{
+  color:var(--vg-color-text);
+  font-size:var(--vg-type-section);
+  font-weight:var(--vg-weight-title);
+}
+
+/* ---------- Shared grouped surfaces ---------- */
+.card,
+.report-summary-card,
+.gc-panel,
+.prospect-result-card{
+  background:var(--vg-color-surface);
+  border:1px solid var(--vg-color-border);
+  border-radius:var(--vg-radius-group);
+  box-shadow:var(--vg-shadow-group);
+}
+
+.card .label,
+.report-summary-label{
+  color:var(--vg-color-text-muted);
+  font-size:var(--vg-type-label);
+  font-weight:var(--vg-weight-label);
+  line-height:1.35;
+}
+
+.card .value,
+.report-summary-value,
+.biz-stat-value,
+.dash-kpi-value{
+  color:var(--vg-color-text);
+  font-weight:var(--vg-weight-value);
+  line-height:1.25;
+  font-variant-numeric:tabular-nums;
+}
+
+/* Numbers: alignment is a hierarchy tool, not decoration. */
+.card .value,
+.report-summary-value,
+.biz-stat-value,
+.dash-kpi-value,
+.ledger-row .amount,
+.tx-row-total,
+.tx-row-amount,
+.customer-row-balance-value{
+  font-variant-numeric:tabular-nums;
+}
+
+/* ---------- Flat data: lists remain dense and readable ---------- */
+.ledger-row{
+  background:transparent;
+  border-bottom:1px solid var(--vg-color-divider);
+}
+.ledger-row:last-child{border-bottom-color:transparent;}
+.ledger-row .name,
+.tx-row-title{
+  color:var(--vg-color-text);
+  font-weight:var(--vg-weight-title);
+}
+.ledger-row .sub,
+.tx-row-meta,
+.tx-hint,
+.report-note,
+.report-period-note{
+  color:var(--vg-color-text-muted);
+}
+.ledger-row .amount,
+.tx-row-total,
+.tx-row-amount{
+  color:var(--vg-color-text);
+  font-weight:var(--vg-weight-value);
+}
+a.ledger-row:active{background:var(--vg-color-surface-soft);}
+
+/* ---------- Buttons: three semantic levels ---------- */
+.btn{
+  min-height:var(--vg-control-height);
+  border-radius:var(--vg-radius-control);
+  background:var(--vg-color-primary);
+  color:#fff;
+  font-size:var(--vg-type-action);
+  font-weight:var(--vg-weight-title);
+  box-shadow:0 3px 10px rgba(0,112,210,.16);
+}
+.btn.secondary{
+  background:var(--vg-color-surface);
+  color:var(--vg-color-text-secondary);
+  border:1px solid var(--vg-color-border);
+  box-shadow:none;
+}
+.btn.danger{
+  background:var(--vg-color-danger);
+  color:#fff;
+  box-shadow:0 3px 10px rgba(250,57,70,.16);
+}
+.btn.small{
+  min-height:40px;
+  font-size:.78rem;
+  font-weight:var(--vg-weight-label);
+}
+
+/* Tertiary action: explicit class only; does not alter existing workflow. */
+.btn.tertiary{
+  background:transparent;
+  color:var(--vg-color-primary);
+  border:1px solid transparent;
+  box-shadow:none;
+}
+
+/* ---------- Chips / compact filters ---------- */
+.chip,
+.chip-opt{
+  border-radius:var(--vg-radius-pill);
+  background:var(--vg-color-surface);
+  border-color:var(--vg-color-border);
+  color:var(--vg-color-text-secondary);
+  font-weight:var(--vg-weight-label);
+}
+.chip.active,
+.chip-opt.selected{
+  background:var(--vg-color-primary);
+  border-color:var(--vg-color-primary);
+  color:#fff;
+}
+
+/* ---------- Semantic status ---------- */
+.badge.tone-success,
+.badge.cleared{background:var(--vg-color-success-soft);color:var(--vg-color-success);}
+.badge.tone-warning,
+.badge.pending{background:var(--vg-color-warning-soft);color:var(--vg-color-warning);}
+.badge.tone-danger,
+.badge.low{background:var(--vg-color-danger-soft);color:var(--vg-color-danger);}
+.badge.tone-muted{background:var(--vg-color-surface-soft);color:var(--vg-color-text-muted);}
+.badge.tone-neutral{background:var(--vg-color-surface-soft);color:var(--vg-color-text-secondary);}
+
+/* Financial/state colors: only semantic accents carry color. */
+.accent-olive{color:var(--vg-color-success)!important;}
+.accent-rust,
+.accent-red{color:var(--vg-color-danger)!important;}
+.accent-amber{color:var(--vg-color-warning)!important;}
+
+/* Neutralize decorative metric color; preserve explicit state classes. */
+.dash-kpi-value.sales,
+.dash-kpi-value.inventory,
+.report-summary-value.sales,
+.report-summary-value.inventory{color:var(--vg-color-text);}
+.dash-kpi-value.profit,
+.report-summary-value.profit{color:var(--vg-color-success);}
+.dash-kpi-value.debt,
+.report-summary-value.debt{color:var(--vg-color-danger);}
+
+/* ---------- Forms: controls are controls, not cards ---------- */
+.field label{
+  color:var(--vg-color-text-muted);
+  font-size:var(--vg-type-label);
+  font-weight:var(--vg-weight-label);
+}
+.field input,
+.field select,
+.field textarea{
+  background:var(--vg-color-surface);
+  border-color:var(--vg-color-border);
+  border-radius:var(--vg-radius-control);
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:rgba(0,112,210,.45);
+  box-shadow:0 0 0 3px rgba(0,112,210,.10);
+}
+
+/* ---------- Icon grammar ---------- */
+.close-x,
+.customer-row-watch,
+.dash-section-ico,
+.dash-qa-ico,
+.dash-action-toggle-ico,
+.gc-line-ico{
+  color:var(--vg-color-text-secondary);
+}
+.close-x{
+  background:var(--vg-color-surface);
+  border:1px solid var(--vg-color-border);
+  box-shadow:none;
+}
+.dash-section-ico,
+.dash-qa-ico{
+  border-color:var(--vg-color-border);
+  background:var(--vg-color-surface-soft);
+}
+.bottom-nav-item .bn-ico{color:var(--vg-color-text-muted);}
+.bottom-nav-item.active .bn-ico,
+.bottom-nav-item.active .bn-label{color:var(--vg-color-primary);}
+
+/* ---------- Raised/overlay semantics ---------- */
+.cust-summary{box-shadow:var(--vg-shadow-raised);}
+.overlay .sheet,
+.sheet{box-shadow:var(--vg-shadow-overlay);}
+
+/* ---------- Utility surface: quiet by default ---------- */
+.report-period-note,
+.visit-precontext,
+.inv-pay-due,
+.settings-warn{
+  border-color:var(--vg-color-divider);
+  box-shadow:none;
+}
+
+/* ---------- Density + rhythm ---------- */
+.cards{gap:var(--vg-space-group);}
+.dashboard-block,
+.report-section,
+.settings-section,
+.gc-section{margin-bottom:var(--vg-space-section);}
+
+@media (max-width:430px){
+  .cards{gap:12px;}
+  .dashboard-block,
+  .report-section,
+  .settings-section,
+  .gc-section{margin-bottom:20px;}
+}
+
+/* Keep touch targets accessible without enlarging visual hierarchy. */
+@media (max-width:430px){
+  .btn.small,.chip,.chip-opt{min-height:44px;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .btn:active,
+  a.dash-tile:active,
+  .card:active,
+  .ledger-row:active{transform:none!important;}
+}
