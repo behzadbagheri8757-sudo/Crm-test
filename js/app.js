@@ -1976,9 +1976,11 @@ function openInvoiceForm(cid, editInv){
 
   // "مانده قبلی": مانده مشتری بدون احتساب این فاکتور اصلاً — برای فاکتور جدید یعنی مانده فعلی،
   // برای ویرایش یعنی مانده فعلی منهای سهم همین فاکتور (چه از بابت جمع فاکتور و چه از بابت پرداختی‌های همراهش)
+  const cust = data.customers.find(c => c.id === cid);
+  const custTotals = customerTotals(cid);
   const prevBalance = editInv
-    ? (customerTotals(cid).balance - editInv.total + (editInv.cashPaid||0) + (editInv.cardPaid||0) + (editInv.transferPaid||0) + (editInv.checkPaid||0))
-    : customerTotals(cid).balance;
+    ? (custTotals.balance - editInv.total + (editInv.cashPaid||0) + (editInv.cardPaid||0) + (editInv.transferPaid||0) + (editInv.checkPaid||0))
+    : custTotals.balance;
 
   function lastSaleToCustomer(productId){
     const past = data.invoices
@@ -2118,18 +2120,29 @@ function openInvoiceForm(cid, editInv){
     const newBalance = prevBalance + total - paid;
     const profit = invoiceProfitEstimate();
     const profitColor = profit<0 ? 'var(--rust)' : 'var(--olive-dark)';
+    const remainColor = newBalance>0 ? 'var(--rust)' : 'var(--olive-dark)';
+    // Stage 3 — presentation-only summary hierarchy. Formulas/values unchanged.
     document.getElementById('calc-summary').innerHTML = `
-      <div class="ledger-row"><span class="name">مانده قبلی مشتری</span><span class="filler"></span><span class="amount">${toman(prevBalance)} ت</span></div>
-      <div class="ledger-row"><span class="name">جمع اقلام</span><span class="filler"></span><span class="amount">${toman(subtotal)} ت</span></div>
-      <div class="ledger-row"><span class="name">تخفیف کلی فاکتور${discountType==='percent'?` (${toman(discount)}٪)`:''}</span><span class="filler"></span><span class="amount">${toman(discountAmount)} ت</span></div>
-      <div class="ledger-row"><span class="name">جمع این فاکتور</span><span class="filler"></span><span class="amount">${toman(total)} ت</span></div>
-      <div class="ledger-row"><span class="name">جمع دریافتی</span><span class="filler"></span><span class="amount">${toman(paid)} ت</span></div>
-      <div class="ledger-row"><span class="name" style="color:${newBalance>0?'var(--rust)':'var(--olive-dark)'}">مانده جدید</span><span class="filler"></span><span class="amount" style="color:${newBalance>0?'var(--rust)':'var(--olive-dark)'}">${toman(Math.abs(newBalance))} ت ${balanceStatusWord(newBalance)}</span></div>
-      <div class="ledger-row" style="border-top:1.5px dashed var(--border);margin-top:6px;padding-top:10px;">
-        <span class="name" style="font-weight:700;">سود این فاکتور (بر اساس FIFO)</span><span class="filler"></span>
-        <span class="amount" style="color:${profitColor};font-weight:700;font-size:1.05rem;">${profit<0?'−':''}${toman(Math.abs(profit))} ت</span>
+      <div class="inv-summary">
+        <div class="ledger-row inv-summary-line"><span class="name">جمع اقلام</span><span class="filler"></span><span class="amount">${toman(subtotal)} ت</span></div>
+        <div class="ledger-row inv-summary-line"><span class="name">تخفیف کلی فاکتور${discountType==='percent'?` (${toman(discount)}٪)`:''}</span><span class="filler"></span><span class="amount">${toman(discountAmount)} ت</span></div>
+        <div class="inv-summary-sep" aria-hidden="true"></div>
+        <div class="ledger-row inv-summary-total"><span class="name">جمع این فاکتور</span><span class="filler"></span><span class="amount">${toman(total)} ت</span></div>
+        <div class="ledger-row inv-summary-line"><span class="name">جمع دریافتی</span><span class="filler"></span><span class="amount">${toman(paid)} ت</span></div>
+        <div class="ledger-row inv-summary-remain"><span class="name" style="color:${remainColor}">مانده جدید</span><span class="filler"></span><span class="amount" style="color:${remainColor}">${toman(Math.abs(newBalance))} ت ${balanceStatusWord(newBalance)}</span></div>
+        <div class="ledger-row inv-summary-context"><span class="name">مانده قبلی مشتری</span><span class="filler"></span><span class="amount">${toman(prevBalance)} ت</span></div>
+        <div class="ledger-row inv-summary-profit"><span class="name">سود این فاکتور (بر اساس FIFO)</span><span class="filler"></span><span class="amount" style="color:${profitColor}">${profit<0?'−':''}${toman(Math.abs(profit))} ت</span></div>
       </div>
     `;
+    // Stage 4 — presentation-only amount-due hint next to payment fields
+    const payDueEl = document.getElementById('inv-pay-due');
+    if(payDueEl){
+      const due = Math.max(0, total - paid);
+      payDueEl.innerHTML = due > 0
+        ? (`مانده قابل دریافت این فاکتور: <strong>${toman(due)} ت</strong>`)
+        : 'این فاکتور از نظر دریافتی پوشش داده شده';
+      payDueEl.classList.toggle('is-covered', due <= 0);
+    }
   }
 
   function renderSheet(){
@@ -2154,6 +2167,10 @@ function openInvoiceForm(cid, editInv){
       : '';
     openSheet(`
       <h3>${editInv?('ویرایش فاکتور #'+(editInv.number||'—')):'فاکتور جدید'}</h3>
+      ${cust?`<div style="margin:0 0 12px;padding-bottom:12px;border-bottom:1px solid var(--color-border);">
+        <div style="font-weight:800;font-size:1rem;color:var(--color-text);">${esc(cust.name)}</div>
+        <div style="font-size:.82rem;color:var(--color-text-muted);margin-top:4px;">${balanceStatusText(custTotals.balance, toman(Math.abs(custTotals.balance))+' ت')}</div>
+      </div>`:''}
       ${editInv?`<div class="empty" style="padding:0 0 8px;text-align:right;">با ذخیره‌ی این ویرایش، موجودی انبار و مانده حساب مشتری به‌طور خودکار اصلاح می‌شود.</div>`:''}
       <div class="field"><label>تاریخ</label>${shamsiDateInputHTML('f-date', editInv?editInv.date:todayISO())}</div>
       <div id="items-wrap">${itemsHtml()}</div>
@@ -2161,14 +2178,17 @@ function openInvoiceForm(cid, editInv){
       ${nprHtmlInv}
 
       <h2 class="section-title">دریافتی همراه این فاکتور (اختیاری)</h2>
-      <div class="field" style="display:flex;gap:8px;">
-        <div style="flex:1;"><label>نقد</label><input id="f-cash" type="text" inputmode="decimal" value="${cashPaid||''}"></div>
-        <div style="flex:1;"><label>کارت</label><input id="f-card" type="text" inputmode="decimal" value="${cardPaid||''}"></div>
-        <div style="flex:1;"><label>انتقال بانکی</label><input id="f-transfer" type="text" inputmode="decimal" value="${transferPaid||''}"></div>
-      </div>
-      <div class="field"><label>دریافت چک</label><input id="f-check" type="text" inputmode="decimal" value="${checkAmount||''}"></div>
-      <div class="field" id="check-due-wrap" style="display:${checkAmount>0?'block':'none'};">
-        <label>تاریخ سررسید چک</label>${shamsiDateInputHTML('f-check-due', checkDue)}
+      <div class="inv-pay">
+        <div class="inv-pay-due" id="inv-pay-due" aria-live="polite"></div>
+        <div class="inv-pay-grid">
+          <div class="field inv-pay-method"><label>نقد</label><input id="f-cash" type="text" inputmode="decimal" value="${cashPaid||''}" autocomplete="off"></div>
+          <div class="field inv-pay-method"><label>کارت</label><input id="f-card" type="text" inputmode="decimal" value="${cardPaid||''}" autocomplete="off"></div>
+          <div class="field inv-pay-method"><label>انتقال بانکی</label><input id="f-transfer" type="text" inputmode="decimal" value="${transferPaid||''}" autocomplete="off"></div>
+          <div class="field inv-pay-method"><label>چک</label><input id="f-check" type="text" inputmode="decimal" value="${checkAmount||''}" autocomplete="off"></div>
+        </div>
+        <div class="field inv-pay-check-due" id="check-due-wrap" style="display:${checkAmount>0?'block':'none'};">
+          <label>تاریخ سررسید چک</label>${shamsiDateInputHTML('f-check-due', checkDue)}
+        </div>
       </div>
 
       <div class="field" style="display:flex;gap:6px;align-items:end;">
@@ -2188,7 +2208,9 @@ function openInvoiceForm(cid, editInv){
       <h2 class="section-title">محاسبه خودکار</h2>
       <div id="calc-summary"></div>
 
-      <div class="btn-row"><button class="btn" id="save-invoice">${editInv?'ذخیره ویرایش':'ثبت فاکتور'}</button></div>
+      <div class="inv-save-bar">
+        <div class="btn-row inv-save-row"><button class="btn" id="save-invoice">${editInv?'ذخیره ویرایش':'ثبت فاکتور'}</button></div>
+      </div>
     `);
     if(_prevSheetEl){
       const _newSheetEl = document.querySelector('.sheet');
@@ -2434,6 +2456,11 @@ function openInvoiceForm(cid, editInv){
       if(noProductRow){
         alert('برای هر ردیف باید یک جنس از لیست انتخاب کنی.');
         btn.disabled = false;
+        try{
+          const i = rows.indexOf(noProductRow);
+          const el = document.querySelector('.row-product-search[data-row="'+i+'"]');
+          if(el) el.focus();
+        }catch(_e){}
         return;
       }
 
@@ -2442,11 +2469,19 @@ function openInvoiceForm(cid, editInv){
       if(invalidRow){
         alert('مقادیر فاکتور نامعتبر است.\n\nتعداد هر ردیف باید بزرگ‌تر از صفر باشد و قیمت/تخفیف نباید منفی باشند.');
         btn.disabled = false;
+        try{
+          const i = rows.indexOf(invalidRow);
+          const el = !(invalidRow.qty>0)
+            ? document.querySelector('.row-qty[data-row="'+i+'"]')
+            : document.querySelector('.row-price[data-row="'+i+'"]');
+          if(el) el.focus();
+        }catch(_e){}
         return;
       }
       if(discount<0){
         alert('تخفیف کلی فاکتور نمی‌تواند منفی باشد.');
         btn.disabled = false;
+        try{ const el=document.getElementById('f-discount'); if(el) el.focus(); }catch(_e){}
         return;
       }
       // FIX (audit M-1): reject negative amounts in the invoice-attached payment
@@ -2454,6 +2489,10 @@ function openInvoiceForm(cid, editInv){
       if(cashPaid<0 || cardPaid<0 || transferPaid<0 || checkAmount<0){
         alert('مبلغ دریافتی (نقد/کارت/انتقال/چک) نمی‌تواند منفی باشد.');
         btn.disabled = false;
+        try{
+          const id = cashPaid<0?'f-cash':cardPaid<0?'f-card':transferPaid<0?'f-transfer':'f-check';
+          const el=document.getElementById(id); if(el) el.focus();
+        }catch(_e){}
         return;
       }
 
