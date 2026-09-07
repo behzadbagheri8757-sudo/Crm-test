@@ -4405,90 +4405,110 @@ a.dash-tile .dash-sub{font-size:.62rem;}
 
 
 /* ============================================================
-   DASHBOARD SPATIAL UI PROTOTYPE — elevation, depth, rhythm
-   UI only. Scoped to .dashboard-shell to avoid leaking styles.
+   DASHBOARD SPATIAL UI — Stage 7 Material & Surface Refinement
+   Builds on Stage 6. UI only. Scoped to .dashboard-shell.
+   Principles: light/shadow behavior, surface↔background continuity,
+   edge refinement. No glass/neumorphism/3D extrusion.
    ============================================================ */
+
 :root{
-  --elevation-1: 0 2px 8px rgba(26,38,52,.05);
-  --elevation-2: 0 4px 18px rgba(26,38,52,.09);
-  --elevation-3: 0 10px 32px rgba(26,38,52,.14);
+  /* Soft upper light (slightly from top). Contact shadows dissolve into bg. */
+  --elevation-1:
+    0 1px 2px rgba(26,38,52,.03),
+    0 3px 10px rgba(26,38,52,.04);
+  --elevation-2:
+    0 1px 2px rgba(26,38,52,.035),
+    0 4px 14px rgba(26,38,52,.06),
+    0 10px 28px rgba(26,38,52,.045);
+  --elevation-3:
+    0 1px 3px rgba(23,35,49,.05),
+    0 6px 18px rgba(23,35,49,.08),
+    0 16px 40px rgba(23,35,49,.10);
+  /* Surface fill: barely cooler than pure white so it sits in the bg space */
+  --dash-surface: #FBFCFD;
+  --dash-surface-edge: rgba(26,38,52,.055);
+  --dash-surface-edge-soft: rgba(26,38,52,.04);
+  --dash-top-highlight: inset 0 1px 0 rgba(255,255,255,.75);
 }
 
-/* Background layer: quiet radial space instead of flat canvas.
-   Scoped via :has() so only the Dashboard page gets the spatial bg. */
+/* Background: quiet spatial field (preserved concept, slightly softer falloff) */
 main:has(.dashboard-shell),
 body.page-dashboard,
 body[data-page="dashboard"]{
   background:
-    radial-gradient(ellipse 120% 80% at 50% -10%, #F4F6F9 0%, #E9EDF2 55%, #E4E9EF 100%);
+    radial-gradient(ellipse 130% 90% at 50% -8%,
+      #F5F7FA 0%,
+      #EEF1F5 48%,
+      #E6EBF0 100%);
 }
 .dashboard-shell{
   background: transparent;
   gap: 0;
 }
 
-/* Primary surface — Monthly Target: strongest elevation */
+/* ---------- Primary surface — Monthly Target ---------- */
 .dashboard-shell .dash-target-block{
   margin-bottom: 22px;
 }
 .dashboard-shell .dash-monthly-target{
-  box-shadow: var(--elevation-3), 0 1px 0 rgba(255,255,255,.12) inset;
-  border: 1px solid rgba(255,255,255,.08);
+  /* Colored primary still uses stronger contact shadow; top edge catch-light */
+  box-shadow:
+    var(--elevation-3),
+    inset 0 1px 0 rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.07);
   border-radius: 18px;
   padding: 13px 15px 14px;
 }
 
-/* Secondary surfaces — Action Queue, Recent lists */
+/* ---------- Secondary surfaces — Action Queue, Recent lists ---------- */
 .dashboard-shell .dashboard-block{
   margin-bottom: 24px;
 }
 .dashboard-shell .dash-activity{
-  background: #FFFFFF;
-  border: 1px solid rgba(26,38,52,.06);
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-surface-edge);
   border-radius: 16px;
-  box-shadow: var(--elevation-2);
+  box-shadow: var(--elevation-2), var(--dash-top-highlight);
   padding: 4px 12px 6px;
   margin-bottom: 0;
 }
 
-/* Tertiary surface — KPI / biz-status-secondary */
+/* ---------- Tertiary surface — KPI strip ---------- */
 .dashboard-shell .biz-status{
   margin-bottom: 20px;
 }
 .dashboard-shell .biz-status-secondary{
   margin-top: 12px;
-  background: #FFFFFF;
-  border: 1px solid rgba(26,38,52,.05);
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-surface-edge-soft);
   border-radius: 14px;
-  box-shadow: var(--elevation-1);
+  box-shadow: var(--elevation-1), var(--dash-top-highlight);
 }
 
-/* Quick Actions — tertiary with a touch more presence */
+/* ---------- Quick Actions — tertiary, slightly more presence ---------- */
 .dashboard-shell .dashboard-block.dash-quick-actions-block{
   margin-bottom: 24px;
 }
 .dashboard-shell .dash-qa-bar{
-  background: #FFFFFF;
-  border: 1px solid rgba(26,38,52,.05);
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-surface-edge-soft);
   border-radius: 14px;
-  box-shadow: var(--elevation-1);
+  box-shadow: var(--elevation-1), var(--dash-top-highlight);
   padding: 10px 8px;
 }
 
-/* Soften list separators so rows sit on the surface, not as separate boxes */
+/* Rows sit on the surface; separators dissolve, not outline */
 .dashboard-shell .dash-activity .ledger-row{
-  border-bottom-color: rgba(26,38,52,.05);
+  border-bottom-color: rgba(26,38,52,.045);
 }
 .dashboard-shell .dash-activity .ledger-row:last-child{
   border-bottom: none;
 }
 
-/* Section heads: slightly tighter to the surface below them */
+/* Section heads remain quiet anchors above surfaces */
 .dashboard-shell .dashboard-block-head{
   margin-bottom: 10px;
 }
-
-/* Eyebrow / title breathing */
 .dashboard-shell > .section-title{
   margin: 2px 0 4px;
 }
@@ -4497,7 +4517,7 @@ body[data-page="dashboard"]{
   color: var(--color-text-muted);
 }
 
-/* Mobile: keep elevation, tighten only internal density */
+/* Mobile: same material language, denser internal padding only */
 @media (max-width: 430px){
   .dashboard-shell .dash-target-block{ margin-bottom: 18px; }
   .dashboard-shell .dashboard-block{ margin-bottom: 20px; }
