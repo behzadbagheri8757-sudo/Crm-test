@@ -4721,3 +4721,296 @@ body[data-page="dashboard"]{
     font-size: .66rem;
   }
 }
+
+/* ============================================================
+   BAGHERI VISUAL GRAMMAR — SYSTEM IMPLEMENTATION v1
+   UI-only. Derived from the audited Bagheri Visual Grammar.
+   Purpose: make meaning, grouping, attention and semantic state
+   consistent across existing pages without changing DOM/logic.
+   ============================================================ */
+
+:root{
+  /* Semantic visual roles */
+  --vg-bg: #F5F7FA;
+  --vg-surface: #FFFFFF;
+  --vg-surface-soft: #F7F8FA;
+  --vg-text: #1F2937;
+  --vg-muted: #667085;
+  --vg-line: rgba(31,41,55,.08);
+  --vg-line-soft: rgba(31,41,55,.055);
+  --vg-primary: #0070D2;
+  --vg-success: #00A068;
+  --vg-warning: #F5A131;
+  --vg-danger: #FA3946;
+  --vg-radius-group: 14px;
+  --vg-radius-strong: 16px;
+  --vg-shadow-group: 0 2px 10px rgba(31,41,55,.045);
+  --vg-shadow-raised: 0 6px 20px rgba(31,41,55,.075);
+}
+
+/* ---------- Environment: neutral by default ---------- */
+body{
+  background:var(--vg-bg);
+  color:var(--vg-text);
+}
+
+/* ---------- Page identity: visible, but not a competing accent ---------- */
+h2.section-title{
+  color:var(--vg-text);
+  font-weight:750;
+  font-size:1.05rem;
+  letter-spacing:-.18px;
+  margin:4px 0 16px;
+}
+h2.section-title::after{
+  border-bottom-color:var(--vg-line);
+  opacity:1;
+}
+h3.sub-title{
+  color:var(--vg-text);
+  font-weight:700;
+  font-size:.88rem;
+}
+
+/* ---------- Grouped surfaces: one visual promise, not decoration ---------- */
+.card,
+.report-summary-card,
+.gc-panel,
+.prospect-result-card{
+  background:var(--vg-surface);
+  border:1px solid var(--vg-line-soft);
+  border-radius:var(--vg-radius-group);
+  box-shadow:var(--vg-shadow-group);
+}
+
+.card .label,
+.report-summary-label{
+  color:var(--vg-muted);
+  font-size:.68rem;
+  font-weight:600;
+  line-height:1.3;
+}
+
+.card .value,
+.report-summary-value{
+  color:var(--vg-text);
+  font-weight:800;
+  line-height:1.25;
+}
+
+/* Metrics share one semantic grammar. State colors remain meaningful. */
+.report-summary-card::before{display:none;}
+.report-summary-value.sales,
+.report-summary-value.inventory{color:var(--vg-text);}
+.report-summary-value.profit{color:var(--vg-success);}
+.report-summary-value.debt{color:var(--vg-danger);}
+.report-summary-meta{color:var(--vg-muted);}
+.report-summary-meta.up{color:var(--vg-success);}
+.report-summary-meta.down{color:var(--vg-danger);}
+
+/* ---------- Section grammar: titles guide, they do not shout ---------- */
+.dashboard-block-head .dash-section-label,
+.report-section h3,
+.settings-section h3,
+.gc-section-title,
+.report-summary-title{
+  color:var(--vg-text);
+}
+
+.dashboard-block-head .section-action,
+.section-action{
+  color:var(--vg-primary);
+  font-weight:700;
+}
+
+/* ---------- Lists: data remains flat and dense ---------- */
+.ledger-row{
+  border-bottom-color:var(--vg-line);
+  border-radius:0;
+}
+.ledger-row .name,
+.tx-row-title{
+  color:var(--vg-text);
+  font-weight:700;
+}
+.ledger-row .sub,
+.tx-row-meta,
+.tx-hint,
+.report-note,
+.report-period-note{
+  color:var(--vg-muted);
+}
+.ledger-row .amount,
+.tx-row-total,
+.tx-row-amount{
+  color:var(--vg-text);
+  font-weight:800;
+}
+a.ledger-row:active{
+  background:var(--vg-surface-soft);
+}
+
+/* ---------- Financial semantics: color only carries state ---------- */
+.accent-olive{color:var(--vg-success)!important;}
+.accent-rust,
+.accent-red{color:var(--vg-danger)!important;}
+.accent-amber{color:var(--vg-warning)!important;}
+.biz-stat-value.debt{color:var(--vg-danger)!important;}
+
+/* Remove decorative color from non-state metric values. */
+.dash-kpi-value.sales,
+.dash-kpi-value.inventory,
+.report-summary-value.sales,
+.report-summary-value.inventory{
+  color:var(--vg-text);
+}
+.dash-kpi-value.profit{color:var(--vg-success);}
+.dash-kpi-value.debt{color:var(--vg-danger);}
+
+/* ---------- Actions: one clear primary, quieter alternatives ---------- */
+.btn{
+  background:var(--vg-primary);
+  border-radius:var(--radius-sm);
+  font-weight:700;
+  box-shadow:var(--shadow-sm);
+}
+.btn.secondary{
+  background:var(--vg-surface);
+  color:var(--vg-primary);
+  border:1px solid rgba(0,112,210,.28);
+  box-shadow:none;
+}
+.btn.danger{
+  background:var(--vg-danger);
+}
+.btn.small{
+  font-weight:700;
+}
+
+/* ---------- Selection/status tokens: compact, semantic ---------- */
+.chip{
+  background:var(--vg-surface);
+  border-color:var(--vg-line);
+  color:var(--vg-muted);
+  font-weight:600;
+}
+.chip.active,
+.chip-opt.selected{
+  background:var(--vg-primary);
+  border-color:var(--vg-primary);
+  color:#fff;
+}
+.badge.pending,
+.badge.tone-warning{color:var(--vg-warning);}
+.badge.cleared,
+.badge.tone-success{color:var(--vg-success);}
+.badge.low,
+.badge.tone-danger{color:var(--vg-danger);}
+
+/* ---------- Forms: fields are controls, not competing cards ---------- */
+.field label{
+  color:var(--vg-muted);
+  font-size:.72rem;
+  font-weight:600;
+}
+.field input,
+.field select,
+.field textarea{
+  background:var(--vg-surface);
+  border-color:var(--vg-line);
+  border-radius:12px;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:rgba(0,112,210,.45);
+  box-shadow:0 0 0 3px rgba(0,112,210,.10);
+}
+
+/* ---------- Major module rhythm ---------- */
+.cards{
+  gap:12px;
+  margin-bottom:20px;
+}
+.dashboard-block,
+.report-section,
+.settings-section,
+.gc-section{
+  margin-bottom:22px;
+}
+
+/* ---------- Dashboard keeps the existing spatial pilot, but uses the shared grammar ---------- */
+.dashboard-shell .dashboard-block-head .dash-section-label{
+  font-weight:700;
+}
+.dashboard-shell .dash-activity{
+  background:var(--vg-surface);
+  border-color:var(--vg-line-soft);
+}
+.dashboard-shell .dash-activity .ledger-row{
+  border-bottom-color:var(--vg-line-soft);
+}
+.dashboard-shell .biz-status-secondary{
+  border-color:var(--vg-line-soft);
+}
+
+/* ---------- Reports: summary cards use the same metric hierarchy as Dashboard ---------- */
+.report-summary-card{
+  padding:13px 14px;
+}
+.report-summary-label{margin-bottom:6px;}
+.report-summary-value{font-size:1rem;}
+
+/* ---------- Prospect / Game / management panels remain specialized,
+   but inherit neutral grouping and semantic hierarchy. ---------- */
+.gc-panel,
+.gc-mission,
+.prospect-result-card{
+  border-color:var(--vg-line-soft);
+  box-shadow:var(--vg-shadow-group);
+}
+.gc-section-ico,
+.prospect-result-title{
+  color:var(--vg-primary);
+}
+
+/* ---------- Customer summary remains a decision block, not a generic card ---------- */
+.cust-summary{
+  background:var(--vg-surface);
+  border-color:var(--vg-line-soft);
+  box-shadow:var(--vg-shadow-raised);
+}
+
+/* ---------- Shared utility surfaces: quiet unless they represent state ---------- */
+.visit-precontext,
+.inv-pay-due,
+.settings-warn,
+.report-period-note{
+  box-shadow:none;
+}
+
+/* ---------- Mobile: preserve density; do not scale the whole interface down ---------- */
+@media (max-width:390px){
+  .cards{gap:10px;margin-bottom:18px;}
+  .dashboard-block,
+  .report-section,
+  .settings-section,
+  .gc-section{margin-bottom:20px;}
+}
+
+/* ---------- Accessibility / interaction: motion remains restrained ---------- */
+@media (prefers-reduced-motion: reduce){
+  .btn:active,
+  a.dash-tile:active,
+  .card:active,
+  .ledger-row:active{transform:none!important;}
+}
+
+
+/* Final grammar correction: informational notes stay structural, not decorative. */
+.report-period-note{
+  background:var(--vg-surface-soft);
+  border:1px solid var(--vg-line-soft);
+  color:var(--vg-muted);
+}
+
