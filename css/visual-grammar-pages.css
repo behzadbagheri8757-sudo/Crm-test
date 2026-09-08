@@ -1,0 +1,165 @@
+/* Bagheri Visual Grammar — Phase 3: Page Composition
+   Scope: composition and hierarchy only. No business logic. */
+
+:root{
+  --vg-page-gap:24px;
+  --vg-group-gap:12px;
+  --vg-unit-gap:8px;
+  --vg-content-max:760px;
+}
+
+/* ---------- Shared page frame ---------- */
+main > *:first-child{margin-top:0;}
+main .section-title{position:relative; margin-bottom:14px;}
+main .tx-hint,
+main > p.tx-hint{margin-top:-6px;margin-bottom:16px;}
+main > .field{margin-bottom:12px;}
+main > .chip-row{margin-bottom:12px;}
+main > .tx-toolbar{margin:0 0 14px;}
+main > .btn-row{margin-bottom:12px;}
+
+/* Page identity is intentionally quieter than the working content. */
+.vg-route-dashboard main .section-title,
+.vg-route-customers main .section-title,
+.vg-route-products main .section-title,
+.vg-route-invoices main .section-title,
+.vg-route-payments main .section-title,
+.vg-route-visits main .section-title,
+.vg-route-reports main .section-title,
+.vg-route-suppliers main .section-title,
+.vg-route-checks main .section-title,
+.vg-route-inventory main .section-title,
+.vg-route-prospects main .section-title{
+  font-weight:700;
+}
+
+/* ---------- List-first pages ---------- */
+.vg-route-customers #customer-list,
+.vg-route-products #product-list,
+.vg-route-invoices #invoice-list,
+.vg-route-payments #payment-list,
+.vg-route-visits #visit-list,
+.vg-route-suppliers #supplier-list,
+.vg-route-checks #check-list,
+.vg-route-prospects #prospect-list{
+  margin-top:14px;
+}
+
+/* Keep the list itself visually quiet; the row carries the information. */
+.vg-route-customers .customer-list-row,
+.vg-route-products .tx-list .ledger-row,
+.vg-route-invoices .tx-list .ledger-row,
+.vg-route-payments .tx-list .ledger-row,
+.vg-route-visits .tx-list .ledger-row,
+.vg-route-suppliers .tx-list .ledger-row,
+.vg-route-checks .tx-list .ledger-row,
+.vg-route-prospects .tx-list .ledger-row{
+  background:transparent;
+  box-shadow:none;
+}
+
+/* A list is one information group, not a stack of independent cards. */
+.vg-route-customers #customer-list,
+.vg-route-products #product-list,
+.vg-route-invoices #invoice-list,
+.vg-route-payments #payment-list,
+.vg-route-visits #visit-list,
+.vg-route-suppliers #supplier-list,
+.vg-route-checks #check-list,
+.vg-route-prospects #prospect-list{
+  border-radius:12px;
+}
+
+/* ---------- Search / filter / sort are one control group ---------- */
+.vg-route-customers .field:has(#customer-search),
+.vg-route-products .field:has(#product-search),
+.vg-route-invoices .field:has(#invoice-search),
+.vg-route-payments .field:has(#payment-search),
+.vg-route-visits .field:has(#visit-search){
+  margin-bottom:8px;
+}
+
+.vg-route-customers .chip-row,
+.vg-route-products .chip-row,
+.vg-route-invoices .chip-row,
+.vg-route-payments .chip-row,
+.vg-route-visits .chip-row,
+.vg-route-suppliers .chip-row,
+.vg-route-checks .chip-row,
+.vg-route-prospects .chip-row{
+  gap:6px;
+}
+
+/* ---------- Customer detail: identity → decision → action → history ---------- */
+.vg-route-customer .cust-summary,
+.vg-route-customer .customer-behavior-summary{
+  margin-bottom:18px;
+}
+
+.vg-route-customer .cust-recommended-action{
+  margin:18px 0 22px;
+}
+
+.vg-route-customer .cust-recommended-action-label{
+  margin-bottom:7px;
+}
+
+.vg-route-customer > main .sub-title{
+  margin-top:20px;
+  margin-bottom:9px;
+}
+
+.vg-route-customer .cust-actions-primary,
+.vg-route-customer .cust-actions-secondary{
+  gap:8px;
+}
+
+/* Identity block is a surface; history remains list-like. */
+.vg-route-customer .cust-summary .ledger-row,
+.vg-route-customer .tx-list .ledger-row{
+  background:transparent;
+  box-shadow:none;
+}
+
+/* ---------- Reports: summary first, controls second, details third ---------- */
+.vg-route-reports #reports-summary{margin:14px 0 20px;}
+.vg-route-reports .report-summary{
+  margin-bottom:0;
+}
+.vg-route-reports #reports-body{margin-top:18px;}
+.vg-route-reports .report-section{margin-bottom:24px;}
+.vg-route-reports .report-section h3{margin-bottom:9px;}
+
+/* ---------- Dashboard: protect the existing anchor, strengthen rhythm only ---------- */
+.vg-route-dashboard .dashboard-shell{gap:0;}
+.vg-route-dashboard .dashboard-shell > .section-title{margin-bottom:5px;}
+.vg-route-dashboard .dashboard-eyebrow{margin-bottom:18px;}
+.vg-route-dashboard .dashboard-block{margin-bottom:26px;}
+.vg-route-dashboard .dashboard-block-head{margin-bottom:9px;}
+.vg-route-dashboard .dash-section-label{font-weight:700;}
+
+/* ---------- Forms: identity/context first, fields as one group, action last ---------- */
+.vg-route-invoice .sheet,
+.vg-route-evaluation .sheet{
+  /* Kept intentionally neutral; composition is handled by existing sheet. */
+}
+
+/* ---------- Settings / management pages ---------- */
+.vg-route-settings .mgmt-section,
+.vg-route-locations .mgmt-section{
+  margin-bottom:24px;
+}
+.vg-route-settings .mgmt-section-title{margin-bottom:9px;}
+
+/* ---------- Empty states are part of the page, not a fake card ---------- */
+main .empty{margin:14px 0;}
+
+/* ---------- Mobile: preserve density, increase only major-module separation ---------- */
+@media (max-width:419px){
+  :root{--vg-page-gap:22px;}
+  main .section-title{margin-bottom:12px;}
+  main > .field{margin-bottom:10px;}
+  .vg-route-dashboard .dashboard-block{margin-bottom:22px;}
+  .vg-route-reports .report-section{margin-bottom:20px;}
+  .vg-route-customer .cust-recommended-action{margin-top:16px;margin-bottom:20px;}
+}
