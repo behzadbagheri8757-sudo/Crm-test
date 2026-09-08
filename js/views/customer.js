@@ -988,10 +988,10 @@
     currentCustomerId = params && params.id ? params.id : null;
     function refreshCustomer() {
       function paint() { drawCustomerPage(rootEl || root); }
+      // Paint immediately so the page is never blank if lifecycle reconcile hangs.
+      paint();
       if (typeof reconcileWatchLifecycle === 'function' && currentCustomerId) {
         reconcileWatchLifecycle(currentCustomerId).then(paint).catch(function () { paint(); });
-      } else {
-        paint();
       }
     }
     refreshCustomer();
