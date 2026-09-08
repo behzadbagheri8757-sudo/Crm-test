@@ -49,9 +49,6 @@
   }
 
   function money(v) { return toman(Math.round(Number(v) || 0)) + ' ت'; }
-  function bizMoney(v) {
-    return '<span class="biz-stat-number">' + toman(Math.round(Number(v) || 0)) + '</span><span class="biz-stat-unit">ت</span>';
-  }
 
   function deltaHtml(pct) {
     if (pct === null || pct === undefined || !isFinite(pct)) return '<span class="kpi-delta flat">بدون مقایسه</span>';
@@ -294,7 +291,8 @@
       const cust = (data.customers || []).find(function (c) { return c.id === inv.customerId; });
       return '<a class="ledger-row" href="#/invoice?id=' + encodeURIComponent(inv.id) + '"><span class="name">فاکتور #' + esc(String(inv.number || '')) + '<span class="sub">' + esc(cust ? cust.name : '—') + ' — ' + faDate(inv.date) + '</span></span><span class="filler"></span><span class="amount">' + money(inv.total) + '</span></a>';
     }).join('');
-    return '<div class="dashboard-block">' + dashSectionHead(ICO.invoiceSection, 'آخرین فاکتورها', '#/invoices', 'همه ←') + '<div class="dash-activity">' + rows + '</div></div>';
+    /* Inner section only — parent .dash-activity-group provides the surface */
+    return '<div class="dash-activity-section">' + dashSectionHead(ICO.invoiceSection, 'آخرین فاکتورها', '#/invoices', 'همه ←') + '<div class="dash-activity">' + rows + '</div></div>';
   }
 
   function recentVisitsHtml() {
@@ -308,7 +306,8 @@
     const rows = top.map(function (v) {
       return '<a class="ledger-row" href="#/customer?id=' + encodeURIComponent(v.customerId) + '"><span class="name">' + esc(v.name) + '<span class="sub">' + faDate(v.date) + (v.time ? ' ' + esc(v.time) : '') + (v.result ? ' — ' + esc(v.result) : '') + '</span></span><span class="filler"></span><span class="amount">ویزیت</span></a>';
     }).join('');
-    return '<div class="dashboard-block">' + dashSectionHead(ICO.visitSection, 'آخرین ویزیت‌ها', '#/visits', 'همه ←') + '<div class="dash-activity">' + rows + '</div></div>';
+    /* Inner section only — parent .dash-activity-group provides the surface */
+    return '<div class="dash-activity-section">' + dashSectionHead(ICO.visitSection, 'آخرین ویزیت‌ها', '#/visits', 'همه ←') + '<div class="dash-activity">' + rows + '</div></div>';
   }
 
   function targetHtml(metrics) {
@@ -429,21 +428,49 @@
     const invVal = inventoryValue();
     if (typeof isStale === 'function' && isStale()) return;
 
+    /* Semantic composition (presentation only):
+         A. Today's Focus  — target + action queue (primary attention)
+         B. Financial Health — profit / inventory / debt (one surface, stacked rows)
+         C. Quick Actions — tools (de-emphasized)
+         D. Recent Activity — invoices + visits (one activity surface)
+         Data sources, helpers, IDs, and event bindings are unchanged. */
+    const focusActions = todaysActionsHtml();
+    const activityInvoices = recentInvoicesHtml();
+    const activityVisits = recentVisitsHtml();
+    const activityBody = activityInvoices + activityVisits;
+    const activityBlock = activityBody
+      ? ('<div class="dashboard-block dash-activity-group">' +
+          '<div class="dashboard-block-head"><div class="dash-section-label"><span class="dash-section-ico" aria-hidden="true">' + ICO.summary + '</span><span>فعالیت اخیر</span></div></div>' +
+          activityBody +
+        '</div>')
+      : '';
+
     root.innerHTML =
       '<div class="dashboard-shell">' +
       '<h2 class="section-title">داشبورد</h2>' +
       '<div class="dashboard-eyebrow">مرکز فرماندهی روزانه</div>' +
-      '<div class="biz-status">' +
-        targetHtml(metrics) +
+
+      /* A — Today's Focus */
+      '<div class="dash-focus">' +
+        '<div class="dash-focus-target">' + targetHtml(metrics) + '</div>' +
+        '<div class="dash-focus-actions">' + focusActions + '</div>' +
       '</div>' +
-      todaysActionsHtml() +
-      '<div class="biz-status-secondary">' +
-        '<div class="biz-stat"><span class="biz-stat-label">سود این ماه</span><span class="biz-stat-value">' + bizMoney(metrics.mtdProfit) + '</span></div>' +
-        '<div class="biz-stat"><span class="biz-stat-label">ارزش موجودی</span><span class="biz-stat-value">' + bizMoney(invVal) + '</span></div>' +
-        '<a class="biz-stat biz-stat-link" href="#/customers?filter=debt"><span class="biz-stat-label">بدهی مشتریان</span><span class="biz-stat-value debt">' + bizMoney(g.customerDebt) + '</span></a>' +
+
+      /* B — Financial Health (same metrics; stacked rows for mobile) */
+      '<div class="dashboard-block dash-health">' +
+        '<div class="dashboard-block-head"><div class="dash-section-label"><span class="dash-section-ico" aria-hidden="true">' + ICO.card + '</span><span>وضعیت مالی</span></div></div>' +
+        '<div class="dash-health-surface">' +
+          '<div class="dash-health-row"><span class="dash-health-label">سود این ماه</span><span class="dash-health-value">' + money(metrics.mtdProfit) + '</span></div>' +
+          '<div class="dash-health-row"><span class="dash-health-label">ارزش موجودی</span><span class="dash-health-value">' + money(invVal) + '</span></div>' +
+          '<a class="dash-health-row dash-health-link" href="#/customers?filter=debt"><span class="dash-health-label">بدهی مشتریان</span><span class="dash-health-value debt">' + money(g.customerDebt) + '</span></a>' +
+        '</div>' +
       '</div>' +
+
+      /* C — Quick Actions (tools) */
       quickActionsHtml() +
-      recentInvoicesHtml() + recentVisitsHtml() +
+
+      /* D — Recent Activity */
+      activityBlock +
       '</div>';
 
     bindMonthlyTarget(root, function () { renderInto(root, isStale); });
