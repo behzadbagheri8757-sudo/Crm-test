@@ -1,0 +1,318 @@
+/* ============================================================
+   BAGHERI VISUAL GRAMMAR — COMPONENTS v1
+   Phase 2: shared component grammar.
+   Presentation only: no business logic, data, navigation, or workflow.
+   ============================================================ */
+
+:root{
+  --vg-c-surface:#FFFFFF;
+  --vg-c-surface-soft:#F8FAFC;
+  --vg-c-bg:#F5F7FA;
+  --vg-c-text:#1F2937;
+  --vg-c-text-2:#475467;
+  --vg-c-muted:#667085;
+  --vg-c-line:rgba(31,41,55,.08);
+  --vg-c-line-soft:rgba(31,41,55,.055);
+  --vg-c-primary:#0070D2;
+  --vg-c-success:#00A068;
+  --vg-c-warning:#F5A131;
+  --vg-c-danger:#FA3946;
+  --vg-c-control:44px;
+  --vg-c-radius:12px;
+  --vg-c-radius-lg:16px;
+}
+
+/* ---------- Sections ---------- */
+.section-title,
+.dashboard-block-head .dash-section-label,
+.gc-section-title,
+.mgmt-section-title,
+.report-section h3{
+  color:var(--vg-c-text);
+  font-weight:700;
+}
+
+.dashboard-block-head,
+.gc-section-head,
+.mgmt-section-title,
+.report-section h3{
+  position:relative;
+}
+
+/* A section is identified by typography + space before borders. */
+.dashboard-block-head{margin-bottom:10px;}
+.report-section{margin-bottom:24px;}
+
+/* ---------- Surface grammar ---------- */
+.card,
+.report-summary-card,
+.gc-panel,
+.prospect-result-card{
+  background:var(--vg-c-surface);
+  border:1px solid var(--vg-c-line-soft);
+  border-radius:var(--vg-c-radius);
+  box-shadow:0 2px 10px rgba(31,41,55,.035);
+}
+
+/* Cards group; they do not compete with the content inside them. */
+.card{padding:14px;}
+.card.wide{padding:14px;}
+
+/* ---------- Metric grammar ---------- */
+.card .label,
+.report-summary-label,
+.dash-kpi-label,
+.biz-stat-label,
+.gc-kpi-lab{
+  color:var(--vg-c-muted);
+  font-size:.70rem;
+  font-weight:600;
+  line-height:1.35;
+}
+
+.card .value,
+.report-summary-value,
+.biz-stat-value,
+.dash-kpi-value,
+.gc-kpi-num{
+  color:var(--vg-c-text);
+  font-variant-numeric:tabular-nums;
+  font-weight:800;
+  line-height:1.22;
+}
+
+.report-summary-value,
+.biz-stat-value,
+.dash-kpi-value{font-size:1.12rem;}
+
+.report-summary-meta,
+.report-note,
+.report-period-note,
+.kpi-delta,
+.tx-row-meta,
+.tx-hint{
+  color:var(--vg-c-muted);
+  font-size:.64rem;
+  font-weight:500;
+}
+
+/* Positive / negative are signals, not painted surfaces. */
+.dash-kpi-value.profit,
+.report-summary-value.profit,
+.accent-olive{color:var(--vg-c-success)!important;}
+.dash-kpi-value.debt,
+.report-summary-value.debt,
+.accent-rust,
+.accent-red{color:var(--vg-c-danger)!important;}
+.accent-amber{color:var(--vg-c-warning)!important;}
+
+/* ---------- Lists / rows ---------- */
+.ledger-row,
+.tx-row,
+.customer-list-row{
+  background:transparent;
+  border-bottom:1px solid var(--vg-c-line-soft);
+}
+
+.ledger-row:last-child,
+.tx-row:last-child{border-bottom-color:transparent;}
+
+.ledger-row .name,
+.tx-row-title,
+.customer-list-row .customer-row-name,
+.customer-list-row .name{
+  color:var(--vg-c-text);
+  font-weight:700;
+}
+
+.ledger-row .sub,
+.tx-row-meta,
+.tx-hint,
+.customer-list-row .customer-row-sub,
+.customer-list-row .sub{
+  color:var(--vg-c-muted);
+  font-size:.64rem;
+  font-weight:500;
+}
+
+.ledger-row .amount,
+.tx-row-total,
+.tx-row-amount,
+.customer-row-balance-value{
+  color:var(--vg-c-text);
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+
+.ledger-row:active,
+.tx-row:active,
+.customer-list-row:active{background:var(--vg-c-surface-soft);}
+
+/* ---------- Buttons ---------- */
+.btn,
+.btn.small,
+.btn.secondary,
+.btn.danger{
+  min-height:var(--vg-c-control);
+  border-radius:10px;
+  font-weight:700;
+  line-height:1.2;
+}
+
+.btn{
+  background:var(--vg-c-primary);
+  color:#fff;
+  border:1px solid var(--vg-c-primary);
+  box-shadow:0 3px 10px rgba(0,112,210,.14);
+}
+
+.btn.secondary{
+  background:var(--vg-c-surface);
+  color:var(--vg-c-text-2);
+  border:1px solid rgba(31,41,55,.10);
+  box-shadow:none;
+}
+
+.btn.danger{
+  background:var(--vg-c-danger);
+  color:#fff;
+  border-color:var(--vg-c-danger);
+  box-shadow:0 3px 10px rgba(250,57,70,.12);
+}
+
+.btn.small{
+  min-height:40px;
+  padding-inline:12px;
+  font-size:.78rem;
+}
+
+.btn.tertiary{
+  min-height:40px;
+  background:transparent;
+  color:var(--vg-c-primary);
+  border-color:transparent;
+  box-shadow:none;
+}
+
+.btn:disabled{box-shadow:none;opacity:.55;}
+
+/* ---------- Icon buttons / icon meaning ---------- */
+.close-x,
+.customer-row-watch,
+.dash-section-ico,
+.dash-qa-ico,
+.dash-action-toggle-ico,
+.gc-line-ico{
+  color:var(--vg-c-text-2);
+}
+
+.close-x,
+.icon-btn,
+.icon-button,
+.dash-target-fab{
+  min-width:40px;
+  min-height:40px;
+}
+
+/* Icons should support an action/state; never become decorative noise. */
+.dash-section-ico,
+.dash-qa-ico,
+.dash-action-toggle-ico,
+.gc-line-ico{opacity:.82;}
+
+/* ---------- Chips / badges ---------- */
+.chip,
+.chip-opt{
+  min-height:40px;
+  border-radius:999px;
+  background:var(--vg-c-surface);
+  border:1px solid rgba(31,41,55,.09);
+  color:var(--vg-c-text-2);
+  font-weight:600;
+}
+
+.chip.active,
+.chip-opt.selected{
+  background:var(--vg-c-primary);
+  border-color:var(--vg-c-primary);
+  color:#fff;
+}
+
+.badge{
+  border:1px solid transparent;
+  border-radius:999px;
+  font-size:.64rem;
+  font-weight:700;
+}
+
+.badge.tone-success,
+.badge.cleared{background:#E8F7F2;color:var(--vg-c-success);}
+.badge.tone-warning,
+.badge.pending{background:#FFF3DF;color:var(--vg-c-warning);}
+.badge.tone-danger,
+.badge.low{background:#FFF0EC;color:var(--vg-c-danger);}
+.badge.tone-muted{background:#F3F4F6;color:var(--vg-c-muted);}
+.badge.tone-neutral{background:#F3F4F6;color:var(--vg-c-text-2);}
+
+/* ---------- Form controls ---------- */
+.field{margin-bottom:16px;}
+.field label{
+  color:var(--vg-c-text-2);
+  font-size:.70rem;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.field input,
+.field select,
+.field textarea{
+  min-height:var(--vg-c-control);
+  background:var(--vg-c-surface);
+  color:var(--vg-c-text);
+  border:1px solid rgba(31,41,55,.10);
+  border-radius:10px;
+  box-shadow:none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:rgba(0,112,210,.42);
+  box-shadow:0 0 0 3px rgba(0,112,210,.09);
+}
+
+/* ---------- Toolbars / action rows ---------- */
+.btn-row{gap:8px;}
+.tx-toolbar{gap:8px;}
+.tx-toolbar-label{color:var(--vg-c-muted);font-size:.64rem;font-weight:600;}
+
+/* ---------- Empty states ---------- */
+.empty{
+  color:var(--vg-c-muted);
+  background:transparent;
+  border:0;
+}
+
+/* ---------- Sheets / overlays ---------- */
+.sheet{
+  background:var(--vg-c-surface);
+  border-top-left-radius:18px;
+  border-top-right-radius:18px;
+  box-shadow:0 -10px 34px rgba(31,41,55,.12);
+}
+
+.sheet h3,
+.sheet-title{
+  color:var(--vg-c-text);
+  font-weight:700;
+}
+
+/* ---------- Responsive restraint ---------- */
+@media (max-width:419px){
+  .card{padding:13px;}
+  .btn{min-height:44px;}
+  .btn.small{min-height:40px;}
+  .field input,
+  .field select,
+  .field textarea{min-height:44px;}
+}
