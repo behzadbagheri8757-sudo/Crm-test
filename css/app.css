@@ -444,7 +444,7 @@ a.ledger-row:active{
 }
 .customer-filter-indicator .chip{
   padding:3px 8px;
-  min-height:40px;
+  min-height:28px;
 }
 
 /* ===================== SHEET / MODAL ===================== */
@@ -3082,30 +3082,25 @@ a.dash-tile .dash-sub{font-size:.58rem;margin-top:2px;}
 }
 
 /* 5. Quick actions: tighter, clearer touch targets */
-/* NOTE: these must match or exceed the specificity of the base
-   ".dash-qa-bar .dash-qa-btn" rule above (line ~2942), or they are
-   silently ignored by the cascade even though they render last in
-   the file — that was the actual bug here (verified against a live
-   screenshot: buttons were rendering at the pre-"tightening" sizing). */
 .dash-quick-actions{
   gap: 8px;
 }
-.dash-qa-bar .dash-qa-btn{
+.dash-qa-btn{
   padding: 10px 11px;
   border-radius: 13px;
   box-shadow: 0 2px 7px rgba(26,38,52,.03);
 }
-.dash-qa-bar .dash-qa-ico{
+.dash-qa-ico{
   width: 32px;
   height: 32px;
   border-radius: 10px;
 }
-.dash-qa-bar .dash-qa-ico svg{
+.dash-qa-ico svg{
   width: 16px;
   height: 16px;
   stroke-width: 1.65;
 }
-.dash-qa-bar .dash-qa-label{
+.dash-qa-label{
   font-size: .72rem;
   font-weight: 700;
 }
@@ -3173,7 +3168,7 @@ a.dash-tile .dash-sub{font-size:.58rem;margin-top:2px;}
   .action-person{ font-size: .79rem; }
   .action-main{ font-size: .72rem; }
   .dash-kpi-value{ font-size: 1.06rem; }
-  .dash-qa-bar .dash-qa-btn{ padding: 9px 10px; }
+  .dash-qa-btn{ padding: 9px 10px; }
 }
 
 @media (max-width: 380px){
@@ -3307,13 +3302,13 @@ header {
 
 /* 5. Lists (iOS Style Rows) */
 .ledger-row {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 0.5px solid rgba(60, 60, 67, 0.18);
 }
 .ledger-row:active {
   background: rgba(0, 0, 0, 0.04);
 }
 .ledger-row .name {
-  font-weight: 700;
+  font-weight: 500;
 }
 
 /* 6. Buttons */
@@ -4274,743 +4269,464 @@ a.dash-tile .dash-sub{font-size:.62rem;}
 }
 
 
-/* ===================== INVOICE SUMMARY (Stage 3 — presentation only) ===================== */
-.inv-summary{margin:0;padding:0;}
-.inv-summary .inv-summary-line{
-  min-height:40px;padding:8px 2px;
+/* ============================================================
+   FINAL UI/UX POLISH — targeted fixes from independent review
+   Presentation/interaction only. No business logic or data changes.
+   ============================================================ */
+
+/* 1) Accessible semantic text colors.
+   Keep the established palette for decorative accents/borders, but use
+   darker text variants where semantic status is rendered on light surfaces. */
+:root{
+  --color-accent-text:#C83E20;
+  --color-warning-text:#9A5B00;
+  --color-success-text:#007A50;
+  --color-danger-text:#D52B36;
 }
-.inv-summary .inv-summary-line .name{font-weight:600;color:var(--color-text-muted);font-size:.86rem;}
-.inv-summary .inv-summary-line .amount{font-weight:700;font-size:.92rem;}
-.inv-summary-sep{
-  height:0;margin:6px 0 8px;
-  border-bottom:1.5px solid var(--color-border);
+.accent-olive{color:var(--color-success-text) !important;}
+.accent-rust,.accent-red{color:var(--color-danger-text) !important;}
+.accent-amber{color:var(--color-warning-text) !important;}
+.badge.pending{color:var(--color-warning-text);}
+.badge.cleared{color:var(--color-success-text);}
+.badge.low{color:var(--color-danger-text);}
+.kpi-delta.up{color:var(--color-success-text);}
+.kpi-delta.down{color:var(--color-danger-text);}
+.report-summary-value.profit{color:var(--color-success-text);}
+.report-summary-value.debt{color:var(--color-danger-text);}
+.report-summary-meta.up{color:var(--color-success-text);}
+.report-summary-meta.down{color:var(--color-danger-text);}
+.action-why-now{color:var(--color-accent-text);}
+.action-urgency-critical{color:var(--color-danger-text);}
+.action-urgency-high,.action-urgency-medium{color:var(--color-accent-text);}
+.dash-risk-badge{color:var(--color-danger-text);}
+.dash-watch-compact-ico{color:var(--color-warning-text);}
+.watch-reviewed-badge{color:var(--color-warning-text);}
+.watch-reviewed-badge.is-reviewed{color:var(--color-success-text);}
+.watch-severity-high{color:var(--color-danger-text) !important;}
+.watch-severity-medium{color:var(--color-accent-text) !important;}
+.customer-row-watch{color:var(--color-warning-text);}
+.watch-level-label.watch-level-critical,
+.watch-level-label.watch-level-high{color:var(--color-danger-text);}
+.watch-level-label.watch-level-medium,
+.watch-level-unreviewed{color:var(--color-warning-text);}
+.customer-list-row .customer-row-status.badge.tone-success{color:var(--color-success-text);}
+.customer-list-row .customer-row-status.badge.tone-warning{color:var(--color-warning-text);}
+.customer-list-row .customer-row-status.badge.tone-danger{color:var(--color-danger-text);}
+#pin-lock-overlay .pin-err{color:var(--color-danger-text) !important;}
+
+/* 2) Dashboard business-status amounts: keep the currency unit attached to
+   the amount. If the number ever becomes too wide, the number may ellipsize;
+   the unit remains stable instead of falling onto a new line. */
+.biz-stat-value{
+  display:flex;
+  align-items:baseline;
+  gap:3px;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
 }
-.inv-summary .inv-summary-total{
-  min-height:48px;padding:10px 2px;
+.biz-stat-number{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
-.inv-summary .inv-summary-total .name{
-  font-weight:800;font-size:.95rem;color:var(--color-text);
+.biz-stat-unit{flex:0 0 auto;white-space:nowrap;}
+
+/* 3) Non-interactive cards must not advertise button-like press feedback. */
+.card:active{transform:none !important;}
+
+/* 4) Customer behavior disclosure: the chevron reflects the real open state. */
+.customer-behavior-summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
 }
-.inv-summary .inv-summary-total .amount{
-  font-weight:900;font-size:1.18rem;color:var(--color-primary);
-  letter-spacing:-.3px;
+.customer-behavior-summary::after{
+  content:'⌄';
+  flex:0 0 auto;
+  color:var(--color-text-muted);
+  font-size:1rem;
+  line-height:1;
+  transform:translateY(-1px);
 }
-.inv-summary .inv-summary-remain{
-  min-height:44px;padding:8px 2px;
-}
-.inv-summary .inv-summary-remain .name{font-weight:800;font-size:.9rem;}
-.inv-summary .inv-summary-remain .amount{font-weight:800;font-size:1.02rem;}
-.inv-summary .inv-summary-context{
-  min-height:36px;padding:6px 2px;opacity:.92;
-}
-.inv-summary .inv-summary-context .name,
-.inv-summary .inv-summary-context .amount{
-  font-size:.78rem;font-weight:600;color:var(--color-text-muted);
-}
-.inv-summary .inv-summary-profit{
-  min-height:36px;padding:8px 2px 4px;margin-top:4px;
-  border-top:1px dotted var(--color-border);
-}
-.inv-summary .inv-summary-profit .name{
-  font-size:.78rem;font-weight:600;color:var(--color-text-muted);
-}
-.inv-summary .inv-summary-profit .amount{
-  font-size:.86rem;font-weight:700;
+details[open] > .customer-behavior-summary::after{
+  content:'⌃';
 }
 
+/* 5) Developer QA remains available through the verified 5-tap secret,
+   but its floating test affordance is hidden from the production UI. */
+#qa-dev-btn{display:none !important;}
 
-/* ===================== INVOICE PAYMENT (Stage 4 — presentation only) ===================== */
-.inv-pay{
-  margin:0 0 16px;
-  padding:12px;
-  border:1px solid var(--color-border);
-  border-radius:var(--radius-sm);
-  background:var(--color-surface);
+/* 6) Secondary customer actions: calmer than the three primary actions,
+   while retaining the existing 44px touch target for easy selection. */
+.cust-actions-secondary{
+  gap:7px;
+  align-items:center;
 }
-.inv-pay-due{
-  margin:0 0 12px;
-  padding:10px 12px;
-  border-radius:10px;
+.cust-actions-secondary .btn{
+  opacity:1;
+  min-height:44px;
+  padding-inline:13px;
   background:var(--color-surface-2);
-  border:1px solid var(--color-border);
-  font-size:.84rem;
+  color:var(--color-text-muted);
+  border-color:var(--color-border);
+  box-shadow:none;
+  font-weight:650;
+}
+.cust-actions-secondary .btn:active{
+  transform:translateY(1px);
+  background:#E8EBEF;
+  box-shadow:none;
+}
+.cust-actions-secondary #act-toggle-active{
+  color:var(--color-danger-text);
+  border-color:#F0C9CD;
+  background:#FFF7F7;
+}
+
+/* 7) Keep secondary dashboard/supporting text readable on narrow phones.
+   Minimum remains above 10px; primary text sizes are untouched. */
+a.dash-tile .dash-sub{font-size:.64rem;}
+.action-why,.action-why-now{font-size:.66rem;}
+@media (max-width:419px){
+  a.dash-tile .dash-sub{font-size:.64rem;}
+  .action-why,.action-why-now{font-size:.64rem;}
+}
+@media (max-width:380px){
+  .action-why,.action-why-now{font-size:.64rem;}
+}
+
+/* 8) Customer list name: slightly stronger than the global ledger label,
+   but scoped only to this view so shared ledger rows remain unchanged. */
+.customer-list-row .name{font-weight:600;}
+
+/* ============================================================
+   INVOICE CREATION — v2 redesign (Zoho-inspired structure/feel)
+   Scoped entirely to .inv-sheet-host / .inv-sheet-v2 / .inv-*
+   classes used ONLY by openInvoiceForm() in js/app.js.
+   Does not alter .sheet, .field, .ledger-row, .btn, .card, etc.
+   for any other screen in the app.
+   ============================================================ */
+
+/* Make just this sheet feel like a full page, not a bottom sheet
+   crammed into a box. Other sheets (.sheet without this class)
+   are completely unaffected. */
+.sheet.inv-sheet-host{
+  max-height:100vh;
+  height:100vh;
+  border-radius:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  box-shadow:none;
+}
+.inv-sheet-v2{
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
+}
+
+/* Sticky header: identity + primary Save action, always visible */
+.inv-header{
+  position:sticky;
+  top:0;
+  z-index:5;
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:calc(12px + var(--safe-top)) 14px 12px;
+  background:var(--color-surface);
+  border-bottom:1px solid var(--color-border);
+}
+.inv-header-btn{
+  flex:0 0 auto;
+  background:none;
+  border:none;
+  padding:8px 4px;
+  font-size:.92rem;
   font-weight:600;
+  color:var(--color-text-muted);
+  cursor:pointer;
+  font-family:inherit;
+}
+.inv-header-btn:active{ color:var(--color-text); }
+.inv-header-title{
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  min-width:0;
+}
+.inv-header-title-main{
+  font-size:.98rem;
+  font-weight:800;
   color:var(--color-text);
-  line-height:1.45;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%;
 }
-.inv-pay-due strong{
-  font-weight:900;
-  color:var(--color-primary);
-  font-size:.95rem;
+.inv-header-title-sub{
+  font-size:.72rem;
+  color:var(--color-text-muted);
+  font-weight:600;
+  margin-top:1px;
 }
-.inv-pay-due.is-covered{
-  color:var(--color-success);
-  border-color:var(--color-success-soft);
-  background:var(--color-success-soft);
+button.inv-header-save.btn{
+  flex:0 0 auto;
+  padding:9px 18px;
+  min-height:40px;
+  border-radius:var(--radius-pill);
+  font-size:.9rem;
+  font-weight:800;
 }
-.inv-pay-due.is-covered strong{color:var(--color-success);}
-.inv-pay-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
+
+.inv-body{
+  flex:1 1 auto;
+  padding:16px 16px calc(28px + var(--safe-bottom));
+}
+
+.inv-edit-notice{
+  background:var(--color-warning-soft);
+  color:var(--color-warning);
+  border-radius:var(--radius-sm);
+  padding:10px 12px;
+  font-size:.8rem;
+  line-height:1.6;
+  margin-bottom:14px;
+}
+
+/* Customer context: independent, clean, no card box */
+.inv-customer-context{
+  display:flex;
+  align-items:center;
   gap:10px;
+  padding-bottom:14px;
+  margin-bottom:16px;
+  border-bottom:1px solid var(--color-border);
 }
-.inv-pay-grid .field{margin-bottom:0;}
-.inv-pay-method label{
-  font-size:.74rem;
+.inv-customer-avatar{
+  flex:0 0 auto;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--color-primary-soft);
+  color:var(--color-primary);
+  font-weight:800;
+  font-size:1rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.inv-customer-info{ min-width:0; }
+.inv-customer-name{
+  font-size:.98rem;
+  font-weight:800;
+  color:var(--color-text);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.inv-customer-meta{
+  font-size:.78rem;
+  color:var(--color-text-muted);
+  margin-top:2px;
+}
+
+.inv-date-field{ margin-bottom:20px; }
+
+.inv-section{ margin-bottom:24px; }
+.inv-section-title{
+  font-size:.8rem;
   font-weight:700;
   color:var(--color-text-muted);
+  margin:0 0 10px;
 }
-.inv-pay-method input{
-  min-height:48px;
+.inv-section-title-optional{
+  font-weight:500;
+  color:var(--color-text-muted);
+  opacity:.75;
+}
+
+/* Item lines: name+amount on top, qty x rate secondary, then a hairline
+   separator to the next row — compact and scannable, no nested boxes. */
+.inv-line{
+  padding:12px 0;
+  border-bottom:1px solid var(--color-border);
+}
+.inv-line:first-child{ padding-top:0; }
+.inv-line:last-child{ border-bottom:none; }
+.inv-line-main{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.inv-line-name{
+  flex:1 1 auto;
+  min-width:0;
+  border:none !important;
+  background:none !important;
+  padding:2px 0 !important;
+  margin:0 !important;
+  min-height:auto !important;
+  font-size:.95rem;
   font-weight:700;
-  font-variant-numeric:tabular-nums;
+  color:var(--color-text);
+  box-shadow:none !important;
+  cursor:pointer;
 }
-.inv-pay-check-due{
-  margin-top:12px;
-  margin-bottom:0;
-  padding-top:10px;
-  border-top:1px dashed var(--color-border);
-}
-@media (max-width:360px){
-  .inv-pay-grid{grid-template-columns:1fr;}
-}
-
-
-/* ===================== INVOICE SAVE BAR (Stage 5 — presentation only) ===================== */
-.sheet .inv-save-bar{
-  position:sticky;
-  bottom:0;
-  z-index:5;
-  margin:16px -16px 0;
-  padding:12px 16px calc(12px + var(--safe-bottom));
-  background:var(--color-surface);
-  border-top:1px solid var(--color-border);
-  box-shadow:0 -6px 18px rgba(26,38,52,.06);
-}
-.sheet .inv-save-bar .inv-save-row{
-  margin:0;
-  display:block;
-}
-.sheet .inv-save-bar #save-invoice{
-  width:100%;
-  min-height:48px;
+.inv-line-name::placeholder{ color:var(--color-text-muted); font-weight:600; }
+.inv-line-amount{
+  flex:0 0 auto;
   font-size:.95rem;
   font-weight:800;
+  color:var(--color-text);
+  font-variant-numeric:tabular-nums;
+}
+.inv-line-chevron{
+  flex:0 0 auto;
+  color:var(--color-text-muted);
+  font-size:1.15rem;
+  line-height:1;
+}
+.inv-line-sub{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:6px;
+}
+.inv-line-qtyrate{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  font-size:.82rem;
+  color:var(--color-text-muted);
+}
+.inv-mini-input{
+  width:46px;
+  border:none;
+  border-bottom:1.5px solid var(--color-border);
+  background:none;
+  padding:2px 2px;
+  font-size:.85rem;
+  font-family:inherit;
+  color:var(--color-text);
+  text-align:center;
+  min-height:auto;
+  border-radius:0;
+  box-shadow:none;
+}
+.inv-mini-input-price{ width:86px; }
+.inv-mini-input:focus{
+  outline:none;
+  border-bottom-color:var(--color-accent);
+  box-shadow:none;
+}
+.inv-line-x,.inv-line-unit{ color:var(--color-text-muted); }
+.inv-line-del{
+  flex:0 0 auto;
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  border:none;
+  background:var(--color-surface-2);
+  color:var(--color-danger);
+  font-size:.95rem;
+  line-height:1;
+  cursor:pointer;
+  padding:0;
+}
+.inv-line-del:active{ background:var(--color-accent-soft); }
+
+.inv-line .row-info{ margin-top:4px; }
+.inv-row-meta{ margin:0; padding:0; }
+.inv-row-profit-line{ font-size:.76rem; margin-bottom:2px; }
+.inv-line .inv-price-info-btn{
+  background:none;
+  border:none;
+  padding:0;
+  font-size:.74rem;
+  color:var(--color-primary);
+  font-weight:600;
+  cursor:pointer;
+}
+.inv-line .inv-price-info-panel{
+  margin-top:6px;
+  background:var(--color-surface-2);
   border-radius:var(--radius-sm);
+  padding:8px 10px;
 }
-/* Clearance so sticky bar does not cover last content while scrolling */
-.sheet{
-  padding-bottom:calc(28px + var(--safe-bottom));
-}
+.inv-line .inv-price-info-grid{ display:flex; flex-direction:column; gap:4px; }
+.inv-line .inv-price-info-row{ display:flex; justify-content:space-between; font-size:.76rem; }
+.inv-line .inv-price-info-row .k{ color:var(--color-text-muted); }
+.inv-line .inv-price-info-row .v{ font-weight:700; color:var(--color-text); }
 
-
-/* ============================================================
-   DASHBOARD SPATIAL UI — Stage 7 Material & Surface Refinement
-   Builds on Stage 6. UI only. Scoped to .dashboard-shell.
-   Principles: light/shadow behavior, surface↔background continuity,
-   edge refinement. No glass/neumorphism/3D extrusion.
-   ============================================================ */
-
-:root{
-  /* Soft upper light (slightly from top). Contact shadows dissolve into bg. */
-  --elevation-1:
-    0 1px 2px rgba(26,38,52,.03),
-    0 3px 10px rgba(26,38,52,.04);
-  --elevation-2:
-    0 1px 2px rgba(26,38,52,.035),
-    0 4px 14px rgba(26,38,52,.06),
-    0 10px 28px rgba(26,38,52,.045);
-  --elevation-3:
-    0 1px 3px rgba(23,35,49,.05),
-    0 6px 18px rgba(23,35,49,.08),
-    0 16px 40px rgba(23,35,49,.10);
-  /* Surface fill: barely cooler than pure white so it sits in the bg space */
-  --dash-surface: #FBFCFD;
-  --dash-surface-edge: rgba(26,38,52,.055);
-  --dash-surface-edge-soft: rgba(26,38,52,.04);
-  --dash-top-highlight: inset 0 1px 0 rgba(255,255,255,.75);
-}
-
-/* Background: quiet spatial field (preserved concept, slightly softer falloff) */
-main:has(.dashboard-shell),
-body.page-dashboard,
-body[data-page="dashboard"]{
-  background:
-    radial-gradient(ellipse 130% 90% at 50% -8%,
-      #F5F7FA 0%,
-      #EEF1F5 48%,
-      #E6EBF0 100%);
-}
-.dashboard-shell{
-  background: transparent;
-  gap: 0;
-}
-
-/* ---------- Primary surface — Monthly Target ---------- */
-.dashboard-shell .dash-target-block{
-  margin-bottom: 22px;
-}
-.dashboard-shell .dash-monthly-target{
-  /* Colored primary still uses stronger contact shadow; top edge catch-light */
-  box-shadow:
-    var(--elevation-3),
-    inset 0 1px 0 rgba(255,255,255,.14);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 18px;
-  padding: 13px 15px 14px;
-}
-
-/* ---------- Secondary surfaces — Action Queue, Recent lists ---------- */
-.dashboard-shell .dashboard-block{
-  margin-bottom: 24px;
-}
-.dashboard-shell .dash-activity{
-  background: var(--dash-surface);
-  border: 1px solid var(--dash-surface-edge);
-  border-radius: 16px;
-  box-shadow: var(--elevation-2), var(--dash-top-highlight);
-  padding: 4px 12px 6px;
-  margin-bottom: 0;
-}
-
-/* ---------- Tertiary surface — KPI strip ---------- */
-.dashboard-shell .biz-status{
-  margin-bottom: 20px;
-}
-.dashboard-shell .biz-status-secondary{
-  margin-top: 12px;
-  background: var(--dash-surface);
-  border: 1px solid var(--dash-surface-edge-soft);
-  border-radius: 14px;
-  box-shadow: var(--elevation-1), var(--dash-top-highlight);
-}
-
-/* ---------- Quick Actions — tertiary, slightly more presence ---------- */
-.dashboard-shell .dashboard-block.dash-quick-actions-block{
-  margin-bottom: 24px;
-}
-.dashboard-shell .dash-qa-bar{
-  background: var(--dash-surface);
-  border: 1px solid var(--dash-surface-edge-soft);
-  border-radius: 14px;
-  box-shadow: var(--elevation-1), var(--dash-top-highlight);
-  padding: 10px 8px;
-}
-
-/* Rows sit on the surface; separators dissolve, not outline */
-.dashboard-shell .dash-activity .ledger-row{
-  border-bottom-color: rgba(26,38,52,.045);
-}
-.dashboard-shell .dash-activity .ledger-row:last-child{
-  border-bottom: none;
-}
-
-/* Section heads remain quiet anchors above surfaces */
-.dashboard-shell .dashboard-block-head{
-  margin-bottom: 10px;
-}
-.dashboard-shell > .section-title{
-  margin: 2px 0 4px;
-}
-.dashboard-shell .dashboard-eyebrow{
-  margin: 0 0 16px;
-  color: var(--color-text-muted);
-}
-
-/* Mobile: same material language, denser internal padding only */
-@media (max-width: 430px){
-  .dashboard-shell .dash-target-block{ margin-bottom: 18px; }
-  .dashboard-shell .dashboard-block{ margin-bottom: 20px; }
-  .dashboard-shell .dash-monthly-target{ padding: 12px 13px 13px; }
-  .dashboard-shell .dash-activity{ padding: 2px 10px 5px; }
-}
-
-
-/* ============================================================
-   DASHBOARD TYPOGRAPHY & VISUAL HIERARCHY — Stage 9
-   Typography only. Scoped to .dashboard-shell.
-   Hierarchy: Target > KPI > Action > Section > Metadata
-   No layout/color/elevation/structure changes.
-   ============================================================ */
-
-/* —— Page chrome (supporting) —— */
-.dashboard-shell > .section-title{
-  font-size: 1.02rem;
-  font-weight: 800;
-  letter-spacing: -.2px;
-}
-.dashboard-shell .dashboard-eyebrow{
-  font-size: .68rem;
-  font-weight: 600;
-  letter-spacing: .01em;
-}
-
-/* —— PRIMARY: Monthly target —— */
-.dashboard-shell .dmt-title{
-  font-size: .85rem;
-  font-weight: 700;
-  letter-spacing: -.15px;
-  line-height: 1.3;
-}
-/* Primary metric on the target card — percentage is the dominant figure */
-.dashboard-shell .dmt-pct{
-  font-size: 1.65rem;
-  font-weight: 900;
-  letter-spacing: -.4px;
-  line-height: 1;
-  min-width: 2.6em;
-}
-/* Supporting monetary line under the title */
-.dashboard-shell .dmt-figures{
-  font-size: .7rem;
-  font-weight: 500;
-  line-height: 1.35;
-}
-.dashboard-shell .dmt-figures-num{
-  font-weight: 700;
-  font-size: .78rem;
-  letter-spacing: -.15px;
-}
-.dashboard-shell .dmt-figures-sep,
-.dashboard-shell .dmt-figures-unit{
-  font-weight: 500;
-  font-size: .68rem;
-}
-/* Status chip + pace = tertiary on the target card */
-.dashboard-shell .dmt-status-chip{
-  font-size: .65rem;
-  font-weight: 700;
-}
-.dashboard-shell .dmt-pace{
-  font-size: .68rem;
-  font-weight: 500;
-  line-height: 1.35;
-}
-.dashboard-shell .dmt-pace-days{
-  font-weight: 400;
-}
-
-/* —— SECONDARY: KPI strip —— */
-.dashboard-shell .biz-stat-label{
-  font-size: .6rem;
-  font-weight: 600;
-  letter-spacing: .01em;
-  line-height: 1.3;
-}
-.dashboard-shell .biz-stat-value{
-  font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: -.25px;
-  line-height: 1.2;
-}
-.dashboard-shell .biz-stat-number{
-  font-size: inherit;
-  font-weight: inherit;
-  letter-spacing: inherit;
-}
-.dashboard-shell .biz-stat-unit{
-  font-size: .72rem;
-  font-weight: 600;
-  margin-inline-start: 2px;
-  opacity: .85;
-}
-
-/* —— SUPPORTING: section titles —— */
-.dashboard-shell .dash-section-label{
-  font-size: .85rem;
-  font-weight: 700;
-  letter-spacing: -.1px;
-  line-height: 1.25;
-}
-.dashboard-shell .dashboard-block-head .section-action{
-  font-size: .68rem;
-  font-weight: 650;
-}
-.dashboard-shell .dash-risk-badge{
-  font-size: .6rem;
-  font-weight: 700;
-}
-
-/* —— OPERATIONAL: Action Queue —— */
-.dashboard-shell .action-person{
-  font-size: .84rem;
-  font-weight: 700;
-  line-height: 1.3;
-}
-.dashboard-shell .action-badge{
-  font-size: .58rem;
-  font-weight: 650;
-}
-.dashboard-shell .action-main{
-  font-size: .8rem;
-  font-weight: 700;
-  line-height: 1.4;
-  margin-top: 4px;
-}
-/* Metadata / why lines */
-.dashboard-shell .action-why,
-.dashboard-shell .action-why-now{
-  font-size: .6rem;
-  font-weight: 500;
-  line-height: 1.4;
-}
-.dashboard-shell .action-why-now{
-  font-weight: 650;
-  font-size: .62rem;
-}
-.dashboard-shell .action-meta-label,
-.dashboard-shell .action-meta-label-now{
-  font-weight: 650;
-}
-.dashboard-shell .dash-action-toggle{
-  font-size: .68rem;
-  font-weight: 650;
-}
-
-/* —— Recent lists: title vs amount hierarchy (scannable, not competing with target) —— */
-.dashboard-shell .dash-activity .ledger-row .name{
-  font-size: .82rem;
-  font-weight: 700;
-  line-height: 1.35;
-}
-.dashboard-shell .dash-activity .ledger-row .sub{
-  font-size: .62rem;
-  font-weight: 500;
-  line-height: 1.35;
-}
-.dashboard-shell .dash-activity .ledger-row .amount{
-  font-size: .86rem;
-  font-weight: 800;
-  letter-spacing: -.2px;
-}
-
-/* —— Mobile: keep hierarchy; prevent overflow on long toman strings —— */
-@media (max-width: 390px){
-  .dashboard-shell .dmt-pct{
-    font-size: 1.45rem;
-    min-width: 2.4em;
-  }
-  .dashboard-shell .dmt-figures-num{
-    font-size: .74rem;
-  }
-  .dashboard-shell .biz-stat-value{
-    font-size: 1.05rem;
-  }
-  .dashboard-shell .biz-stat-label{
-    font-size: .58rem;
-  }
-  .dashboard-shell .action-person{
-    font-size: .8rem;
-  }
-  .dashboard-shell .action-main{
-    font-size: .76rem;
-  }
-  .dashboard-shell .action-why,
-  .dashboard-shell .action-why-now{
-    font-size: .58rem;
-  }
-}
-@media (max-width: 360px){
-  .dashboard-shell .dmt-pct{
-    font-size: 1.35rem;
-  }
-  .dashboard-shell .biz-stat-value{
-    font-size: .98rem;
-  }
-  .dashboard-shell .dmt-figures{
-    font-size: .66rem;
-  }
-}
-
-/* ============================================================
-   BAGHERI VISUAL GRAMMAR — SYSTEM IMPLEMENTATION v1
-   UI-only. Derived from the audited Bagheri Visual Grammar.
-   Purpose: make meaning, grouping, attention and semantic state
-   consistent across existing pages without changing DOM/logic.
-   ============================================================ */
-
-:root{
-  /* Semantic visual roles */
-  --vg-bg: #F5F7FA;
-  --vg-surface: #FFFFFF;
-  --vg-surface-soft: #F7F8FA;
-  --vg-text: #1F2937;
-  --vg-muted: #667085;
-  --vg-line: rgba(31,41,55,.08);
-  --vg-line-soft: rgba(31,41,55,.055);
-  --vg-primary: #0070D2;
-  --vg-success: #00A068;
-  --vg-warning: #F5A131;
-  --vg-danger: #FA3946;
-  --vg-radius-group: 14px;
-  --vg-radius-strong: 16px;
-  --vg-shadow-group: 0 2px 10px rgba(31,41,55,.045);
-  --vg-shadow-raised: 0 6px 20px rgba(31,41,55,.075);
-}
-
-/* ---------- Environment: neutral by default ---------- */
-body{
-  background:var(--vg-bg);
-  color:var(--vg-text);
-}
-
-/* ---------- Page identity: visible, but not a competing accent ---------- */
-h2.section-title{
-  color:var(--vg-text);
-  font-weight:750;
-  font-size:1.05rem;
-  letter-spacing:-.18px;
-  margin:4px 0 16px;
-}
-h2.section-title::after{
-  border-bottom-color:var(--vg-line);
-  opacity:1;
-}
-h3.sub-title{
-  color:var(--vg-text);
+/* Add line: one clear, prominent action — not a small secondary button */
+.inv-add-line{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  width:100%;
+  margin-top:14px;
+  padding:12px;
+  border:1.5px dashed var(--color-primary);
+  border-radius:var(--radius-sm);
+  background:var(--color-primary-soft);
+  color:var(--color-primary);
   font-weight:700;
   font-size:.88rem;
+  cursor:pointer;
+  font-family:inherit;
 }
+.inv-add-line:active{ background:var(--color-primary); color:#fff; }
+.inv-add-line-icon{ font-weight:800; font-size:1rem; }
 
-/* ---------- Grouped surfaces: one visual promise, not decoration ---------- */
-.card,
-.report-summary-card,
-.gc-panel,
-.prospect-result-card{
-  background:var(--vg-surface);
-  border:1px solid var(--vg-line-soft);
-  border-radius:var(--vg-radius-group);
-  box-shadow:var(--vg-shadow-group);
+/* Summary: hierarchy via weight/size/color, not extra boxes */
+.inv-summary-section{ margin-bottom:4px; }
+.inv-summary-section #calc-summary .ledger-row{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  font-size:.86rem;
+  color:var(--color-text-muted);
+  border-bottom:none;
+  min-height:auto;
 }
-
-.card .label,
-.report-summary-label{
-  color:var(--vg-muted);
-  font-size:.68rem;
-  font-weight:600;
-  line-height:1.3;
+.inv-summary-section #calc-summary .ledger-row .name{ color:inherit; font-weight:600; }
+.inv-summary-section #calc-summary .ledger-row .amount{
+  font-weight:700;
+  color:var(--color-text);
+  font-variant-numeric:tabular-nums;
 }
-
-.card .value,
-.report-summary-value{
-  color:var(--vg-text);
+.inv-summary-section #calc-summary .ledger-row.inv-total-row{
+  padding-top:10px;
+  margin-top:4px;
+  border-top:1.5px dashed var(--color-border);
+}
+.inv-summary-section #calc-summary .ledger-row.inv-total-row .name,
+.inv-summary-section #calc-summary .ledger-row.inv-total-row .amount{
+  font-size:1.08rem;
   font-weight:800;
-  line-height:1.25;
+  color:var(--color-text);
 }
-
-/* Metrics share one semantic grammar. State colors remain meaningful. */
-.report-summary-card::before{display:none;}
-.report-summary-value.sales,
-.report-summary-value.inventory{color:var(--vg-text);}
-.report-summary-value.profit{color:var(--vg-success);}
-.report-summary-value.debt{color:var(--vg-danger);}
-.report-summary-meta{color:var(--vg-muted);}
-.report-summary-meta.up{color:var(--vg-success);}
-.report-summary-meta.down{color:var(--vg-danger);}
-
-/* ---------- Section grammar: titles guide, they do not shout ---------- */
-.dashboard-block-head .dash-section-label,
-.report-section h3,
-.settings-section h3,
-.gc-section-title,
-.report-summary-title{
-  color:var(--vg-text);
+.inv-summary-section #calc-summary .ledger-row.inv-remain-row{
+  padding-top:10px;
+  margin-top:2px;
+  border-top:1px solid var(--color-border);
 }
-
-.dashboard-block-head .section-action,
-.section-action{
-  color:var(--vg-primary);
-  font-weight:700;
-}
-
-/* ---------- Lists: data remains flat and dense ---------- */
-.ledger-row{
-  border-bottom-color:var(--vg-line);
-  border-radius:0;
-}
-.ledger-row .name,
-.tx-row-title{
-  color:var(--vg-text);
-  font-weight:700;
-}
-.ledger-row .sub,
-.tx-row-meta,
-.tx-hint,
-.report-note,
-.report-period-note{
-  color:var(--vg-muted);
-}
-.ledger-row .amount,
-.tx-row-total,
-.tx-row-amount{
-  color:var(--vg-text);
+.inv-summary-section #calc-summary .ledger-row.inv-remain-row .name,
+.inv-summary-section #calc-summary .ledger-row.inv-remain-row .amount{
+  font-size:1rem;
   font-weight:800;
 }
-a.ledger-row:active{
-  background:var(--vg-surface-soft);
-}
 
-/* ---------- Financial semantics: color only carries state ---------- */
-.accent-olive{color:var(--vg-success)!important;}
-.accent-rust,
-.accent-red{color:var(--vg-danger)!important;}
-.accent-amber{color:var(--vg-warning)!important;}
-.biz-stat-value.debt{color:var(--vg-danger)!important;}
-
-/* Remove decorative color from non-state metric values. */
-.dash-kpi-value.sales,
-.dash-kpi-value.inventory,
-.report-summary-value.sales,
-.report-summary-value.inventory{
-  color:var(--vg-text);
+@media print{
+  .inv-header{ display:none !important; }
 }
-.dash-kpi-value.profit{color:var(--vg-success);}
-.dash-kpi-value.debt{color:var(--vg-danger);}
-
-/* ---------- Actions: one clear primary, quieter alternatives ---------- */
-.btn{
-  background:var(--vg-primary);
-  border-radius:var(--radius-sm);
-  font-weight:700;
-  box-shadow:var(--shadow-sm);
-}
-.btn.secondary{
-  background:var(--vg-surface);
-  color:var(--vg-primary);
-  border:1px solid rgba(0,112,210,.28);
-  box-shadow:none;
-}
-.btn.danger{
-  background:var(--vg-danger);
-}
-.btn.small{
-  font-weight:700;
-}
-
-/* ---------- Selection/status tokens: compact, semantic ---------- */
-.chip{
-  background:var(--vg-surface);
-  border-color:var(--vg-line);
-  color:var(--vg-muted);
-  font-weight:600;
-}
-.chip.active,
-.chip-opt.selected{
-  background:var(--vg-primary);
-  border-color:var(--vg-primary);
-  color:#fff;
-}
-.badge.pending,
-.badge.tone-warning{color:var(--vg-warning);}
-.badge.cleared,
-.badge.tone-success{color:var(--vg-success);}
-.badge.low,
-.badge.tone-danger{color:var(--vg-danger);}
-
-/* ---------- Forms: fields are controls, not competing cards ---------- */
-.field label{
-  color:var(--vg-muted);
-  font-size:.72rem;
-  font-weight:600;
-}
-.field input,
-.field select,
-.field textarea{
-  background:var(--vg-surface);
-  border-color:var(--vg-line);
-  border-radius:12px;
-}
-.field input:focus,
-.field select:focus,
-.field textarea:focus{
-  border-color:rgba(0,112,210,.45);
-  box-shadow:0 0 0 3px rgba(0,112,210,.10);
-}
-
-/* ---------- Major module rhythm ---------- */
-.cards{
-  gap:12px;
-  margin-bottom:20px;
-}
-.dashboard-block,
-.report-section,
-.settings-section,
-.gc-section{
-  margin-bottom:22px;
-}
-
-/* ---------- Dashboard keeps the existing spatial pilot, but uses the shared grammar ---------- */
-.dashboard-shell .dashboard-block-head .dash-section-label{
-  font-weight:700;
-}
-.dashboard-shell .dash-activity{
-  background:var(--vg-surface);
-  border-color:var(--vg-line-soft);
-}
-.dashboard-shell .dash-activity .ledger-row{
-  border-bottom-color:var(--vg-line-soft);
-}
-.dashboard-shell .biz-status-secondary{
-  border-color:var(--vg-line-soft);
-}
-
-/* ---------- Reports: summary cards use the same metric hierarchy as Dashboard ---------- */
-.report-summary-card{
-  padding:13px 14px;
-}
-.report-summary-label{margin-bottom:6px;}
-.report-summary-value{font-size:1rem;}
-
-/* ---------- Prospect / Game / management panels remain specialized,
-   but inherit neutral grouping and semantic hierarchy. ---------- */
-.gc-panel,
-.gc-mission,
-.prospect-result-card{
-  border-color:var(--vg-line-soft);
-  box-shadow:var(--vg-shadow-group);
-}
-.gc-section-ico,
-.prospect-result-title{
-  color:var(--vg-primary);
-}
-
-/* ---------- Customer summary remains a decision block, not a generic card ---------- */
-.cust-summary{
-  background:var(--vg-surface);
-  border-color:var(--vg-line-soft);
-  box-shadow:var(--vg-shadow-raised);
-}
-
-/* ---------- Shared utility surfaces: quiet unless they represent state ---------- */
-.visit-precontext,
-.inv-pay-due,
-.settings-warn,
-.report-period-note{
-  box-shadow:none;
-}
-
-/* ---------- Mobile: preserve density; do not scale the whole interface down ---------- */
-@media (max-width:390px){
-  .cards{gap:10px;margin-bottom:18px;}
-  .dashboard-block,
-  .report-section,
-  .settings-section,
-  .gc-section{margin-bottom:20px;}
-}
-
-/* ---------- Accessibility / interaction: motion remains restrained ---------- */
-@media (prefers-reduced-motion: reduce){
-  .btn:active,
-  a.dash-tile:active,
-  .card:active,
-  .ledger-row:active{transform:none!important;}
-}
-
-
-/* Final grammar correction: informational notes stay structural, not decorative. */
-.report-period-note{
-  background:var(--vg-surface-soft);
-  border:1px solid var(--vg-line-soft);
-  color:var(--vg-muted);
-}
-
