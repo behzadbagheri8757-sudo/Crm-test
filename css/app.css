@@ -5784,3 +5784,213 @@ button.inv-header-save.btn{
   }
   .sheet.inv-sheet-host .inv-line-amount{ font-size:.95rem; }
 }
+
+/* ============================================================
+   DASHBOARD COMPOSITION — Visual Grammar transfer (Invoice V6 principles)
+   Scoped to .dashboard-shell / dash-* only. Presentation only.
+   Hierarchy: Focus → Health → Tools → Activity
+   ============================================================ */
+
+.dashboard-shell{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
+/* ---- A. TODAY'S FOCUS (primary attention surface) ---- */
+.dash-focus{
+  margin:0 0 18px;
+  padding:0;
+  background:var(--color-surface);
+  border:1px solid rgba(15,23,42,.07);
+  border-radius:20px;
+  box-shadow:0 6px 22px rgba(15,23,42,.05);
+  overflow:hidden;
+}
+.dash-focus-target{
+  padding:14px 14px 10px;
+}
+.dash-focus-target .dash-target-block{
+  margin:0;
+}
+.dash-focus-target .dash-monthly-target{
+  border-radius:16px;
+  box-shadow:0 6px 18px rgba(0,112,210,.18);
+}
+/* Keep target FAB usable above the focus surface */
+.dash-focus-target .dash-target-fab-row{
+  top:-8px;
+  left:10px;
+}
+.dash-focus-actions{
+  padding:0 0 4px;
+  border-top:1px solid rgba(15,23,42,.06);
+}
+.dash-focus-actions .dashboard-block{
+  margin:0;
+}
+.dash-focus-actions .dashboard-block-head{
+  margin:10px 14px 6px;
+}
+.dash-focus-actions .dash-action-queue,
+.dash-focus-actions .dash-activity{
+  margin:0;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  background:transparent;
+  padding:0 10px 6px;
+}
+.dash-focus-actions .empty{
+  padding:14px 12px 18px;
+}
+
+/* ---- B. FINANCIAL HEALTH (stacked rows — mobile-safe, not 3-col) ---- */
+.dash-health{
+  margin-bottom:18px;
+}
+.dash-health-surface{
+  background:var(--color-surface);
+  border:1px solid rgba(15,23,42,.07);
+  border-radius:20px;
+  box-shadow:0 6px 22px rgba(15,23,42,.05);
+  overflow:hidden;
+  padding:4px 0;
+}
+.dash-health-row{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 16px;
+  text-decoration:none;
+  color:inherit;
+  border-bottom:1px solid rgba(15,23,42,.06);
+  min-width:0;
+}
+.dash-health-row:last-child{
+  border-bottom:0;
+}
+.dash-health-label{
+  font-size:.78rem;
+  font-weight:600;
+  color:var(--color-text-muted);
+  flex:0 1 auto;
+  min-width:0;
+  line-height:1.35;
+}
+.dash-health-value{
+  font-size:.98rem;
+  font-weight:800;
+  color:var(--color-text);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.2px;
+  text-align:left;
+  flex:0 0 auto;
+  line-height:1.25;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+.dash-health-value.debt{
+  color:var(--color-danger);
+}
+.dash-health-link:active{
+  background:var(--color-surface-2);
+}
+@media (max-width:360px){
+  .dash-health-row{padding:11px 12px;}
+  .dash-health-label{font-size:.74rem;}
+  .dash-health-value{font-size:.9rem;}
+}
+
+/* ---- C. QUICK ACTIONS (tools — quieter than Focus) ---- */
+.dashboard-shell .dash-quick-actions-block{
+  margin-bottom:16px;
+}
+.dashboard-shell .dash-quick-actions-block .dashboard-block-head{
+  margin-bottom:8px;
+}
+.dashboard-shell .dash-qa-bar{
+  gap:6px;
+  padding:0;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+}
+.dashboard-shell .dash-qa-bar .dash-qa-btn{
+  background:var(--color-surface);
+  border:1px solid rgba(15,23,42,.08);
+  border-radius:14px;
+  box-shadow:0 2px 8px rgba(15,23,42,.03);
+  opacity:.96;
+}
+.dashboard-shell .dash-qa-bar .dash-qa-label{
+  font-weight:700;
+  color:var(--color-text-muted);
+}
+.dashboard-shell .dash-qa-bar .dash-qa-ico{
+  color:var(--color-primary);
+  opacity:.9;
+}
+
+/* ---- D. RECENT ACTIVITY (one surface, two quiet sections) ---- */
+.dash-activity-group{
+  margin-bottom:18px;
+}
+.dash-activity-group > .dashboard-block-head{
+  margin-bottom:8px;
+}
+.dash-activity-section{
+  background:var(--color-surface);
+  border:1px solid rgba(15,23,42,.07);
+  border-radius:20px;
+  box-shadow:0 6px 22px rgba(15,23,42,.05);
+  overflow:hidden;
+  margin-bottom:10px;
+  padding:4px 12px 6px;
+}
+.dash-activity-section:last-child{
+  margin-bottom:0;
+}
+.dash-activity-section .dashboard-block-head{
+  margin:8px 2px 4px;
+}
+.dash-activity-section .dash-activity{
+  margin:0;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  background:transparent;
+  padding:0;
+}
+.dash-activity-section .ledger-row{
+  min-height:48px;
+}
+.dash-activity-section .ledger-row .name{
+  font-weight:700;
+}
+.dash-activity-section .ledger-row .amount{
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+.dash-activity-section .ledger-row .sub{
+  font-weight:500;
+  color:var(--color-text-muted);
+}
+
+/* Shell rhythm: slightly tighter secondary blocks under Focus */
+.dashboard-shell > .dashboard-block{
+  margin-bottom:16px;
+}
+.dashboard-shell > .section-title{
+  margin:2px 0 4px;
+}
+.dashboard-shell > .dashboard-eyebrow{
+  margin:0 0 14px;
+  font-size:.7rem;
+  font-weight:700;
+  color:var(--color-text-muted);
+}
+
+/* Preserve legacy biz-status if referenced elsewhere — do not break */
+.biz-status{margin-bottom:0;}
