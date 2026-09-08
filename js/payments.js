@@ -5,6 +5,24 @@
 'use strict';
 
 (function (global) {
+  /* Defensive presentation helper: used by this view and customer detail.
+     Only defines if missing (expected home is ui.js / core payments).
+     Labels map 1:1 to filter chip codes already used in this view. */
+  if (typeof global.paymentMethodLabel !== 'function') {
+    global.paymentMethodLabel = function paymentMethodLabel(method) {
+      var map = {
+        cash: 'نقد',
+        card: 'کارت',
+        transfer: 'انتقال',
+        return: 'برگشت',
+        check: 'چک',
+        supplier: 'پرداخت به تامین‌کننده'
+      };
+      if (method == null || method === '') return '—';
+      return map[method] || String(method);
+    };
+  }
+
   let payQuery = '';
   let payFilter = 'all';
   let paySort = 'newest';
