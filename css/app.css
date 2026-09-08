@@ -261,7 +261,7 @@ main .empty{
 
 /* Floating Detached Glass Bottom Navigation (owned by VG) - restrained refinements only */
 .bottom-nav{
-  bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  bottom:calc(16px + env(safe-area-inset-bottom,0px));
   background:rgba(255,255,255,.82);
   box-shadow:0 8px 28px rgba(26,38,52,.14),0 1px 3px rgba(26,38,52,.06);
 }
@@ -364,6 +364,31 @@ body.modal-open .bottom-nav,
 body.modal-open .fab{
   opacity:0;
   pointer-events:none;
+}
+
+/* Shared modal infrastructure: lock page scroll while sheet is open.
+   openSheet() is expected to toggle body.modal-open (ui.js). */
+body.modal-open{
+  overflow:hidden;
+  overscroll-behavior:none;
+}
+
+/* Shared sheet composition (not Invoice V6 full-screen host) */
+.overlay{
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.overlay .sheet:not(.inv-sheet-host),
+.sheet:not(.inv-sheet-host){
+  max-height:min(88vh, calc(100dvh - env(safe-area-inset-top,0px) - 12px));
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  width:100%;
+  max-width:720px;
+  padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));
+  box-sizing:border-box;
 }
 
 /* Restrained touch feedback (targeted transitions only) */
