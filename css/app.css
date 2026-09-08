@@ -338,6 +338,12 @@ body.modal-open .fab{
   min-height:52px;
   cursor:pointer;
 }
+.ledger-row .filler,
+.tx-row .filler{
+  flex:1;
+  min-width:6px;
+  height:0;
+}
 .ledger-row:last-child,
 .tx-row:last-child{
   border-bottom-color:transparent;
@@ -348,10 +354,23 @@ body.modal-open .fab{
   font-weight:700;
   font-size:1rem;
   color:#1F2937;
+  min-width:0;
+  line-height:1.35;
+}
+.ledger-row .name > .tx-row-title,
+.tx-row .name > .tx-row-title{
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  min-width:0;
+  display:block;
+}
+/* Generic metadata hierarchy used across lists (not always under .ledger-row .name) */
+.sub{
+  font-size:.72rem;
+  color:#667085;
+  display:block;
+  font-weight:500;
+  margin-top:2px;
   line-height:1.35;
 }
 .ledger-row .sub,
