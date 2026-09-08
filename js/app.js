@@ -2155,8 +2155,8 @@ function openInvoiceForm(cid, editInv){
     // those actions. Capturing/restoring scrollTop here is local to this
     // function and does not change what openSheet()/closeModal() do for any
     // other sheet in the app.
-    const _prevSheetEl = document.querySelector('.sheet');
-    const _prevScrollTop = _prevSheetEl ? _prevSheetEl.scrollTop : 0;
+    const _prevScrollEl = document.querySelector('.inv-body') || document.querySelector('.sheet');
+    const _prevScrollTop = _prevScrollEl ? _prevScrollEl.scrollTop : 0;
     // No-Purchase Reason: expected SKUs missing from current basket (non-blocking)
     const basketPids = rows.map(function(r){ return r.productId; }).filter(Boolean);
     const nprCandidatesInv = (typeof getNoPurchaseCandidates === 'function')
@@ -2291,14 +2291,18 @@ function openInvoiceForm(cid, editInv){
     (function(){
       const sheetEl = document.querySelector('.sheet');
       if(sheetEl) sheetEl.classList.add('inv-sheet-host');
+      // Overlay default z-index (60) is below bottom-nav (70). Lift only while
+      // Invoice V6 host is open so chrome cannot cover the full-screen sheet.
+      const ov = document.getElementById('overlay');
+      if(ov) ov.style.zIndex = '80';
       const genericClose = document.getElementById('closeX');
       if(genericClose) genericClose.style.display = 'none';
       const cancelBtn = document.getElementById('inv-cancel');
       if(cancelBtn) cancelBtn.addEventListener('click', closeModal);
     })();
-    if(_prevSheetEl){
-      const _newSheetEl = document.querySelector('.sheet');
-      if(_newSheetEl) _newSheetEl.scrollTop = _prevScrollTop;
+    if(_prevScrollTop){
+      const _newScrollEl = document.querySelector('.inv-body') || document.querySelector('.sheet');
+      if(_newScrollEl) _newScrollEl.scrollTop = _prevScrollTop;
     }
     updateSummary();
     // No-Purchase Reason chips (re-bound after every renderSheet rebuild)
