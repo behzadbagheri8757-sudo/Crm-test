@@ -6396,3 +6396,101 @@ body.page-dashboard > header .header-date{
     transition:none !important;
   }
 }
+
+/* ============================================================
+   DASHBOARD — TARGET BOX FINAL POLISH (css only)
+   White/light surface; hierarchy via type + progress, not gradient.
+   Scoped: body.page-dashboard only. Does not touch inv-*.
+   ============================================================ */
+body.page-dashboard .dash-monthly-target,
+body.page-dashboard .dashboard-shell .dash-monthly-target,
+body.page-dashboard .dashboard-shell .dash-focus-target .dash-monthly-target{
+  background:#FFFFFF !important;
+  background-image:none !important;
+  color:#1C1C1E !important;
+  border:0.5px solid rgba(60,60,67,.12) !important;
+  border-radius:16px !important;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.04),
+    0 6px 18px rgba(0,0,0,.06) !important;
+}
+body.page-dashboard .dash-monthly-target.is-done,
+body.page-dashboard .dashboard-shell .dash-monthly-target.is-done{
+  background:#FFFFFF !important;
+  background-image:none !important;
+  border-color:rgba(0,160,104,.22) !important;
+}
+/* Kill decorative radial overlay on the banner */
+body.page-dashboard .dash-monthly-target::after{
+  display:none !important;
+  content:none !important;
+}
+
+/* Title + growth: primary blue accents on light surface */
+body.page-dashboard .dash-monthly-target .dmt-title{
+  color:var(--color-primary) !important;
+  font-weight:800;
+}
+body.page-dashboard .dash-monthly-target .dmt-growth{
+  color:var(--color-primary) !important;
+  filter:none !important;
+}
+body.page-dashboard .dash-monthly-target .dmt-pct{
+  color:var(--color-primary) !important;
+  font-weight:900;
+}
+
+/* Progress track + fill */
+body.page-dashboard .dash-monthly-target .dmt-bar{
+  background:rgba(60,60,67,.12) !important;
+  height:8px;
+}
+body.page-dashboard .dash-monthly-target .dmt-bar > span{
+  background:var(--color-primary) !important;
+}
+body.page-dashboard .dash-monthly-target.is-done .dmt-bar > span{
+  background:var(--color-success) !important;
+}
+
+/* Secondary figures: muted gray (readable on white) */
+body.page-dashboard .dash-monthly-target .dmt-figures{
+  color:#8E8E93 !important;
+}
+body.page-dashboard .dash-monthly-target .dmt-figures-num{
+  color:#3A3A3C !important;
+  font-weight:700;
+}
+body.page-dashboard .dash-monthly-target .dmt-figures-sep,
+body.page-dashboard .dash-monthly-target .dmt-figures-unit{
+  color:#8E8E93 !important;
+  opacity:1 !important;
+}
+
+/* Status chips + pace on light surface */
+body.page-dashboard .dash-monthly-target .dmt-status-chip{
+  background:rgba(0,112,210,.08) !important;
+  border:0.5px solid rgba(0,112,210,.14) !important;
+  color:var(--color-primary) !important;
+}
+body.page-dashboard .dash-monthly-target .dmt-status-behind{
+  background:rgba(250,57,70,.08) !important;
+  border-color:rgba(250,57,70,.18) !important;
+  color:var(--color-danger) !important;
+}
+body.page-dashboard .dash-monthly-target .dmt-status-ontrack{
+  background:rgba(245,161,49,.12) !important;
+  border-color:rgba(245,161,49,.22) !important;
+  color:var(--color-warning) !important;
+}
+body.page-dashboard .dash-monthly-target .dmt-status-ahead{
+  background:rgba(0,160,104,.1) !important;
+  border-color:rgba(0,160,104,.2) !important;
+  color:var(--color-success) !important;
+}
+body.page-dashboard .dash-monthly-target .dmt-pace{
+  color:#8E8E93 !important;
+}
+body.page-dashboard .dash-monthly-target .dmt-pace-days{
+  color:#8E8E93 !important;
+  opacity:.9 !important;
+}
