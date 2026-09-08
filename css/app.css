@@ -5994,3 +5994,405 @@ button.inv-header-save.btn{
 
 /* Preserve legacy biz-status if referenced elsewhere — do not break */
 .biz-status{margin-bottom:0;}
+
+/* ============================================================
+   DASHBOARD — iOS NATIVE MATERIAL PASS (presentation only)
+   Builds on DASHBOARD COMPOSITION. Does not change IA or logic.
+   Scoped primarily to body.page-dashboard / .dashboard-shell.
+   Does NOT touch .sheet.inv-sheet-host or inv-* rules.
+   ============================================================ */
+
+/* 1. Background — system neutral vs white surfaces */
+body.page-dashboard{
+  background:#F2F2F7;
+}
+body.page-dashboard main#main,
+body.page-dashboard .dashboard-shell{
+  background:transparent;
+}
+
+/* Header — light nav-bar feel (dashboard only) */
+body.page-dashboard > header{
+  background:rgba(255,255,255,.82);
+  -webkit-backdrop-filter:saturate(180%) blur(16px);
+  backdrop-filter:saturate(180%) blur(16px);
+  border-bottom:0;
+  box-shadow:0 0.5px 0 rgba(0,0,0,.08);
+}
+body.page-dashboard > header h1{
+  font-weight:800;
+  letter-spacing:-.2px;
+  color:#1C1C1E;
+}
+body.page-dashboard > header .header-date{
+  color:#8E8E93;
+  font-weight:600;
+}
+
+/* ---- Surfaces: borderless elevated white, soft depth ---- */
+.dashboard-shell .dash-focus,
+.dashboard-shell .dash-health-surface,
+.dashboard-shell .dash-activity-section{
+  background:#FFFFFF;
+  border:0;
+  border-radius:20px;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.04),
+    0 8px 24px rgba(0,0,0,.06);
+}
+
+/* Focus: primary elevation */
+.dashboard-shell .dash-focus{
+  margin-bottom:20px;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.04),
+    0 10px 28px rgba(0,0,0,.07);
+}
+.dashboard-shell .dash-focus-target{
+  padding:14px 14px 12px;
+}
+.dashboard-shell .dash-focus-target .dash-monthly-target{
+  border-radius:16px;
+  border:0;
+  box-shadow:
+    0 4px 14px rgba(0,112,210,.22),
+    0 1px 0 rgba(255,255,255,.12) inset;
+}
+.dashboard-shell .dash-focus-actions{
+  border-top:0.5px solid rgba(60,60,67,.12);
+}
+.dashboard-shell .dash-focus-actions .dashboard-block-head{
+  margin:12px 16px 6px;
+}
+.dashboard-shell .dash-focus-actions .dash-action-queue,
+.dashboard-shell .dash-focus-actions .dash-activity{
+  padding:0 12px 8px;
+}
+
+/* Health: secondary elevation, hairline separators */
+.dashboard-shell .dash-health{
+  margin-bottom:20px;
+}
+.dashboard-shell .dash-health-surface{
+  padding:2px 0;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.03),
+    0 6px 18px rgba(0,0,0,.05);
+}
+.dashboard-shell .dash-health-row{
+  padding:13px 16px;
+  border-bottom:0.5px solid rgba(60,60,67,.12);
+}
+.dashboard-shell .dash-health-row:last-child{
+  border-bottom:0;
+}
+.dashboard-shell .dash-health-label{
+  font-size:.78rem;
+  font-weight:500;
+  color:#8E8E93;
+  letter-spacing:-.1px;
+}
+.dashboard-shell .dash-health-value{
+  font-size:1rem;
+  font-weight:700;
+  color:#1C1C1E;
+  letter-spacing:-.3px;
+}
+.dashboard-shell .dash-health-value.debt{
+  color:var(--color-danger);
+}
+.dashboard-shell .dash-health-link:active{
+  background:rgba(0,0,0,.04);
+}
+
+/* Activity: list-group surfaces */
+.dashboard-shell .dash-activity-group{
+  margin-bottom:20px;
+}
+.dashboard-shell .dash-activity-section{
+  margin-bottom:12px;
+  padding:2px 4px 4px;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.03),
+    0 6px 18px rgba(0,0,0,.05);
+}
+.dashboard-shell .dash-activity-section .dashboard-block-head{
+  margin:10px 12px 2px;
+}
+.dashboard-shell .dash-activity-section .dash-activity{
+  padding:0 8px 4px;
+}
+/* Native list rows — no boxed cells, hairline separators */
+.dashboard-shell .dash-activity-section .ledger-row{
+  min-height:52px;
+  padding:11px 8px;
+  border-bottom:0.5px solid rgba(60,60,67,.12);
+  border-radius:0;
+  background:transparent;
+}
+.dashboard-shell .dash-activity-section .ledger-row:last-child{
+  border-bottom:0;
+}
+.dashboard-shell .dash-activity-section .ledger-row:active{
+  background:rgba(0,0,0,.04);
+  border-radius:10px;
+}
+.dashboard-shell .dash-activity-section .ledger-row .name{
+  font-weight:600;
+  font-size:.92rem;
+  color:#1C1C1E;
+  letter-spacing:-.15px;
+}
+.dashboard-shell .dash-activity-section .ledger-row .amount{
+  font-weight:700;
+  font-size:.88rem;
+  color:#1C1C1E;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.2px;
+}
+.dashboard-shell .dash-activity-section .ledger-row .sub{
+  font-weight:500;
+  font-size:.72rem;
+  color:#8E8E93;
+  margin-top:2px;
+}
+
+/* Action queue rows inside Focus — same list language */
+.dashboard-shell .dash-focus-actions .action-row,
+.dashboard-shell .dash-focus-actions .ledger-row.action-row{
+  border-bottom:0.5px solid rgba(60,60,67,.12);
+  padding-block:12px;
+}
+.dashboard-shell .dash-focus-actions .action-row:last-of-type,
+.dashboard-shell .dash-focus-actions .ledger-row.action-row:last-of-type{
+  border-bottom:0;
+}
+.dashboard-shell .dash-focus-actions .action-person{
+  font-weight:700;
+  color:#1C1C1E;
+}
+.dashboard-shell .dash-focus-actions .action-main{
+  font-weight:600;
+  color:#3A3A3C;
+}
+.dashboard-shell .dash-focus-actions .action-why,
+.dashboard-shell .dash-focus-actions .action-why-now{
+  color:#8E8E93;
+  font-weight:500;
+}
+
+/* Section labels — quiet iOS group headers */
+.dashboard-shell .dash-section-label{
+  font-size:.78rem;
+  font-weight:600;
+  color:#6C6C70;
+  letter-spacing:-.1px;
+}
+.dashboard-shell .dash-section-label::after{
+  border-bottom-color:rgba(60,60,67,.12);
+  opacity:.7;
+}
+.dashboard-shell .section-action{
+  font-size:.78rem;
+  font-weight:600;
+  color:var(--color-primary);
+}
+
+/* 6. Icon tiles — soft squircle, no hard border */
+.dashboard-shell .dash-section-ico{
+  width:28px;
+  height:28px;
+  flex:0 0 28px;
+  border:0;
+  border-radius:8px;
+  background:rgba(0,112,210,.1);
+  color:var(--color-primary);
+  box-shadow:none;
+}
+.dashboard-shell .dash-section-ico svg{
+  width:15px;
+  height:15px;
+  stroke:currentColor;
+}
+
+/* Urgency icon: soft tile, no heavy box */
+.dashboard-shell .action-urgency{
+  border:0;
+  border-radius:10px;
+  background:rgba(142,142,147,.12);
+  box-shadow:none;
+}
+.dashboard-shell .action-urgency-critical{
+  background:rgba(250,57,70,.12);
+  color:var(--color-danger);
+  border:0;
+}
+.dashboard-shell .action-urgency-high{
+  background:rgba(255,92,53,.12);
+  color:var(--color-accent-dark);
+  border:0;
+}
+.dashboard-shell .action-urgency-medium{
+  background:rgba(0,112,210,.1);
+  color:var(--color-primary);
+  border:0;
+}
+.dashboard-shell .action-urgency-low{
+  background:rgba(142,142,147,.12);
+  color:#8E8E93;
+  border:0;
+}
+
+/* 7. Quick Actions — compact native tools, below Focus */
+.dashboard-shell .dash-quick-actions-block{
+  margin-bottom:18px;
+}
+.dashboard-shell .dash-qa-bar{
+  gap:8px;
+  padding:0;
+}
+.dashboard-shell .dash-qa-bar .dash-qa-btn{
+  background:#FFFFFF;
+  border:0;
+  border-radius:14px;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.04),
+    0 4px 12px rgba(0,0,0,.05);
+  padding:11px 8px;
+  min-width:70px;
+  transition:transform .12s ease, opacity .12s ease, background .12s ease;
+}
+.dashboard-shell .dash-qa-bar .dash-qa-btn:active{
+  transform:scale(.96);
+  opacity:.88;
+  background:#F2F2F7;
+}
+.dashboard-shell .dash-qa-bar .dash-qa-ico{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  border:0;
+  background:rgba(0,112,210,.12);
+  color:var(--color-primary);
+  box-shadow:none;
+}
+.dashboard-shell .dash-qa-bar .dash-qa-ico svg{
+  width:17px;
+  height:17px;
+  stroke-width:1.7;
+}
+.dashboard-shell .dash-qa-bar .dash-qa-label{
+  font-size:.66rem;
+  font-weight:600;
+  color:#3A3A3C;
+  letter-spacing:-.1px;
+}
+
+/* Shell title / eyebrow */
+.dashboard-shell > .section-title{
+  font-size:1.22rem;
+  font-weight:800;
+  color:#1C1C1E;
+  letter-spacing:-.4px;
+  margin:4px 0 2px;
+}
+.dashboard-shell > .section-title::after{
+  display:none;
+}
+.dashboard-shell > .dashboard-eyebrow{
+  margin:0 0 16px;
+  font-size:.72rem;
+  font-weight:600;
+  color:#8E8E93;
+  letter-spacing:-.1px;
+}
+.dashboard-shell > .dashboard-block{
+  margin-bottom:18px;
+}
+
+/* Toggle “show more” — quiet text control */
+.dashboard-shell .dash-action-toggle{
+  border:0;
+  background:transparent;
+  color:var(--color-primary);
+  font-weight:600;
+  font-size:.78rem;
+  padding:10px 8px 12px;
+}
+.dashboard-shell .dash-action-toggle:active{
+  opacity:.7;
+}
+
+/* Risk badge — soft pill */
+.dashboard-shell .dash-risk-badge{
+  border:0;
+  border-radius:999px;
+  background:rgba(250,57,70,.12);
+  color:var(--color-danger);
+  font-weight:700;
+  font-size:.68rem;
+  padding:3px 9px;
+}
+
+/* ---- Bottom nav: native tab bar (app-wide chrome, not Invoice sheet) ----
+   Safe: does not target .sheet.inv-sheet-host. Keeps fixed + safe-area. */
+.bottom-nav{
+  background:rgba(255,255,255,.78) !important;
+  -webkit-backdrop-filter:saturate(180%) blur(20px) !important;
+  backdrop-filter:saturate(180%) blur(20px) !important;
+  border:0 !important;
+  border-top:0.5px solid rgba(0,0,0,.08) !important;
+  box-shadow:0 -4px 24px rgba(0,0,0,.06) !important;
+  padding:4px 6px calc(4px + var(--safe-bottom)) !important;
+}
+.bottom-nav-item{
+  border-radius:12px !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  border:0 !important;
+  color:#8E8E93 !important;
+  font-weight:500 !important;
+  min-height:48px !important;
+  transition:transform .12s ease, color .12s ease, background .12s ease !important;
+}
+.bottom-nav-item .bn-ico{
+  color:inherit;
+}
+.bottom-nav-item .bn-label{
+  font-size:.6rem;
+  font-weight:500;
+  letter-spacing:-.1px;
+}
+/* Active: tint only — no heavy filled box / arc chrome */
+.bottom-nav-item.active{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  color:var(--color-primary) !important;
+  font-weight:700 !important;
+}
+.bottom-nav-item.active .bn-ico{
+  color:var(--color-primary) !important;
+  transform:none !important;
+}
+.bottom-nav-item.active .bn-label{
+  color:var(--color-primary) !important;
+  font-weight:700 !important;
+}
+.bottom-nav-item.active::before,
+.bottom-nav-item.active::after{
+  display:none !important;
+  content:none !important;
+}
+.bottom-nav-item:active{
+  transform:scale(.94) !important;
+  background:rgba(0,0,0,.04) !important;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion:reduce){
+  .dashboard-shell .dash-qa-bar .dash-qa-btn,
+  .bottom-nav-item{
+    transition:none !important;
+  }
+}
