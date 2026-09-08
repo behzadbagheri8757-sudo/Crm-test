@@ -4917,3 +4917,206 @@ button.inv-header-save.btn{
   .sheet.inv-sheet-host .inv-payment-action-icon svg{ width:22px; height:22px; }
   .sheet.inv-sheet-host .inv-discount-block{ grid-template-columns:1fr; }
 }
+
+
+/* ============================================================
+   INVOICE V5 — compact controls, persistent header, carded lines
+   Presentation-only; scoped to the invoice creation sheet.
+   ============================================================ */
+.sheet.inv-sheet-host{
+  overflow-y:auto;
+  overflow-x:hidden;
+  position:relative;
+  padding:0;
+}
+.sheet.inv-sheet-host .inv-sheet-v2{
+  min-height:100%;
+}
+/* Fixed to the viewport so a long invoice can never push Save away. */
+.sheet.inv-sheet-host .inv-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  width:100%;
+  max-width:720px;
+  margin:0 auto;
+  box-sizing:border-box;
+  padding-top:calc(10px + var(--safe-top));
+  padding-bottom:10px;
+  background:rgba(255,255,255,.97);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+  box-shadow:0 1px 0 rgba(15,23,42,.07), 0 8px 22px rgba(15,23,42,.05);
+}
+.sheet.inv-sheet-host .inv-body{
+  padding-top:calc(78px + var(--safe-top));
+  padding-bottom:calc(32px + var(--safe-bottom));
+  scroll-padding-top:calc(82px + var(--safe-top));
+}
+
+/* Product picker: compact pill, not a large faux field. */
+.sheet.inv-sheet-host .inv-line-empty{
+  padding:4px 0 10px;
+  border-bottom:0;
+}
+.sheet.inv-sheet-host .inv-line-empty .inv-line-main{
+  justify-content:flex-start;
+}
+.sheet.inv-sheet-host .inv-line-empty .inv-line-name{
+  flex:0 1 auto;
+  width:auto;
+  max-width:100%;
+  min-width:0;
+  padding:7px 12px !important;
+  border:1px solid var(--color-border) !important;
+  border-radius:999px !important;
+  background:var(--color-surface-2) !important;
+  color:var(--color-text-muted);
+  font-size:.78rem;
+  font-weight:700;
+  box-shadow:none !important;
+}
+.sheet.inv-sheet-host .inv-line-empty .inv-line-chevron{
+  font-size:1rem;
+  margin-inline-start:-4px;
+}
+
+/* Once a product exists, promote the row to a clean information card. */
+.sheet.inv-sheet-host .inv-line:not(.inv-line-empty){
+  margin:0 0 10px;
+  padding:13px 14px 11px;
+  border:1px solid rgba(15,23,42,.07);
+  border-radius:20px;
+  background:var(--color-surface);
+  box-shadow:0 5px 18px rgba(15,23,42,.055);
+}
+.sheet.inv-sheet-host .inv-line:not(.inv-line-empty) + .inv-line:not(.inv-line-empty){
+  margin-top:10px;
+}
+.sheet.inv-sheet-host .inv-line:not(.inv-line-empty) .inv-line-main{
+  gap:8px;
+}
+.sheet.inv-sheet-host .inv-line:not(.inv-line-empty) .inv-line-name{
+  font-size:.98rem;
+}
+.sheet.inv-sheet-host .inv-line:not(.inv-line-empty) .inv-line-amount{
+  font-size:1rem;
+}
+
+/* Smaller, round payment actions. */
+.sheet.inv-sheet-host .inv-payment-actions{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;
+}
+.sheet.inv-sheet-host .inv-payment-action{
+  min-height:48px;
+  padding:7px 8px;
+  border-radius:999px;
+  flex-direction:row;
+  gap:6px;
+  font-size:.74rem;
+}
+.sheet.inv-sheet-host .inv-payment-action-icon{
+  width:20px;
+  height:20px;
+}
+.sheet.inv-sheet-host .inv-payment-action-icon svg{
+  width:18px;
+  height:18px;
+  stroke-width:1.7;
+}
+
+/* Payment details become a floating pop-up instead of consuming page height. */
+.sheet.inv-sheet-host .inv-payment-panel{
+  position:fixed;
+  left:50%;
+  bottom:calc(18px + var(--safe-bottom));
+  transform:translateX(-50%);
+  width:min(420px,calc(100vw - 32px));
+  max-height:min(70vh,520px);
+  overflow:auto;
+  z-index:80;
+  margin:0;
+  box-sizing:border-box;
+  padding:16px;
+  border-radius:24px;
+  background:rgba(255,255,255,.985);
+  box-shadow:0 18px 50px rgba(15,23,42,.18),0 0 0 100vmax rgba(15,23,42,.16);
+}
+.sheet.inv-sheet-host .inv-payment-panel-head{
+  margin-bottom:12px;
+  font-size:.9rem;
+}
+
+/* Compact discount control: label + type + value on one quiet row. */
+.sheet.inv-sheet-host .inv-discount-block{
+  display:grid;
+  grid-template-columns:auto 88px minmax(110px,150px);
+  align-items:center;
+  justify-content:start;
+  gap:8px;
+  margin-top:12px;
+  padding:8px 10px;
+  border-radius:999px;
+  background:var(--color-surface-2);
+  border:1px solid var(--color-border);
+}
+.sheet.inv-sheet-host .inv-discount-label{
+  font-size:.76rem;
+  font-weight:700;
+  color:var(--color-text-muted);
+  white-space:nowrap;
+}
+.sheet.inv-sheet-host .inv-discount-block select,
+.sheet.inv-sheet-host .inv-discount-block input{
+  width:100%;
+  min-height:36px;
+  box-sizing:border-box;
+  padding:6px 9px;
+  border:1px solid var(--color-border);
+  border-radius:999px;
+  background:var(--color-surface);
+  color:var(--color-text);
+  font-family:inherit;
+  font-size:14px;
+  box-shadow:none;
+}
+.sheet.inv-sheet-host .inv-discount-block input{text-align:center;font-weight:700;}
+
+/* Summary hierarchy: supporting rows quiet; invoice total and remaining lead. */
+.sheet.inv-sheet-host .inv-summary-section #calc-summary .ledger-row{font-size:.8rem;}
+.sheet.inv-sheet-host .inv-summary-section #calc-summary .ledger-row .name{font-weight:600;}
+.sheet.inv-sheet-host .inv-summary-section #calc-summary .ledger-row .amount{font-weight:700;}
+.sheet.inv-sheet-host .inv-summary-section #calc-summary .ledger-row.inv-total-row{
+  margin-top:7px;
+  padding:12px 0 8px;
+  border-top:1px solid var(--color-border);
+}
+.sheet.inv-sheet-host .inv-summary-section #calc-summary .ledger-row.inv-total-row .name,
+.sheet.inv-sheet-host .inv-summary-section #calc-summary .ledger-row.inv-total-row .amount{
+  font-size:1.12rem;
+  font-weight:850;
+}
+.sheet.inv-sheet-host .inv-summary-section #calc-summary .ledger-row.inv-remain-row{
+  padding:9px 0 2px;
+  border-top:0;
+}
+.sheet.inv-sheet-host .inv-summary-section #calc-summary .ledger-row.inv-remain-row .name,
+.sheet.inv-sheet-host .inv-summary-section #calc-summary .ledger-row.inv-remain-row .amount{
+  font-size:1rem;
+  font-weight:800;
+}
+
+@media (max-width:420px){
+  .sheet.inv-sheet-host .inv-header{padding-inline:12px;}
+  .sheet.inv-sheet-host .inv-body{padding-inline:14px;}
+  .sheet.inv-sheet-host .inv-payment-actions{gap:5px;}
+  .sheet.inv-sheet-host .inv-payment-action{min-height:46px;padding-inline:6px;font-size:.69rem;}
+  .sheet.inv-sheet-host .inv-payment-action-icon svg{width:17px;height:17px;}
+  .sheet.inv-sheet-host .inv-discount-block{
+    grid-template-columns:auto 78px minmax(90px,1fr);
+    gap:6px;
+    padding:7px 8px;
+  }
+}
