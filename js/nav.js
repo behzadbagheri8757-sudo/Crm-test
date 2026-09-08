@@ -83,7 +83,13 @@ const MORE_NAV_ITEMS = [
 function renderSharedNav(activeId){
   const nav = document.getElementById('nav');
   if(!nav) return;
-  const spa = isSpaShell();
+  // SPA shell uses floating bottom nav + More sheet only.
+  // Do not render the legacy top text navigation into #nav.
+  if(isSpaShell()){
+    nav.innerHTML = '';
+    nav.removeAttribute('aria-label');
+    return;
+  }
   nav.innerHTML = NAV_ITEMS.map(t => {
     const active = t.id === activeId ? ' active' : '';
     let href = t.spaPath ? '#' + t.spaPath : t.href;
