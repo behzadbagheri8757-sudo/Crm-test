@@ -6,6 +6,22 @@
 'use strict';
 
 (function (global) {
+  /* Same defensive helper as payments view — customer payment rows call this. */
+  if (typeof global.paymentMethodLabel !== 'function') {
+    global.paymentMethodLabel = function paymentMethodLabel(method) {
+      var map = {
+        cash: 'نقد',
+        card: 'کارت',
+        transfer: 'انتقال',
+        return: 'برگشت',
+        check: 'چک',
+        supplier: 'پرداخت به تامین‌کننده'
+      };
+      if (method == null || method === '') return '—';
+      return map[method] || String(method);
+    };
+  }
+
   let currentCustomerId = null;
   let rootEl = null;
   function customersHref() {
