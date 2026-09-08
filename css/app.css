@@ -4730,3 +4730,190 @@ button.inv-header-save.btn{
 @media print{
   .inv-header{ display:none !important; }
 }
+
+
+/* ============================================================
+   INVOICE V4 — rounded surfaces + progressive payment disclosure
+   Scoped to the invoice creation sheet only.
+   ============================================================ */
+.sheet.inv-sheet-host .inv-section,
+.sheet.inv-sheet-host .inv-edit-notice,
+.sheet.inv-sheet-host .inv-price-info-panel,
+.sheet.inv-sheet-host .inv-payment-panel,
+.sheet.inv-sheet-host .inv-discount-block{
+  border-radius:18px;
+}
+.sheet.inv-sheet-host .inv-edit-notice{
+  border:1px solid rgba(15,23,42,.06);
+  box-shadow:0 4px 14px rgba(15,23,42,.05);
+}
+.sheet.inv-sheet-host .inv-date-field .field,
+.sheet.inv-sheet-host .inv-date-field input,
+.sheet.inv-sheet-host .inv-discount-block input,
+.sheet.inv-sheet-host .inv-discount-block select{
+  border-radius:14px;
+}
+.sheet.inv-sheet-host .inv-add-line{
+  border-radius:16px;
+}
+.sheet.inv-sheet-host .prod-drop-panel{
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid var(--color-border);
+  box-shadow:0 12px 34px rgba(15,23,42,.14);
+}
+.sheet.inv-sheet-host .prod-drop-search-wrap{
+  padding:10px;
+  background:var(--color-surface);
+}
+.sheet.inv-sheet-host .prod-drop-search{
+  border-radius:14px !important;
+}
+.sheet.inv-sheet-host .inv-payment-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.sheet.inv-sheet-host .inv-payment-heading .inv-section-title{ margin-bottom:0; }
+.sheet.inv-payment-total{
+  flex:0 0 auto;
+  font-size:.78rem;
+  font-weight:800;
+  color:var(--color-text);
+  font-variant-numeric:tabular-nums;
+}
+.sheet.inv-sheet-host .inv-payment-actions{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+.sheet.inv-sheet-host .inv-payment-action{
+  min-height:72px;
+  padding:9px 5px;
+  border:1px solid var(--color-border);
+  border-radius:16px;
+  background:var(--color-surface);
+  color:var(--color-text);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-family:inherit;
+  font-size:.72rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
+}
+.sheet.inv-sheet-host .inv-payment-action:active{
+  transform:scale(.98);
+}
+.sheet.inv-sheet-host .inv-payment-action.is-active{
+  border-color:var(--color-primary);
+  background:var(--color-primary-soft);
+  color:var(--color-primary);
+  box-shadow:0 4px 14px rgba(15,23,42,.07);
+}
+.inv-payment-action-icon{
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+}
+.inv-payment-action-icon svg{
+  width:24px;
+  height:24px;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.sheet.inv-sheet-host .inv-payment-panel{
+  margin-top:10px;
+  padding:14px;
+  background:var(--color-surface-2);
+  border:1px solid var(--color-border);
+  box-shadow:0 8px 24px rgba(15,23,42,.07);
+}
+.sheet.inv-sheet-host .inv-payment-panel[hidden]{ display:none; }
+.inv-payment-panel-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+  font-size:.82rem;
+  font-weight:800;
+  color:var(--color-text);
+}
+.inv-payment-close{
+  width:30px;
+  height:30px;
+  border:0;
+  border-radius:50%;
+  background:var(--color-surface);
+  color:var(--color-text-muted);
+  font-size:1.1rem;
+  line-height:1;
+  font-family:inherit;
+  cursor:pointer;
+}
+.sheet.inv-sheet-host .inv-payment-panel > label,
+.sheet.inv-sheet-host .inv-payment-check-due > label{
+  display:block;
+  margin-bottom:6px;
+  font-size:.72rem;
+  font-weight:700;
+  color:var(--color-text-muted);
+}
+.sheet.inv-sheet-host .inv-payment-panel > input,
+.sheet.inv-sheet-host .inv-payment-check-due input{
+  width:100%;
+  min-height:46px;
+  padding:11px 13px;
+  border:1px solid var(--color-border);
+  border-radius:14px;
+  background:var(--color-surface);
+  color:var(--color-text);
+  font-family:inherit;
+  font-size:16px;
+  box-sizing:border-box;
+}
+.sheet.inv-sheet-host .inv-payment-panel > input:focus,
+.sheet.inv-sheet-host .inv-payment-check-due input:focus{
+  outline:none;
+  border-color:var(--color-accent);
+  box-shadow:0 0 0 3px var(--color-accent-soft);
+}
+.inv-payment-check-due{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--color-border);
+}
+.sheet.inv-sheet-host .inv-discount-block{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:14px;
+  padding:12px;
+  background:var(--color-surface-2);
+  border:1px solid var(--color-border);
+}
+.sheet.inv-sheet-host .inv-discount-block .field{
+  margin-bottom:0;
+}
+.sheet.inv-sheet-host .inv-discount-block input,
+.sheet.inv-sheet-host .inv-discount-block select{
+  min-height:44px;
+}
+@media (max-width:420px){
+  .sheet.inv-sheet-host .inv-payment-actions{ gap:6px; }
+  .sheet.inv-sheet-host .inv-payment-action{
+    min-height:68px;
+    border-radius:14px;
+    font-size:.68rem;
+  }
+  .sheet.inv-sheet-host .inv-payment-action-icon svg{ width:22px; height:22px; }
+  .sheet.inv-sheet-host .inv-discount-block{ grid-template-columns:1fr; }
+}
