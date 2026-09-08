@@ -2263,17 +2263,12 @@ function openInvoiceForm(cid, editInv){
             </div>
 
             <div class="inv-discount-block">
-              <div class="field">
-                <label>تخفیف کلی فاکتور (${discountType==='percent'?'درصد':'تومان'}، اختیاری)</label>
-                <input id="f-discount" type="text" inputmode="decimal" value="${discount||''}">
-              </div>
-              <div class="field">
-                <label>نوع تخفیف</label>
-                <select id="f-discount-type">
-                  <option value="fixed" ${discountType==='fixed'?'selected':''}>مبلغ</option>
-                  <option value="percent" ${discountType==='percent'?'selected':''}>درصد</option>
-                </select>
-              </div>
+              <span class="inv-discount-label">تخفیف</span>
+              <select id="f-discount-type" aria-label="نوع تخفیف">
+                <option value="fixed" ${discountType==='fixed'?'selected':''}>مبلغ</option>
+                <option value="percent" ${discountType==='percent'?'selected':''}>درصد</option>
+              </select>
+              <input id="f-discount" type="text" inputmode="decimal" value="${discount||''}" placeholder="۰">
             </div>
           </div>
 
@@ -2305,8 +2300,17 @@ function openInvoiceForm(cid, editInv){
     if(typeof bindNoPurchasePrompt === 'function') bindNoPurchasePrompt(cid);
 
     document.getElementById('add-row').addEventListener('click', ()=>{
+      // One active empty line at a time: once a blank line exists, repeated
+      // taps open its product picker instead of creating another blank row.
+      const emptyIdx = rows.findIndex(r=>!r.productId);
+      if(emptyIdx >= 0){
+        openProductDrop(emptyIdx);
+        return;
+      }
       rows.push({productId:'', qty:1, price:0, discount:0});
       renderSheet();
+      // Start the intended workflow immediately: Add Line → Product Search.
+      setTimeout(()=>openProductDrop(rows.length-1), 0);
     });
     document.querySelectorAll('.row-del').forEach(el=>el.addEventListener('click', e=>{
       const i = parseInt(e.currentTarget.dataset.row, 10);
