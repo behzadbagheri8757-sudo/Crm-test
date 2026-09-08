@@ -2201,23 +2201,73 @@ function openInvoiceForm(cid, editInv){
 
           ${nprHtmlInv}
 
-          <div class="inv-section">
-            <h2 class="inv-section-title">دریافتی همراه این فاکتور <span class="inv-section-title-optional">(اختیاری)</span></h2>
-            <div class="field" style="display:flex;gap:8px;">
-              <div style="flex:1;"><label>نقد</label><input id="f-cash" type="text" inputmode="decimal" value="${cashPaid||''}"></div>
-              <div style="flex:1;"><label>کارت</label><input id="f-card" type="text" inputmode="decimal" value="${cardPaid||''}"></div>
-              <div style="flex:1;"><label>انتقال بانکی</label><input id="f-transfer" type="text" inputmode="decimal" value="${transferPaid||''}"></div>
+          <div class="inv-section inv-payment-section">
+            <div class="inv-payment-heading">
+              <h2 class="inv-section-title">دریافتی همراه این فاکتور <span class="inv-section-title-optional">(اختیاری)</span></h2>
+              <span class="inv-payment-total" id="inv-payment-total">${toman(cashPaid+cardPaid+transferPaid+checkAmount)} ت</span>
             </div>
-            <div class="field"><label>دریافت چک</label><input id="f-check" type="text" inputmode="decimal" value="${checkAmount||''}"></div>
-            <div class="field" id="check-due-wrap" style="display:${checkAmount>0?'block':'none'};">
-              <label>تاریخ سررسید چک</label>${shamsiDateInputHTML('f-check-due', checkDue)}
+
+            <div class="inv-payment-actions" role="group" aria-label="روش دریافت">
+              <button type="button" class="inv-payment-action" data-payment-method="cash" aria-expanded="false">
+                <span class="inv-payment-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 9h18M7 14h.01M11 14h3"/></svg>
+                </span>
+                <span>نقد</span>
+              </button>
+              <button type="button" class="inv-payment-action" data-payment-method="card" aria-expanded="false">
+                <span class="inv-payment-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M7 15h4"/></svg>
+                </span>
+                <span>کارت</span>
+              </button>
+              <button type="button" class="inv-payment-action" data-payment-method="transfer" aria-expanded="false">
+                <span class="inv-payment-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5M8 17h8"/></svg>
+                </span>
+                <span>بانکی</span>
+              </button>
+              <button type="button" class="inv-payment-action" data-payment-method="check" aria-expanded="false">
+                <span class="inv-payment-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+                </span>
+                <span>چک</span>
+              </button>
             </div>
-            <div class="field" style="display:flex;gap:6px;align-items:end;">
-              <div style="flex:1;">
+
+            <div class="inv-payment-panel" data-payment-panel="cash" hidden>
+              <div class="inv-payment-panel-head"><span>دریافت نقدی</span><button type="button" class="inv-payment-close" data-payment-close="cash" aria-label="بستن">×</button></div>
+              <label for="f-cash">مبلغ نقدی</label>
+              <input id="f-cash" type="text" inputmode="decimal" value="${cashPaid||''}" placeholder="مبلغ را وارد کنید">
+            </div>
+
+            <div class="inv-payment-panel" data-payment-panel="card" hidden>
+              <div class="inv-payment-panel-head"><span>دریافت با کارت</span><button type="button" class="inv-payment-close" data-payment-close="card" aria-label="بستن">×</button></div>
+              <label for="f-card">مبلغ کارت</label>
+              <input id="f-card" type="text" inputmode="decimal" value="${cardPaid||''}" placeholder="مبلغ را وارد کنید">
+            </div>
+
+            <div class="inv-payment-panel" data-payment-panel="transfer" hidden>
+              <div class="inv-payment-panel-head"><span>انتقال بانکی</span><button type="button" class="inv-payment-close" data-payment-close="transfer" aria-label="بستن">×</button></div>
+              <label for="f-transfer">مبلغ انتقال</label>
+              <input id="f-transfer" type="text" inputmode="decimal" value="${transferPaid||''}" placeholder="مبلغ را وارد کنید">
+            </div>
+
+            <div class="inv-payment-panel" data-payment-panel="check" hidden>
+              <div class="inv-payment-panel-head"><span>دریافت چک</span><button type="button" class="inv-payment-close" data-payment-close="check" aria-label="بستن">×</button></div>
+              <label for="f-check">مبلغ چک</label>
+              <input id="f-check" type="text" inputmode="decimal" value="${checkAmount||''}" placeholder="مبلغ چک را وارد کنید">
+              <div class="inv-payment-check-due" id="check-due-wrap" style="display:${checkAmount>0?'block':'none'};">
+                <label for="f-check-due">تاریخ سررسید چک</label>
+                ${shamsiDateInputHTML('f-check-due', checkDue)}
+              </div>
+            </div>
+
+            <div class="inv-discount-block">
+              <div class="field">
                 <label>تخفیف کلی فاکتور (${discountType==='percent'?'درصد':'تومان'}، اختیاری)</label>
                 <input id="f-discount" type="text" inputmode="decimal" value="${discount||''}">
               </div>
-              <div style="flex:1;">
+              <div class="field">
                 <label>نوع تخفیف</label>
                 <select id="f-discount-type">
                   <option value="fixed" ${discountType==='fixed'?'selected':''}>مبلغ</option>
@@ -2455,12 +2505,52 @@ function openInvoiceForm(cid, editInv){
       updateRowInfo(idx);
       updateSummary();
     }));
-    document.getElementById('f-cash').addEventListener('input', e=>{ cashPaid = parseFloat(faToEnDigits(e.target.value))||0; updateSummary(); });
-    document.getElementById('f-card').addEventListener('input', e=>{ cardPaid = parseFloat(faToEnDigits(e.target.value))||0; updateSummary(); });
-    document.getElementById('f-transfer').addEventListener('input', e=>{ transferPaid = parseFloat(faToEnDigits(e.target.value))||0; updateSummary(); });
+    function updateInvPaymentTotal(){
+      const totalEl = document.getElementById('inv-payment-total');
+      if(totalEl) totalEl.textContent = toman(cashPaid+cardPaid+transferPaid+checkAmount) + ' ت';
+    }
+    function closeInvPaymentPanels(){
+      document.querySelectorAll('.inv-payment-panel').forEach(panel=>panel.hidden = true);
+      document.querySelectorAll('.inv-payment-action').forEach(btn=>{
+        btn.classList.remove('is-active');
+        btn.setAttribute('aria-expanded','false');
+      });
+    }
+    document.querySelectorAll('.inv-payment-action').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const method = btn.getAttribute('data-payment-method');
+        const panel = document.querySelector(`.inv-payment-panel[data-payment-panel="${method}"]`);
+        if(!panel) return;
+        const willOpen = panel.hidden;
+        closeInvPaymentPanels();
+        if(willOpen){
+          panel.hidden = false;
+          btn.classList.add('is-active');
+          btn.setAttribute('aria-expanded','true');
+          const input = panel.querySelector('input[type="text"]');
+          if(input) setTimeout(()=>input.focus(), 0);
+        }
+      });
+    });
+    document.querySelectorAll('.inv-payment-close').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const method = btn.getAttribute('data-payment-close');
+        const panel = document.querySelector(`.inv-payment-panel[data-payment-panel="${method}"]`);
+        if(panel) panel.hidden = true;
+        const action = document.querySelector(`.inv-payment-action[data-payment-method="${method}"]`);
+        if(action){
+          action.classList.remove('is-active');
+          action.setAttribute('aria-expanded','false');
+        }
+      });
+    });
+    document.getElementById('f-cash').addEventListener('input', e=>{ cashPaid = parseFloat(faToEnDigits(e.target.value))||0; updateInvPaymentTotal(); updateSummary(); });
+    document.getElementById('f-card').addEventListener('input', e=>{ cardPaid = parseFloat(faToEnDigits(e.target.value))||0; updateInvPaymentTotal(); updateSummary(); });
+    document.getElementById('f-transfer').addEventListener('input', e=>{ transferPaid = parseFloat(faToEnDigits(e.target.value))||0; updateInvPaymentTotal(); updateSummary(); });
     document.getElementById('f-check').addEventListener('input', e=>{
       checkAmount = parseFloat(faToEnDigits(e.target.value))||0;
       document.getElementById('check-due-wrap').style.display = checkAmount>0 ? 'block':'none';
+      updateInvPaymentTotal();
       updateSummary();
     });
     document.getElementById('f-check-due').addEventListener('change', e=>{ checkDue = e.target.value; });
