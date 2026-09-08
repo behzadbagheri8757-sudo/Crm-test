@@ -1335,6 +1335,9 @@ details[open] > .customer-behavior-summary::after{
    11. INVOICES V6 (PROTECTED)
    -------------------------------------------------------------------------- */
 .sheet.inv-sheet-host{
+  width:100%;
+  max-width:none;
+  align-self:stretch;
   max-height:100vh;
   height:100vh;
   border-radius:0;
@@ -1575,6 +1578,90 @@ button.inv-header-save.btn{
 .inv-line .row-info{
   margin-top:6px;
 }
+
+/* Product picker panel (Invoice V6) — markup from openProductDrop; CSS was missing */
+.prod-drop{
+  position:fixed;
+  z-index:80;
+  box-sizing:border-box;
+}
+.prod-drop[hidden]{
+  display:none!important;
+}
+.prod-drop-panel{
+  display:flex;
+  flex-direction:column;
+  max-height:inherit;
+  background:#FFFFFF;
+  border:1px solid rgba(31,41,55,.1);
+  border-radius:14px;
+  box-shadow:0 10px 32px rgba(26,38,52,.16),0 2px 8px rgba(26,38,52,.06);
+  overflow:hidden;
+}
+.prod-drop-search-wrap{
+  flex:0 0 auto;
+  padding:10px 12px;
+  border-bottom:1px solid rgba(31,41,55,.06);
+  background:#F8FAFC;
+}
+.prod-drop-search{
+  width:100%;
+  box-sizing:border-box;
+  min-height:40px;
+  padding:8px 12px;
+  border:1px solid rgba(31,41,55,.1);
+  border-radius:10px;
+  background:#FFFFFF;
+  font-family:inherit;
+  font-size:.9rem;
+  color:#1F2937;
+}
+.prod-drop-list{
+  flex:1 1 auto;
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  max-height:inherit;
+}
+.prod-drop-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-bottom:1px solid rgba(31,41,55,.05);
+  cursor:pointer;
+  background:#FFFFFF;
+}
+.prod-drop-item:last-child{
+  border-bottom:none;
+}
+.prod-drop-item:active{
+  background:#F2F2F7;
+}
+.prod-drop-name{
+  flex:1 1 auto;
+  min-width:0;
+  font-size:.95rem;
+  font-weight:700;
+  color:#1F2937;
+  line-height:1.35;
+}
+.prod-drop-stock{
+  flex:0 0 auto;
+  font-size:.72rem;
+  font-weight:600;
+  color:#667085;
+  white-space:nowrap;
+}
+.prod-drop-empty{
+  padding:20px 14px;
+  text-align:center;
+  font-size:.85rem;
+  color:#667085;
+}
+
 .inv-row-profit-line{
   font-size:.72rem;
   font-weight:600;
