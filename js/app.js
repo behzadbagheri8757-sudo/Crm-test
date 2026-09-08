@@ -2130,16 +2130,17 @@ function openInvoiceForm(cid, editInv){
     const newBalance = prevBalance + total - paid;
     const profit = invoiceProfitEstimate();
     const profitColor = profit<0 ? 'var(--rust)' : 'var(--olive-dark)';
+    const remainCls = newBalance>0 ? 'accent-rust' : 'accent-olive';
     document.getElementById('calc-summary').innerHTML = `
-      <div class="ledger-row"><span class="name">مانده قبلی مشتری</span><span class="filler"></span><span class="amount">${toman(prevBalance)} ت</span></div>
-      <div class="ledger-row"><span class="name">جمع اقلام</span><span class="filler"></span><span class="amount">${toman(subtotal)} ت</span></div>
-      <div class="ledger-row"><span class="name">تخفیف کلی فاکتور${discountType==='percent'?` (${toman(discount)}٪)`:''}</span><span class="filler"></span><span class="amount">${toman(discountAmount)} ت</span></div>
-      <div class="ledger-row inv-total-row"><span class="name">جمع این فاکتور</span><span class="filler"></span><span class="amount">${toman(total)} ت</span></div>
-      <div class="ledger-row"><span class="name">جمع دریافتی</span><span class="filler"></span><span class="amount">${toman(paid)} ت</span></div>
-      <div class="ledger-row inv-remain-row"><span class="name" style="color:${newBalance>0?'var(--rust)':'var(--olive-dark)'}">مانده جدید</span><span class="filler"></span><span class="amount" style="color:${newBalance>0?'var(--rust)':'var(--olive-dark)'}">${toman(Math.abs(newBalance))} ت ${balanceStatusWord(newBalance)}</span></div>
-      <div class="ledger-row" style="border-top:1.5px dashed var(--border);margin-top:6px;padding-top:10px;">
-        <span class="name" style="font-weight:700;">سود این فاکتور (بر اساس FIFO)</span><span class="filler"></span>
-        <span class="amount" style="color:${profitColor};font-weight:700;font-size:1.05rem;">${profit<0?'−':''}${toman(Math.abs(profit))} ت</span>
+      <div class="ledger-row inv-sum-tertiary"><span class="name">مانده قبلی مشتری</span><span class="filler"></span><span class="amount">${toman(prevBalance)} ت</span></div>
+      <div class="ledger-row inv-sum-secondary"><span class="name">جمع اقلام</span><span class="filler"></span><span class="amount">${toman(subtotal)} ت</span></div>
+      <div class="ledger-row inv-sum-tertiary"><span class="name">تخفیف کلی فاکتور${discountType==='percent'?` (${toman(discount)}٪)`:''}</span><span class="filler"></span><span class="amount">${toman(discountAmount)} ت</span></div>
+      <div class="ledger-row inv-total-row inv-sum-primary"><span class="name">جمع این فاکتور</span><span class="filler"></span><span class="amount">${toman(total)} ت</span></div>
+      <div class="ledger-row inv-sum-secondary"><span class="name">جمع دریافتی</span><span class="filler"></span><span class="amount">${toman(paid)} ت</span></div>
+      <div class="ledger-row inv-remain-row inv-sum-primary"><span class="name ${remainCls}">مانده جدید</span><span class="filler"></span><span class="amount ${remainCls}">${toman(Math.abs(newBalance))} ت ${balanceStatusWord(newBalance)}</span></div>
+      <div class="ledger-row inv-sum-profit inv-sum-tertiary">
+        <span class="name">سود این فاکتور (بر اساس FIFO)</span><span class="filler"></span>
+        <span class="amount" style="color:${profitColor}">${profit<0?'−':''}${toman(Math.abs(profit))} ت</span>
       </div>
     `;
   }
@@ -2193,10 +2194,14 @@ function openInvoiceForm(cid, editInv){
 
           <div class="field inv-date-field"><label>تاریخ فاکتور</label>${shamsiDateInputHTML('f-date', editInv?editInv.date:todayISO())}</div>
 
-          <div class="inv-section">
-            <h2 class="inv-section-title">اقلام فاکتور</h2>
-            <div id="items-wrap" class="inv-items">${itemsHtml()}</div>
-            <button type="button" class="inv-add-line" id="add-row"><span class="inv-add-line-icon">+</span> افزودن قلم جدید</button>
+          <div class="inv-section inv-items-section">
+            <div class="inv-items-card">
+              <div class="inv-items-card-head">
+                <span class="inv-items-card-label">اقلام فاکتور</span>
+              </div>
+              <div id="items-wrap" class="inv-items">${itemsHtml()}</div>
+              <button type="button" class="inv-add-line" id="add-row"><span class="inv-add-line-icon" aria-hidden="true">+</span> افزودن قلم جدید</button>
+            </div>
           </div>
 
           ${nprHtmlInv}
