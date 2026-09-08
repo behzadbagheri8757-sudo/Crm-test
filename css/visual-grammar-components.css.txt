@@ -1,0 +1,462 @@
+/* ============================================================
+   BAGHERI VISUAL GRAMMAR — COMPONENTS v2
+   Owns all shared component geometry:
+   Capsule, Circle, Soft Surface, Floating Glass.
+   No page-specific or view-specific rules.
+   ============================================================ */
+
+/* ---------- Capsule geometry ---------- */
+/* Applies to form controls, buttons, chips, search inputs, selects */
+.btn,
+.btn.small,
+.btn.secondary,
+.btn.danger,
+.chip,
+.chip-opt,
+.field input,
+.field select,
+.tx-toolbar-select,
+input[type="search"],
+input[placeholder*="جستجو"]{
+  border-radius:var(--vg-radius-control); /* 999px = real capsule */
+}
+
+/* ---------- Circle geometry ---------- */
+/* Applies to icon-only actions and containers */
+.close-x,
+.icon-btn,
+.icon-button,
+.dash-section-ico,
+.dash-qa-ico{
+  border-radius:var(--vg-radius-circle); /* 50% */
+}
+
+/* ---------- Soft Surface geometry ---------- */
+/* Cards, panels, summaries, sheets */
+.card,
+.report-summary-card,
+.gc-panel,
+.prospect-result-card,
+.cust-summary,
+.overlay .sheet{
+  border-radius:var(--vg-radius-soft); /* 14px */
+}
+
+.sheet{
+  border-radius:var(--vg-radius-raised) var(--vg-radius-raised) 0 0; /* 16px top */
+}
+
+/* ---------- Floating Glass Bottom Navigation ---------- */
+.bottom-nav{
+  position:fixed!important;
+  top:auto!important;
+  left:12px;
+  right:12px;
+  bottom:calc(10px + env(safe-area-inset-bottom,0px));
+  z-index:40;
+  display:flex;
+  align-items:stretch;
+  justify-content:space-around;
+  background:rgba(255,255,255,.78);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:var(--vg-radius-control); /* capsule */
+  box-shadow:var(--vg-shadow-glass);
+  padding:6px 8px;
+  min-height:54px;
+  -webkit-overflow-scrolling:auto;
+}
+
+.bottom-nav-item{
+  flex:1 1 0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  min-height:44px;
+  padding:4px 2px;
+  border:none;
+  background:transparent;
+  color:var(--vg-color-text-muted);
+  text-decoration:none;
+  font-family:inherit;
+  font-size:.62rem;
+  font-weight:var(--vg-weight-label);
+  line-height:1.15;
+  cursor:pointer;
+  border-radius:0; /* NOT capsule */
+  -webkit-tap-highlight-color:transparent;
+}
+
+.bottom-nav-item .bn-ico{
+  width:24px;
+  height:24px;
+  color:var(--vg-color-text-muted);
+}
+
+.bottom-nav-item .bn-ico svg{
+  width:22px;
+  height:22px;
+  stroke-width:1.55;
+}
+
+.bottom-nav-item .bn-label{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* Active = tint-only (no pill, no glass box) */
+.bottom-nav-item.active{
+  color:var(--vg-color-primary);
+  font-weight:var(--vg-weight-title);
+  background:transparent;
+}
+
+.bottom-nav-item.active .bn-ico{
+  color:var(--vg-color-primary);
+}
+
+/* ---------- Buttons ---------- */
+.btn{
+  min-height:var(--vg-control-height);
+  padding:12px 16px;
+  background:var(--vg-color-primary);
+  color:#fff;
+  border:1px solid var(--vg-color-primary);
+  font-size:var(--vg-type-action);
+  font-weight:var(--vg-weight-title);
+  box-shadow:0 3px 10px rgba(0,112,210,.14);
+  cursor:pointer;
+  transition:transform .1s,box-shadow .1s;
+}
+
+.btn:active{
+  transform:scale(.98);
+  box-shadow:0 1px 4px rgba(0,0,0,.1);
+}
+
+.btn.secondary{
+  background:var(--vg-color-surface);
+  color:var(--vg-color-text-secondary);
+  border:1px solid var(--vg-color-border);
+  box-shadow:none;
+}
+
+.btn.danger{
+  background:var(--vg-color-danger);
+  color:#fff;
+  border-color:var(--vg-color-danger);
+  box-shadow:0 3px 10px rgba(250,57,70,.16);
+}
+
+.btn.small{
+  min-height:40px;
+  padding:8px 12px;
+  font-size:.78rem;
+}
+
+.btn:disabled{
+  opacity:.55;
+  box-shadow:none;
+}
+
+/* ---------- Chips ---------- */
+.chip,
+.chip-opt{
+  min-height:40px;
+  padding:8px 12px;
+  background:var(--vg-color-surface);
+  border:1px solid var(--vg-color-border);
+  color:var(--vg-color-text-secondary);
+  font-weight:var(--vg-weight-label);
+  cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s;
+}
+
+.chip.active,
+.chip-opt.selected{
+  background:var(--vg-color-primary);
+  border-color:var(--vg-color-primary);
+  color:#fff;
+}
+
+/* ---------- Badges ---------- */
+.badge{
+  display:inline-block;
+  padding:3px 9px;
+  border:1px solid transparent;
+  border-radius:var(--vg-radius-pill);
+  font-size:.64rem;
+  font-weight:var(--vg-weight-title);
+  line-height:1.3;
+}
+
+.badge.tone-success,
+.badge.cleared{
+  background:var(--vg-color-success-soft);
+  color:var(--vg-color-success);
+}
+
+.badge.tone-warning,
+.badge.pending{
+  background:var(--vg-color-warning-soft);
+  color:var(--vg-color-warning);
+}
+
+.badge.tone-danger,
+.badge.low{
+  background:var(--vg-color-danger-soft);
+  color:var(--vg-color-danger);
+}
+
+.badge.tone-muted{
+  background:var(--vg-color-surface-soft);
+  color:var(--vg-color-text-muted);
+}
+
+.badge.tone-neutral{
+  background:var(--vg-color-neutral-soft);
+  color:var(--vg-color-text-secondary);
+}
+
+/* ---------- Form Controls ---------- */
+.field{
+  margin-bottom:var(--vg-space-group);
+}
+
+.field label{
+  display:block;
+  margin-bottom:6px;
+  color:var(--vg-color-text-muted);
+  font-size:var(--vg-type-label);
+  font-weight:var(--vg-weight-label);
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  min-height:var(--vg-control-height);
+  padding:11px 14px;
+  background:var(--vg-color-surface);
+  color:var(--vg-color-text);
+  border:1px solid var(--vg-color-border);
+  font-size:16px;
+  font-family:inherit;
+  box-shadow:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  outline:none;
+  border-color:rgba(0,112,210,.45);
+  box-shadow:0 0 0 3px rgba(0,112,210,.10);
+}
+
+.field textarea{
+  min-height:72px;
+  border-radius:var(--vg-radius-soft); /* not capsule because multi-line */
+}
+
+/* ---------- Search Inputs (Capsule) ---------- */
+input[type="search"],
+input[placeholder*="جستجو"]{
+  min-height:var(--vg-control-height);
+  padding:11px 14px;
+  background:var(--vg-color-surface);
+  border:1px solid var(--vg-color-border);
+  border-radius:var(--vg-radius-control); /* capsule */
+  font-size:16px;
+  font-family:inherit;
+}
+
+input[type="search"]:focus,
+input[placeholder*="جستجو"]:focus{
+  outline:none;
+  border-color:rgba(0,112,210,.45);
+  box-shadow:0 0 0 3px rgba(0,112,210,.10);
+}
+
+/* ---------- Toolbar Selects (Capsule) ---------- */
+.tx-toolbar-select{
+  min-height:var(--vg-control-height);
+  padding:11px 28px 11px 12px;
+  background:var(--vg-color-surface);
+  border:1px solid var(--vg-color-border);
+  color:var(--vg-color-text);
+  font-family:inherit;
+  font-size:16px;
+  cursor:pointer;
+}
+
+/* ---------- Icon-only actions (Circle) ---------- */
+.close-x,
+.icon-btn,
+.icon-button{
+  width:44px;
+  height:44px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--vg-color-surface-soft);
+  color:var(--vg-color-text-secondary);
+  border:1px solid var(--vg-color-border);
+  cursor:pointer;
+  font-size:1.2rem;
+  padding:0;
+  transition:background .15s;
+}
+
+.close-x:active,
+.icon-btn:active,
+.icon-button:active{
+  background:var(--vg-color-surface);
+}
+
+/* ---------- Surface grammar ---------- */
+.card,
+.report-summary-card,
+.gc-panel,
+.prospect-result-card{
+  background:var(--vg-color-surface);
+  border:1px solid var(--vg-color-border);
+  box-shadow:var(--vg-shadow-group);
+  padding:14px;
+}
+
+.card.wide{
+  padding:14px;
+}
+
+/* ---------- Sheets / Modals ---------- */
+.sheet{
+  background:var(--vg-color-surface);
+  border-top-left-radius:var(--vg-radius-raised);
+  border-top-right-radius:var(--vg-radius-raised);
+  box-shadow:var(--vg-shadow-overlay);
+}
+
+.sheet h3,
+.sheet-title{
+  color:var(--vg-color-text);
+  font-weight:var(--vg-weight-title);
+}
+
+/* ---------- Empty states ---------- */
+.empty{
+  color:var(--vg-color-text-muted);
+  background:transparent;
+  border:0;
+  padding:32px 14px;
+  text-align:center;
+  font-size:.9rem;
+}
+
+/* ---------- Lists / Ledger rows ---------- */
+.ledger-row,
+.tx-row,
+.customer-list-row{
+  background:transparent;
+  border-bottom:1px solid var(--vg-color-divider);
+}
+
+.ledger-row:last-child,
+.tx-row:last-child{
+  border-bottom-color:transparent;
+}
+
+.ledger-row .name,
+.tx-row-title,
+.customer-list-row .name{
+  color:var(--vg-color-text);
+  font-weight:var(--vg-weight-title);
+}
+
+.ledger-row .sub,
+.tx-row-meta,
+.tx-hint,
+.customer-list-row .sub{
+  color:var(--vg-color-text-muted);
+  font-size:var(--vg-type-meta);
+  font-weight:var(--vg-weight-regular);
+}
+
+.ledger-row .amount,
+.tx-row-total,
+.tx-row-amount,
+.customer-row-balance-value{
+  color:var(--vg-color-text);
+  font-weight:var(--vg-weight-value);
+  font-variant-numeric:tabular-nums;
+}
+
+a.ledger-row:active{
+  background:var(--vg-color-surface-soft);
+}
+
+/* ---------- Semantic accent colors (protected) ---------- */
+.accent-olive{color:var(--vg-color-success)!important;}
+.accent-rust,
+.accent-red{color:var(--vg-color-danger)!important;}
+.accent-amber{color:var(--vg-color-warning)!important;}
+
+/* ---------- Toolbars ---------- */
+.btn-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--vg-space-related);
+  margin-top:var(--vg-space-group);
+}
+
+.tx-toolbar{
+  display:flex;
+  align-items:center;
+  gap:var(--vg-space-related);
+  margin:var(--vg-space-group) 0;
+}
+
+.tx-toolbar-label{
+  color:var(--vg-color-text-muted);
+  font-size:var(--vg-type-meta);
+  font-weight:var(--vg-weight-label);
+}
+
+/* ---------- Toast (floating, not glass) ---------- */
+.toast{
+  position:fixed;
+  bottom:calc(84px + env(safe-area-inset-bottom,0px));
+  left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:var(--vg-color-primary);
+  color:#fff;
+  padding:11px 18px;
+  border-radius:var(--vg-radius-control);
+  font-size:.82rem;
+  font-weight:var(--vg-weight-title);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s,transform .2s;
+  z-index:70;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* ---------- Overlay ---------- */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(11,31,58,.5);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:60;
+}
