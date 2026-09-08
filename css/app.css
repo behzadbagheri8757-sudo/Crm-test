@@ -84,6 +84,23 @@ h3.sub-title{
   font-weight:700;
 }
 
+/* Shared card typography hierarchy (used across list/detail/report cards) */
+.label{
+  font-size:.68rem;
+  font-weight:600;
+  color:#667085;
+  line-height:1.35;
+  margin:0 0 4px;
+}
+.value{
+  font-size:1.02rem;
+  font-weight:800;
+  color:#1F2937;
+  line-height:1.35;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.2px;
+}
+
 /* --------------------------------------------------------------------------
    04. GLOBAL LAYOUT (Header / Main / Navigation)
    -------------------------------------------------------------------------- */
@@ -334,7 +351,7 @@ body.modal-open .fab{
   display:flex;
   align-items:center;
   gap:10px;
-  padding:13px 2px;
+  padding:12px 2px;
   min-height:52px;
   cursor:pointer;
 }
@@ -349,12 +366,22 @@ body.modal-open .fab{
   border-bottom-color:transparent;
 }
 .ledger-row .name,
-.tx-row-title,
+.tx-row .name,
 .customer-list-row .name{
   font-weight:700;
   font-size:1rem;
   color:#1F2937;
   min-width:0;
+  line-height:1.35;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:3px;
+}
+.tx-row-title{
+  font-weight:700;
+  font-size:1rem;
+  color:#1F2937;
   line-height:1.35;
 }
 .ledger-row .name > .tx-row-title,
@@ -363,6 +390,7 @@ body.modal-open .fab{
   overflow:hidden;
   text-overflow:ellipsis;
   display:block;
+  max-width:100%;
 }
 /* Generic metadata hierarchy used across lists (not always under .ledger-row .name) */
 .sub{
@@ -370,18 +398,19 @@ body.modal-open .fab{
   color:#667085;
   display:block;
   font-weight:500;
-  margin-top:2px;
-  line-height:1.35;
+  margin-top:0;
+  line-height:1.4;
 }
 .ledger-row .sub,
 .tx-row-meta,
+.tx-row .sub,
 .customer-list-row .sub{
   font-size:.72rem;
   color:#667085;
   display:block;
   font-weight:500;
-  margin-top:2px;
-  line-height:1.35;
+  margin-top:0;
+  line-height:1.4;
 }
 .ledger-row .amount,
 .tx-row-total,
@@ -395,6 +424,15 @@ body.modal-open .fab{
   flex-shrink:0;
   font-variant-numeric:tabular-nums;
   letter-spacing:-.2px;
+  line-height:1.35;
+}
+.invoice-row-summary,
+.product-row-summary{
+  gap:4px;
+}
+.invoice-row-label,
+.product-row-label{
+  margin-bottom:1px;
 }
 a.ledger-row:active,
 a.tx-row:active{
@@ -706,6 +744,55 @@ details[open] > .customer-behavior-summary::after{
   color:#D52B36;
   background:#FFF0EC;
   border:1px solid #FFF0EC;
+}
+/* Financial health — composition for existing dash-health markup */
+.dash-health{
+  margin-bottom:20px;
+}
+.dash-health-surface{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  background:#FFFFFF;
+  border:1px solid rgba(31,41,55,.08);
+  border-radius:16px;
+  box-shadow:0 3px 10px rgba(26,38,52,.04);
+  overflow:hidden;
+}
+.dash-health-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:13px 14px;
+  border-bottom:1px solid rgba(31,41,55,.05);
+  text-decoration:none;
+  color:inherit;
+  min-height:48px;
+}
+.dash-health-row:last-child{
+  border-bottom:none;
+}
+.dash-health-label{
+  font-size:.72rem;
+  font-weight:600;
+  color:#667085;
+  line-height:1.35;
+}
+.dash-health-value{
+  font-size:1.02rem;
+  font-weight:800;
+  color:#1F2937;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.2px;
+  line-height:1.3;
+  white-space:nowrap;
+}
+.dash-health-value.debt{
+  color:#D52B36;
+}
+.dash-health-link:active{
+  background:rgba(31,41,55,.03);
 }
 /* Monthly target block */
 .dash-target-block{
@@ -1709,10 +1796,27 @@ button.inv-header-save.btn{
 /* --------------------------------------------------------------------------
    14. REPORTS / SETTINGS (Composition)
    -------------------------------------------------------------------------- */
+.report-summary-title{
+  font-size:.82rem;
+  font-weight:700;
+  color:#1F2937;
+  margin:0 0 10px;
+  letter-spacing:-.15px;
+}
+.report-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:18px;
+}
 .report-summary-card{
   padding:12px 13px;
   position:relative;
   overflow:hidden;
+  background:#FFFFFF;
+  border:1px solid rgba(31,41,55,.08);
+  border-radius:14px;
+  box-shadow:0 2px 10px rgba(31,41,55,.045);
 }
 .report-summary-card::before{
   content:"";
@@ -1736,6 +1840,21 @@ button.inv-header-save.btn{
 .report-summary-card.inventory::before{
   background:#1F2937;
 }
+.report-summary-label{
+  font-size:.68rem;
+  font-weight:600;
+  color:#667085;
+  margin:0 0 5px;
+  line-height:1.3;
+}
+.report-summary-value{
+  font-size:1.05rem;
+  font-weight:800;
+  color:#1F2937;
+  line-height:1.3;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.2px;
+}
 .report-summary-value.sales{
   color:#0070D2;
 }
@@ -1743,6 +1862,19 @@ button.inv-header-save.btn{
   color:#007A50;
 }
 .report-summary-value.debt{
+  color:#D52B36;
+}
+.report-summary-meta{
+  font-size:.66rem;
+  color:#667085;
+  margin-top:5px;
+  line-height:1.4;
+  font-weight:500;
+}
+.report-summary-meta.up{
+  color:#007A50;
+}
+.report-summary-meta.down{
   color:#D52B36;
 }
 .report-period-note{
