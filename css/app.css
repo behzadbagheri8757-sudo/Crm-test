@@ -90,7 +90,7 @@ h3.sub-title{
   font-weight:600;
   color:#667085;
   line-height:1.35;
-  margin:0 0 4px;
+  margin:0 0 5px;
 }
 .value{
   font-size:1.02rem;
@@ -99,6 +99,10 @@ h3.sub-title{
   line-height:1.35;
   font-variant-numeric:tabular-nums;
   letter-spacing:-.2px;
+}
+.value + .sub,
+.label + .value{
+  margin-top:0;
 }
 
 /* --------------------------------------------------------------------------
@@ -255,7 +259,28 @@ main .empty{
   line-height:1.2;
 }
 
-/* Floating Detached Glass Bottom Navigation (owned by VG) - do not redefine geometry */
+/* Floating Detached Glass Bottom Navigation (owned by VG) - restrained refinements only */
+.bottom-nav{
+  bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  background:rgba(255,255,255,.82);
+  box-shadow:0 8px 28px rgba(26,38,52,.14),0 1px 3px rgba(26,38,52,.06);
+}
+.bottom-nav-item{
+  position:relative;
+  border-radius:999px;
+  transition:color .2s ease,background-color .22s cubic-bezier(0.32,0.72,0,1),transform .12s ease;
+}
+.bottom-nav-item:active{
+  transform:scale(.96);
+  opacity:.88;
+}
+.bottom-nav-item.active{
+  background:rgba(0,112,210,.11);
+  color:#0070D2;
+}
+.bottom-nav-item.active .bn-ico{
+  color:#0070D2;
+}
 
 /* More menu (composition + visibility) */
 .more-overlay{
@@ -339,7 +364,19 @@ body.modal-open .bottom-nav,
 body.modal-open .fab{
   opacity:0;
   pointer-events:none;
-}/* --------------------------------------------------------------------------
+}
+
+/* Restrained touch feedback (targeted transitions only) */
+.chip,
+.chip-opt{
+  transition:background-color .15s ease,border-color .15s ease,color .15s ease,transform .12s ease;
+}
+.chip:active,
+.chip-opt:active{
+  transform:scale(.97);
+}
+
+/* --------------------------------------------------------------------------
    05. TRANSACTION / LEDGER (Composition)
    -------------------------------------------------------------------------- */
 .tx-list{
@@ -399,7 +436,7 @@ body.modal-open .fab{
   display:block;
   font-weight:500;
   margin-top:0;
-  line-height:1.4;
+  line-height:1.45;
 }
 .ledger-row .sub,
 .tx-row-meta,
@@ -410,7 +447,11 @@ body.modal-open .fab{
   display:block;
   font-weight:500;
   margin-top:0;
-  line-height:1.4;
+  line-height:1.45;
+}
+.ledger-row .name,
+.tx-row .name{
+  gap:4px;
 }
 .ledger-row .amount,
 .tx-row-total,
@@ -745,54 +786,63 @@ details[open] > .customer-behavior-summary::after{
   background:#FFF0EC;
   border:1px solid #FFF0EC;
 }
-/* Financial health — composition for existing dash-health markup */
+/* Financial health — three compact data surfaces (not buttons) */
 .dash-health{
   margin-bottom:20px;
 }
 .dash-health-surface{
-  display:flex;
-  flex-direction:column;
-  gap:0;
-  background:#FFFFFF;
-  border:1px solid rgba(31,41,55,.08);
-  border-radius:16px;
-  box-shadow:0 3px 10px rgba(26,38,52,.04);
-  overflow:hidden;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  background:transparent;
+  border:none;
+  box-shadow:none;
+  overflow:visible;
 }
 .dash-health-row{
   display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:13px 14px;
-  border-bottom:1px solid rgba(31,41,55,.05);
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:4px;
+  padding:11px 12px;
+  min-height:64px;
+  background:#FFFFFF;
+  border:1px solid rgba(31,41,55,.08);
+  border-radius:14px;
+  box-shadow:0 2px 8px rgba(26,38,52,.04);
   text-decoration:none;
   color:inherit;
-  min-height:48px;
-}
-.dash-health-row:last-child{
-  border-bottom:none;
 }
 .dash-health-label{
-  font-size:.72rem;
+  font-size:.66rem;
   font-weight:600;
   color:#667085;
-  line-height:1.35;
+  line-height:1.3;
 }
 .dash-health-value{
-  font-size:1.02rem;
+  font-size:.95rem;
   font-weight:800;
   color:#1F2937;
   font-variant-numeric:tabular-nums;
   letter-spacing:-.2px;
-  line-height:1.3;
+  line-height:1.25;
   white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%;
 }
 .dash-health-value.debt{
   color:#D52B36;
 }
 .dash-health-link:active{
-  background:rgba(31,41,55,.03);
+  transform:scale(.98);
+  background:#F8FAFC;
+}
+@media(max-width:360px){
+  .dash-health-surface{gap:5px;}
+  .dash-health-row{padding:10px 8px;min-height:60px;}
+  .dash-health-value{font-size:.88rem;}
 }
 /* Monthly target block */
 .dash-target-block{
