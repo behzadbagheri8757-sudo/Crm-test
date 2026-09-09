@@ -284,7 +284,7 @@ main .empty{
 .bottom-nav-item.active .bn-ico{
   color:#0070D2;
 }
-/* Single persistent solid ice jelly — covers icon+label; not circle/ring/pill. */
+/* Single persistent transparent-ice jelly — covers icon+label; not circle/ring/pill. */
 .bn-indicator{
   position:absolute;
   left:0;
@@ -295,23 +295,55 @@ main .empty{
   border-radius:16px;
   pointer-events:none;
   z-index:0;
-  opacity:0;
+  opacity:1;
   box-sizing:border-box;
   isolation:isolate;
   overflow:visible;
-  /* Solid icy blue (Aqua/Icy) */
-  background: #D9ECFA;
-  /* Subtle outer shadow only */
-  box-shadow:0 2px 8px rgba(26,38,52,.06);
+  /* Highly transparent, near-neutral surface with an extremely subtle icy tint (like clear water) */
+  background: rgba(245, 249, 252, 0.45);
+  /* Very subtle border to define the surface without glass effect */
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  /* Subtle outer shadow only for separation from the nav */
+  box-shadow: 0 2px 8px rgba(26,38,52,.06);
   transform:translate3d(0,0,0) scale(1,1);
   transform-origin:center center;
   will-change:transform;
 }
 .bn-indicator.is-traveling{
-  background: #D9ECFA;
+  background: rgba(245, 249, 252, 0.45);
 }
 .bn-indicator.is-settling{
-  background: #D9ECFA;
+  background: rgba(245, 249, 252, 0.45);
+}
+/* Internal refraction / highlight */
+.bn-indicator::before{
+  content:"";
+  position:absolute;
+  inset:4px 5px 10px 5px;
+  border-radius:12px 13px 10px 11px;
+  background:
+    linear-gradient(160deg,
+      rgba(255,255,255,.35) 0%,
+      rgba(230,240,248,.05) 50%,
+      transparent 100%);
+  pointer-events:none;
+  z-index:0;
+}
+/* Soft bottom thickness cue */
+.bn-indicator::after{
+  content:"";
+  position:absolute;
+  left:6px;
+  right:6px;
+  bottom:4px;
+  height:40%;
+  border-radius:0 0 11px 11px;
+  background:
+    linear-gradient(180deg,
+      transparent 0%,
+      rgba(40,70,100,.02) 100%);
+  pointer-events:none;
+  z-index:0;
 }
 
 /* More menu (composition + visibility) */
