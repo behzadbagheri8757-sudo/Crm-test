@@ -3559,3 +3559,340 @@ a.ledger-row:active,
     transition:none!important;
   }
 }
+
+/* ==========================================================================
+   FINAL UI/UX PATCH (Issues 1–24 + Jelly) — minimal, composition-only
+   ========================================================================== */
+
+/* 1 — Customers: status badge alignment between name and financials */
+.customer-list-row{
+  align-items:center;
+}
+.customer-row-status{
+  align-self:center;
+  flex-shrink:0;
+  white-space:nowrap;
+  max-width:5.5rem;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.customer-row-watch,
+.customer-row-watch-placeholder{
+  align-self:center;
+}
+
+/* 2 — Products: reduce visual weight of total value */
+.product-row-value .tx-row-total{
+  font-size:.82rem;
+  font-weight:700;
+  color:#4B5563;
+}
+.product-row-value .product-row-label{
+  font-size:.6rem;
+}
+
+/* 3 — Product detail profit % readability */
+.product-profit-pct{
+  padding:6px 10px;
+  margin:0 0 10px;
+  font-size:.88rem;
+  font-weight:700;
+  color:#1F2937;
+  text-align:right;
+  background:rgba(0,112,210,.06);
+  border-radius:10px;
+}
+
+/* 4 — Price history spacing */
+.product-price-history .ledger-row{
+  padding:8px 2px;
+  min-height:40px;
+  align-items:flex-start;
+  gap:8px;
+}
+.product-price-history .ledger-row .amount{
+  font-size:.78rem;
+  font-weight:600;
+  white-space:normal;
+  text-align:left;
+  line-height:1.4;
+  max-width:62%;
+}
+
+/* 6 — Inventory summary hierarchy: value card slightly quieter */
+#main .cards .card .value{
+  font-weight:700;
+}
+.inv-summary-quiet .value{
+  font-size:.95rem;
+  font-weight:700;
+  color:#4B5563;
+}
+
+/* 7 — Supplier payment delete: smaller, less aggressive */
+.tx-list .btn.danger.small.tx-status-btn,
+.tx-row .btn.danger.small[data-sup-pay-del]{
+  min-height:32px;
+  padding:4px 8px;
+  font-size:.72rem;
+  border-radius:8px;
+}
+
+/* 8 — Return purchase qty inputs */
+.ret-item-qty{
+  min-height:40px;
+  padding:8px 10px;
+  font-size:.9rem;
+}
+
+/* 9 — Visits primaryCtx single-line clamp */
+.tx-row-ctx{
+  display:block;
+  max-width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  line-height:1.35;
+}
+
+/* 10 — Visit product compact grid */
+.visit-product-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(108px, 1fr));
+  gap:6px;
+}
+.visit-product-grid .chip-opt{
+  width:100%;
+  min-height:40px;
+  padding:8px 6px;
+  font-size:.78rem;
+  font-weight:700;
+  text-align:center;
+  line-height:1.25;
+  border-radius:10px;
+  white-space:normal;
+  word-break:break-word;
+}
+
+/* 11 — Evaluation answer chips compact */
+.eval-q-options .eval-q-opt,
+.chip-wrap.eval-q-options .chip-opt,
+.eval-q-opt{
+  min-height:40px;
+  padding:8px 12px;
+  font-size:.84rem;
+  border-radius:10px;
+}
+.eval-q-options{
+  gap:6px;
+}
+
+/* 12 — Prospect score less dominant */
+.field-score-row{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  margin-top:8px;
+}
+.field-score-value{
+  font-size:1.35rem;
+  font-weight:800;
+  color:#1F2937;
+  letter-spacing:-.3px;
+  line-height:1.2;
+}
+.field-score-meta{
+  font-size:.78rem;
+  font-weight:600;
+  color:#667085;
+}
+
+/* 13–16 — Monthly target: layering, light surface, spacing, bar */
+.dash-target-block{
+  position:relative;
+  z-index:1;
+}
+.dash-target-fab-row{
+  z-index:3;
+}
+.dash-monthly-target{
+  position:relative;
+  z-index:1;
+  background:rgba(255,255,255,.88);
+  border:.5px solid rgba(60,60,67,.1);
+  box-shadow:0 1px 2px rgba(0,0,0,.03),0 4px 14px rgba(0,0,0,.045);
+}
+.dmt-top{
+  margin-bottom:6px;
+}
+.dmt-figures{
+  margin:0 0 8px;
+  line-height:1.35;
+}
+.dmt-row{
+  gap:10px;
+  margin-top:2px;
+}
+.dmt-progress{
+  position:relative;
+  z-index:0;
+}
+.dmt-bar{
+  height:6px;
+  border-radius:999px;
+  background:rgba(60,60,67,.1);
+  overflow:hidden;
+}
+.dmt-bar>span{
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background:#FF5C35;
+  min-width:0;
+}
+.dmt-pct{
+  font-size:1rem;
+  font-weight:800;
+  min-width:2.2em;
+}
+.dmt-status-row{
+  margin-top:8px;
+  gap:6px;
+}
+
+/* 17–18 — Reports notes + profit hierarchy */
+.report-note{
+  font-size:.72rem;
+  line-height:1.45;
+  color:#667085;
+  margin-top:6px;
+}
+.report-profit-primary .value{
+  font-size:1.12rem;
+  font-weight:800;
+}
+.report-profit-secondary .value{
+  font-size:.95rem;
+  font-weight:700;
+  color:#4B5563;
+}
+.report-profit-secondary .label{
+  font-weight:600;
+}
+
+/* 19 — Settings warn lighter */
+.settings-warn{
+  padding:8px 10px;
+  font-size:.76rem;
+  line-height:1.5;
+  color:#9A5B00;
+  background:rgba(245,161,49,.08);
+  border:1px solid rgba(245,161,49,.18);
+  border-radius:8px;
+}
+
+/* 20 — File input alignment */
+#import-file,
+input[type="file"]#import-file{
+  display:block;
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+  padding:10px 12px;
+  min-height:44px;
+  font-family:inherit;
+  font-size:.84rem;
+  color:#1F2937;
+  background:#F8FAFC;
+  border:1px solid rgba(31,41,55,.1);
+  border-radius:12px;
+}
+
+/* 21 — save-tx as standard primary button (not FAB) */
+#save-tx.btn,
+button#save-tx{
+  width:100%;
+  min-height:48px;
+  border-radius:12px;
+  font-size:.95rem;
+  font-weight:700;
+}
+
+/* 22 — Invoice product selector: compact plain (empty state already pill; selected is plain) */
+.inv-line:not(.inv-line-empty) .inv-line-name{
+  font-size:.92rem;
+  font-weight:700;
+}
+
+/* 23 — Invoice profit privacy: blur by default, reveal on tap */
+.inv-row-profit-line{
+  cursor:pointer;
+  user-select:none;
+  -webkit-user-select:none;
+  margin-bottom:6px;
+}
+.inv-row-profit-line .inv-profit-private{
+  filter:blur(5px);
+  transition:filter .15s ease;
+}
+.inv-row-profit-line.is-revealed .inv-profit-private{
+  filter:none;
+}
+.inv-row-meta{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:4px;
+  margin-top:4px;
+}
+
+/* 24 — Invoice qty × price × delete: stable narrow layout */
+.inv-line-sub{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:8px;
+  flex-wrap:nowrap;
+}
+.inv-line-qtyrate{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  flex:1 1 auto;
+  min-width:0;
+  flex-wrap:nowrap;
+}
+.inv-line-del{
+  flex:0 0 32px;
+  width:32px;
+  height:32px;
+  min-width:32px;
+  margin-inline-start:4px;
+}
+.inv-mini-input{
+  width:44px;
+  min-width:40px;
+  flex:0 0 auto;
+}
+.inv-mini-input-price{
+  width:84px;
+  min-width:72px;
+}
+@media(max-width:360px){
+  .inv-mini-input{ width:40px; }
+  .inv-mini-input-price{ width:72px; }
+  .inv-line-del{ width:30px; height:30px; min-width:30px; flex-basis:30px; }
+}
+
+/* Jelly: slightly more visible (alpha + subtle icy tint only) */
+.bn-indicator{
+  background: rgba(236, 246, 252, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.78);
+}
+.bn-indicator.is-traveling{
+  background: rgba(236, 246, 252, 0.58);
+}
+.bn-indicator.is-settling{
+  background: rgba(236, 246, 252, 0.58);
+}
