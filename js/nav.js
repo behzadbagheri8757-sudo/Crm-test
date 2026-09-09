@@ -236,17 +236,18 @@ function positionBnIndicator(bar, animate){
   var ico = active.querySelector('.bn-ico') || active;
   var barRect = bar.getBoundingClientRect();
   var icoRect = ico.getBoundingClientRect();
-  /* Compact rounded-square volume, slightly larger than icon, smaller than tab */
-  var size = 34;
-  var left = icoRect.left - barRect.left + (icoRect.width - size) / 2;
-  var top = icoRect.top - barRect.top + (icoRect.height - size) / 2 - 1;
+  /* Compact organic rounded-square volume (~slightly larger than icon) */
+  var w = 36;
+  var h = 34;
+  var left = icoRect.left - barRect.left + (icoRect.width - w) / 2;
+  var top = icoRect.top - barRect.top + (icoRect.height - h) / 2 - 1;
   var reduceMotion = false;
   try{
     reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }catch(_e){}
 
-  ind.style.width = size + 'px';
-  ind.style.height = size + 'px';
+  ind.style.width = w + 'px';
+  ind.style.height = h + 'px';
   ind.style.opacity = '1';
 
   var prevLeft = _bnIndicatorState.left;
@@ -277,28 +278,28 @@ function positionBnIndicator(bar, animate){
 
   var dx = left - prevLeft;
   var dist = Math.abs(dx);
-  /* Subtle stretch proportional to travel distance (capped) */
-  var stretch = Math.min(1.22, 1 + dist / 220);
+  /* Perceptible but restrained stretch along travel direction */
+  var stretch = Math.min(1.34, 1 + dist / 180);
 
   _bnIndicatorState.animating = true;
 
-  /* Phase 1: slight compress at origin */
+  /* Phase 1: slight compress at origin (~110ms) */
   ind.style.transition = 'transform 110ms cubic-bezier(.22,1,.36,1)';
   ind.classList.add('is-traveling');
-  ind.style.transform = 'translate3d(' + prevLeft + 'px,' + prevTop + 'px,0) scale(' + (0.92 * stretch) + ',' + (0.92 / Math.sqrt(stretch)) + ')';
+  ind.style.transform = 'translate3d(' + prevLeft + 'px,' + prevTop + 'px,0) scale(' + (0.9 * stretch) + ',' + (0.9 / Math.sqrt(stretch)) + ')';
 
   requestAnimationFrame(function(){
     requestAnimationFrame(function(){
-      /* Phase 2: travel with elongation toward destination */
+      /* Phase 2: travel with elongation (~320ms) */
       ind.style.transition = 'transform 320ms cubic-bezier(.22,1.05,.36,1)';
       ind.style.transform = 'translate3d(' + left + 'px,' + top + 'px,0) scale(' + stretch + ',' + (1 / Math.sqrt(stretch)) + ')';
 
       ind._bnSettleTimer = setTimeout(function(){
-        /* Phase 3: soft overshoot settle into compact form */
-        ind.style.transition = 'transform 160ms cubic-bezier(.22,1.12,.36,1)';
-        ind.style.transform = 'translate3d(' + left + 'px,' + top + 'px,0) scale(1.04,0.97)';
+        /* Phase 3: soft overshoot then settle into compact jelly */
+        ind.style.transition = 'transform 150ms cubic-bezier(.22,1.14,.36,1)';
+        ind.style.transform = 'translate3d(' + left + 'px,' + top + 'px,0) scale(1.06,0.96)';
         ind._bnSettleTimer = setTimeout(function(){
-          ind.style.transition = 'transform 140ms cubic-bezier(.22,1,.36,1)';
+          ind.style.transition = 'transform 130ms cubic-bezier(.22,1,.36,1)';
           ind.classList.remove('is-traveling');
           ind.classList.add('is-settling');
           ind.style.transform = 'translate3d(' + left + 'px,' + top + 'px,0) scale(1,1)';
@@ -309,9 +310,9 @@ function positionBnIndicator(bar, animate){
             _bnIndicatorState.top = top;
             _bnIndicatorState.animating = false;
             ind._bnSettleTimer = null;
-          }, 150);
-        }, 150);
-      }, 310);
+          }, 140);
+        }, 145);
+      }, 300);
     });
   });
 }
