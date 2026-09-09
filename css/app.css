@@ -1803,6 +1803,11 @@ button.inv-header-save.btn{
 .inv-payment-action-icon svg{
   width:20px;
   height:20px;
+  display:block;
+  stroke:currentColor;
+  stroke-width:1.7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
 }
 .inv-payment-panel{
   position:fixed;
@@ -3226,5 +3231,252 @@ button.inv-header-save.btn{
   }
   body{
     background:#fff!important;
+  }
+}
+
+/* ============================================================================
+   iOS 26 / LIQUID-GLASS INTERACTION POLISH — TEST ONLY
+   Interaction layer only. Visual Grammar geometry remains the source of truth.
+   Timing targets: ~120ms touch response, ~220-260ms navigation/presentation,
+   ~360ms spring-like active-state settling.
+   ============================================================================ */
+
+:root{
+  --ios-ease-out:cubic-bezier(.22,1,.36,1);
+  --ios-ease-spring:cubic-bezier(.22,1.18,.36,1);
+  --ios-touch:120ms;
+  --ios-control:180ms;
+  --ios-route:240ms;
+  --ios-glass:rgba(255,255,255,.72);
+  --ios-glass-border:rgba(255,255,255,.58);
+}
+
+/* Route changes: short, directional-feeling materialization rather than a fade-only flash. */
+main.route-transition{
+  animation:iosRouteEnter var(--ios-route) var(--ios-ease-out) both;
+  will-change:opacity,transform;
+}
+@keyframes iosRouteEnter{
+  from{opacity:.72;transform:translateY(5px) scale(.995);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+
+/* Floating navigation: more dynamic glass, but still restrained. */
+.bottom-nav{
+  background:rgba(255,255,255,.76);
+  border-color:rgba(255,255,255,.68);
+  backdrop-filter:saturate(185%) blur(24px);
+  -webkit-backdrop-filter:saturate(185%) blur(24px);
+  box-shadow:0 10px 30px rgba(26,38,52,.13),
+             0 2px 6px rgba(26,38,52,.055),
+             inset 0 1px 0 rgba(255,255,255,.72);
+}
+.bottom-nav-item{
+  position:relative;
+  isolation:isolate;
+  overflow:visible;
+  transition:color var(--ios-control) var(--ios-ease-out),
+             transform var(--ios-touch) var(--ios-ease-out),
+             opacity var(--ios-touch) ease;
+}
+.bottom-nav-item::before{
+  content:"";
+  position:absolute;
+  inset:3px 5px;
+  z-index:-1;
+  border-radius:18px;
+  background:rgba(0,112,210,.105);
+  border:1px solid rgba(255,255,255,.42);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.52),
+             0 2px 8px rgba(0,112,210,.055);
+  opacity:0;
+  transform:scale(.72);
+  transform-origin:center;
+}
+.bottom-nav-item.active::before{
+  opacity:1;
+  transform:scale(1);
+  animation:iosTabMaterialize 360ms var(--ios-ease-spring) both;
+}
+.bottom-nav-item.active .bn-ico{
+  animation:iosTabIconSettle 340ms var(--ios-ease-spring) both;
+}
+@keyframes iosTabMaterialize{
+  0%{opacity:0;transform:scale(.72);}
+  55%{opacity:1;transform:scale(1.045);}
+  78%{transform:scale(.985);}
+  100%{opacity:1;transform:scale(1);}
+}
+@keyframes iosTabIconSettle{
+  0%{transform:scale(.86);}
+  55%{transform:scale(1.08);}
+  100%{transform:scale(1);}
+}
+.bottom-nav-item:active{
+  transform:scale(.965);
+  opacity:.84;
+}
+
+/* Buttons and capsules: immediate tactile response, then a slightly longer material settle. */
+.btn{
+  transition:transform var(--ios-touch) var(--ios-ease-out),
+             box-shadow var(--ios-control) var(--ios-ease-out),
+             background-color var(--ios-control) ease,
+             border-color var(--ios-control) ease;
+}
+.btn:active{
+  transform:scale(.975) translateY(1px);
+}
+.btn.secondary,
+.chip,
+.chip-opt,
+.gc-seg-btn,
+.tx-toolbar-select,
+input[type="search"],
+input[placeholder*="جستجو"]{
+  background:var(--ios-glass);
+  border-color:var(--ios-glass-border);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62),
+             0 1px 3px rgba(26,38,52,.035);
+  backdrop-filter:saturate(150%) blur(12px);
+  -webkit-backdrop-filter:saturate(150%) blur(12px);
+}
+.chip,
+.chip-opt,
+.gc-seg-btn{
+  transition:transform var(--ios-touch) var(--ios-ease-out),
+             background-color var(--ios-control) ease,
+             border-color var(--ios-control) ease,
+             color var(--ios-control) ease,
+             box-shadow var(--ios-control) var(--ios-ease-out);
+}
+.chip:active,
+.chip-opt:active,
+.gc-seg-btn:active{
+  transform:scale(.975);
+}
+
+/* Search controls: focused but not over-decorated. */
+input[type="search"],
+input[placeholder*="جستجو"]{
+  transition:transform var(--ios-touch) var(--ios-ease-out),
+             border-color var(--ios-control) ease,
+             box-shadow var(--ios-control) var(--ios-ease-out),
+             background-color var(--ios-control) ease;
+}
+input[type="search"]:focus,
+input[placeholder*="جستجو"]:focus{
+  border-color:rgba(0,112,210,.34);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72),
+             0 0 0 3px rgba(0,112,210,.075),
+             0 4px 14px rgba(0,112,210,.045);
+}
+
+/* Icon controls and floating action button get the same native-feeling tap response. */
+.close-x,
+.icon-btn,
+.icon-button,
+.fab,
+button.app-back,
+.prospect-daily-target .pdt-edit{
+  transition:transform var(--ios-touch) var(--ios-ease-out),
+             background-color var(--ios-control) ease,
+             box-shadow var(--ios-control) var(--ios-ease-out),
+             opacity var(--ios-touch) ease;
+}
+.close-x:active,
+.icon-btn:active,
+.icon-button:active,
+.fab:active,
+button.app-back:active,
+.prospect-daily-target .pdt-edit:active{
+  transform:scale(.95);
+}
+
+/* Only interactive cards/list rows lift on touch; static cards remain calm. */
+a.card:active,
+button.card:active,
+[role="button"].card:active,
+a.tx-row:active,
+a.ledger-row:active,
+.customer-list-row:active,
+.gc-mission:active{
+  transform:scale(.992);
+  box-shadow:0 5px 16px rgba(26,38,52,.065);
+  transition:transform var(--ios-touch) var(--ios-ease-out),
+             box-shadow var(--ios-control) var(--ios-ease-out),
+             background-color var(--ios-touch) ease;
+}
+
+/* More sheet / modal presentation: same short spring family as native sheets. */
+.more-overlay{
+  transition:opacity 220ms var(--ios-ease-out);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
+.more-sheet{
+  transition:transform 270ms var(--ios-ease-spring),
+             box-shadow 220ms var(--ios-ease-out);
+  background:rgba(255,255,255,.88);
+  backdrop-filter:saturate(170%) blur(22px);
+  -webkit-backdrop-filter:saturate(170%) blur(22px);
+  box-shadow:0 -12px 34px rgba(31,41,55,.12),
+             inset 0 1px 0 rgba(255,255,255,.7);
+}
+.more-sheet-item{
+  transition:transform var(--ios-touch) var(--ios-ease-out),
+             background-color var(--ios-control) ease,
+             border-color var(--ios-control) ease,
+             box-shadow var(--ios-control) var(--ios-ease-out);
+}
+.more-sheet-item:active{
+  transform:scale(.985);
+  background:rgba(247,248,250,.9);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+/* Dashboard quick actions: slightly larger icon material + glass surface. */
+.dash-qa-btn{
+  transition:transform var(--ios-touch) var(--ios-ease-out),
+             box-shadow var(--ios-control) var(--ios-ease-out),
+             background-color var(--ios-control) ease;
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(255,255,255,.62);
+  backdrop-filter:saturate(165%) blur(14px);
+  -webkit-backdrop-filter:saturate(165%) blur(14px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),
+             0 3px 12px rgba(26,38,52,.055);
+}
+.dash-qa-btn:active{
+  transform:scale(.965) translateY(1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),
+             0 1px 5px rgba(26,38,52,.06);
+}
+.dash-qa-ico{
+  width:34px;
+  height:34px;
+  background:rgba(0,112,210,.10);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+}
+.dash-qa-ico svg{
+  width:18px;
+  height:18px;
+}
+
+/* Cards: slightly more elevated, without turning the content layer into glass. */
+.card,
+.report-summary-card,
+.gc-panel,
+.prospect-result-card{
+  box-shadow:0 2px 10px rgba(26,38,52,.045),
+             0 1px 2px rgba(26,38,52,.025);
+}
+
+/* Respect reduced-motion users; iOS does the same for motion-sensitive settings. */
+@media (prefers-reduced-motion:reduce){
+  main.route-transition,
+  .bottom-nav-item.active::before,
+  .bottom-nav-item.active .bn-ico{
+    animation:none!important;
   }
 }
