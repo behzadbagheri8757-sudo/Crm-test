@@ -668,7 +668,7 @@ a.tx-row:active{
 }
 .customer-row-balance-value{
   font-size:.86rem;
-  font-weight:900;
+  font-weight: var(--fw-value-strong, 700);
   white-space:nowrap;
 }
 
@@ -1436,6 +1436,20 @@ details[open] > .customer-behavior-summary::after{
 .customer-list-row{
   /* composition already defined above */
 }
+/* Scoped visual polish for Customers list rows */
+#customer-list .customer-list-row .name{
+  font-weight: var(--fw-value, 600);
+}
+
+/* Scoped visual polish for Customer Detail data rows */
+#main.customer-detail-view .tx-row-title{
+  font-weight: var(--fw-value, 600);
+}
+
+#main.customer-detail-view .tx-row-total{
+  font-weight: var(--fw-value-strong, 700);
+}
+
 /* (No extra needed - all rules covered) */
 
 /* --------------------------------------------------------------------------
