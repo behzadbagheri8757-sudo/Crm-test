@@ -114,7 +114,8 @@ function ensureBottomNavDOM(){
     bar.className = 'bottom-nav';
     bar.setAttribute('aria-label', 'منوی پایین');
     document.body.appendChild(bar);
-  }  if(!document.getElementById('more-sheet-root')){
+  }
+  if(!document.getElementById('more-sheet-root')){
     const root = document.createElement('div');
     root.id = 'more-sheet-root';
     root.innerHTML = `
@@ -178,7 +179,6 @@ function pinBottomNav(){
   }catch(e){
     /* ignore — bar still uses CSS bottom:0 */
   }
-  repositionBnIndicator();
 }
 
 function ensureBottomNavPinned(){
@@ -191,6 +191,11 @@ function ensureBottomNavPinned(){
     requestAnimationFrame(function(){
       ticking = false;
       pinBottomNav();
+      /* Reposition indicator without animation on viewport changes */
+      var bar = document.getElementById('bottom-nav');
+      if(bar && typeof positionBnIndicator === 'function'){
+        positionBnIndicator(bar, false);
+      }
     });
   }
   window.addEventListener('resize', schedule, {passive:true});
@@ -205,69 +210,110 @@ function ensureBottomNavPinned(){
   }, {passive:true});
 }
 
-/* --------------------------------------------------------------------------
-   Bottom nav — single persistent liquid-glass indicator (section 11).
-   One DOM node, created once, moved (not recreated) into the bar on every
-   render, and animated between tab positions with a spring transition.
-   -------------------------------------------------------------------------- */
-let _bnIndicatorEl = null;
-let _bnIndicatorPositionedOnce = false;
+/* Single persistent liquid/glass indicator for bottom nav.
+   One element moves between tabs; not per-item backgrounds. */
+var _bnIndicatorState = { left: null, top: null, ready: false, animating: false };
 
-function getBnIndicator(){
-  if(!_bnIndicatorEl){
-    _bnIndicatorEl = document.createElement('div');
-    _bnIndicatorEl.className = 'bn-indicator';
-    _bnIndicatorEl.setAttribute('aria-hidden', 'true');
+function ensureBnIndicator(bar){
+  var ind = bar.querySelector('.bn-indicator');
+  if(!ind){
+    ind = document.createElement('span');
+    ind.className = 'bn-indicator';
+    ind.setAttribute('aria-hidden', 'true');
+    bar.insertBefore(ind, bar.firstChild);
   }
-  return _bnIndicatorEl;
+  return ind;
 }
 
-function prefersReducedMotion(){
-  try{
-    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  }catch(e){
-    return false;
-  }
-}
-
-/** Move+resize the single indicator onto activeEl's icon. jump=true skips the spring transition (first paint, resize/orientation snaps). */
-function positionBnIndicator(activeEl, jump){
-  const bar = document.getElementById('bottom-nav');
-  const indicator = _bnIndicatorEl;
-  if(!bar || !indicator) return;
-  if(!activeEl){
-    indicator.classList.remove('is-ready');
+function positionBnIndicator(bar, animate){
+  if(!bar) return;
+  var ind = ensureBnIndicator(bar);
+  var active = bar.querySelector('.bottom-nav-item.active');
+  if(!active){
+    ind.style.opacity = '0';
     return;
   }
-  const icon = activeEl.querySelector('.bn-ico') || activeEl;
-  const iconBox = icon.getBoundingClientRect();
-  const barBox = bar.getBoundingClientRect();
-  if(iconBox.width === 0 && iconBox.height === 0) return; // not laid out yet
+  var ico = active.querySelector('.bn-ico') || active;
+  var barRect = bar.getBoundingClientRect();
+  var icoRect = ico.getBoundingClientRect();
+  /* Compact rounded-square volume, slightly larger than icon, smaller than tab */
+  var size = 34;
+  var left = icoRect.left - barRect.left + (icoRect.width - size) / 2;
+  var top = icoRect.top - barRect.top + (icoRect.height - size) / 2 - 1;
+  var reduceMotion = false;
+  try{
+    reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }catch(_e){}
 
-  const size = Math.round(Math.max(iconBox.width, iconBox.height) + 20);
-  const centerX = iconBox.left + iconBox.width / 2 - barBox.left;
-  const centerY = iconBox.top + iconBox.height / 2 - barBox.top;
-  const x = Math.round(centerX - size / 2);
-  const y = Math.round(centerY - size / 2);
+  ind.style.width = size + 'px';
+  ind.style.height = size + 'px';
+  ind.style.opacity = '1';
 
-  const shouldJump = !!jump || !_bnIndicatorPositionedOnce || prefersReducedMotion();
-  indicator.classList.toggle('is-jump', shouldJump);
-  indicator.style.width = size + 'px';
-  indicator.style.height = size + 'px';
-  indicator.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+  var prevLeft = _bnIndicatorState.left;
+  var prevTop = _bnIndicatorState.top;
+  var canAnimate = animate && _bnIndicatorState.ready && !reduceMotion &&
+    prevLeft !== null && Math.abs(prevLeft - left) > 1;
+
+  if(ind._bnSettleTimer){
+    try{ clearTimeout(ind._bnSettleTimer); }catch(_e2){}
+    ind._bnSettleTimer = null;
+  }
+
+  if(!canAnimate){
+    ind.classList.remove('is-traveling', 'is-settling');
+    ind.style.transition = 'none';
+    ind.style.transform = 'translate3d(' + left + 'px,' + top + 'px,0) scale(1,1)';
+    _bnIndicatorState.left = left;
+    _bnIndicatorState.top = top;
+    _bnIndicatorState.ready = true;
+    _bnIndicatorState.animating = false;
+    return;
+  }
+
+  if(_bnIndicatorState.animating){
+    ind.style.transition = 'none';
+    ind.classList.remove('is-traveling', 'is-settling');
+  }
+
+  var dx = left - prevLeft;
+  var dist = Math.abs(dx);
+  /* Subtle stretch proportional to travel distance (capped) */
+  var stretch = Math.min(1.22, 1 + dist / 220);
+
+  _bnIndicatorState.animating = true;
+
+  /* Phase 1: slight compress at origin */
+  ind.style.transition = 'transform 110ms cubic-bezier(.22,1,.36,1)';
+  ind.classList.add('is-traveling');
+  ind.style.transform = 'translate3d(' + prevLeft + 'px,' + prevTop + 'px,0) scale(' + (0.92 * stretch) + ',' + (0.92 / Math.sqrt(stretch)) + ')';
 
   requestAnimationFrame(function(){
-    indicator.classList.add('is-ready');
-  });
-  _bnIndicatorPositionedOnce = true;
-}
+    requestAnimationFrame(function(){
+      /* Phase 2: travel with elongation toward destination */
+      ind.style.transition = 'transform 320ms cubic-bezier(.22,1.05,.36,1)';
+      ind.style.transform = 'translate3d(' + left + 'px,' + top + 'px,0) scale(' + stretch + ',' + (1 / Math.sqrt(stretch)) + ')';
 
-/** Re-snap the indicator to whichever tab is currently active (resize/orientation/keyboard). */
-function repositionBnIndicator(){
-  const bar = document.getElementById('bottom-nav');
-  if(!bar) return;
-  const active = bar.querySelector('.bottom-nav-item.active');
-  if(active) positionBnIndicator(active, true);
+      ind._bnSettleTimer = setTimeout(function(){
+        /* Phase 3: soft overshoot settle into compact form */
+        ind.style.transition = 'transform 160ms cubic-bezier(.22,1.12,.36,1)';
+        ind.style.transform = 'translate3d(' + left + 'px,' + top + 'px,0) scale(1.04,0.97)';
+        ind._bnSettleTimer = setTimeout(function(){
+          ind.style.transition = 'transform 140ms cubic-bezier(.22,1,.36,1)';
+          ind.classList.remove('is-traveling');
+          ind.classList.add('is-settling');
+          ind.style.transform = 'translate3d(' + left + 'px,' + top + 'px,0) scale(1,1)';
+          ind._bnSettleTimer = setTimeout(function(){
+            ind.classList.remove('is-settling');
+            ind.style.transition = 'none';
+            _bnIndicatorState.left = left;
+            _bnIndicatorState.top = top;
+            _bnIndicatorState.animating = false;
+            ind._bnSettleTimer = null;
+          }, 150);
+        }, 150);
+      }, 310);
+    });
+  });
 }
 
 function renderBottomNav(activeId){
@@ -276,6 +322,9 @@ function renderBottomNav(activeId){
   if(!bar) return;
   const moreActive = isMoreSectionActive(activeId);
   const spa = isSpaShell();
+
+  /* Preserve single indicator across re-renders */
+  var prevInd = bar.querySelector('.bn-indicator');
   bar.innerHTML = BOTTOM_NAV_ITEMS.map(t => {
     let active = false;
     if(t.id === 'more') active = moreActive;
@@ -294,6 +343,11 @@ function renderBottomNav(activeId){
       <span class="bn-label">${t.label}</span>
     </a>`;
   }).join('');
+  if(prevInd){
+    bar.insertBefore(prevInd, bar.firstChild);
+  } else {
+    ensureBnIndicator(bar);
+  }
 
   if (spa) {
     bar.querySelectorAll('a[data-spa-path]').forEach(function (a) {
@@ -317,18 +371,14 @@ function renderBottomNav(activeId){
 
   fillMoreSheetList(activeId);
 
-  // Re-parent the SAME indicator node into the freshly-built bar (innerHTML
-  // above just destroyed any previous copy of it) instead of creating a new
-  // one, so it is one persistent object that moves — never disappears and
-  // rematerializes on the destination tab.
-  bar.appendChild(getBnIndicator());
-  const activeItemEl = bar.querySelector('.bottom-nav-item.active');
-  requestAnimationFrame(function(){
-    positionBnIndicator(activeItemEl, false);
-  });
-
   ensureBottomNavPinned();
   pinBottomNav();
+
+  /* Position jelly indicator after layout. Animate only when tab actually changes. */
+  var shouldAnimate = _bnIndicatorState.ready;
+  requestAnimationFrame(function(){
+    positionBnIndicator(bar, shouldAnimate);
+  });
 }
 
 function fillMoreSheetList(activeId){
