@@ -153,12 +153,16 @@
           customerHref(c.id) +
           '" style="text-decoration:none;color:inherit;"' +
           (watchTitle ? ' title="' + esc(watchTitle) + '"' : '') + '>' +
-          '<span class="name">' +
-          esc(c.name) +
+          '<span class="customer-row-main">' +
+          '<span class="customer-row-title-line">' +
+          '<span class="customer-row-name">' + esc(c.name) + '</span>' +
+          '<span class="customer-row-status badge tone-' + badgeTone + '">' + esc(badgeLabel) + '</span>' +
+          (watchCount > 0
+            ? '<span class="customer-row-watch" aria-label="هشدار فعال" title="' + esc(watchTitle) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></span>'
+            : '') +
+          '</span>' +
           '<span class="sub customer-row-meta">' + esc(daysText) + '</span>' +
           '</span>' +
-          '<span class="customer-row-status badge tone-' + badgeTone + '">' + esc(badgeLabel) + '</span>' +
-          (watchCount > 0 ? '<span class="customer-row-watch" aria-label="هشدار فعال" title="' + esc(watchTitle) + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5 20 19H4L12 4.5Z"></path><path d="M12 9v4.5M12 16.5h.01"></path></svg></span>' : '<span class="customer-row-watch-placeholder" aria-hidden="true"></span>') +
           '<span class="customer-row-balance ' + color + '">' +
           '<span class="customer-row-balance-label">' + esc(word) + '</span>' +
           (t.balance !== 0 ? '<span class="customer-row-balance-value">' + toman(Math.abs(t.balance)) + ' ت</span>' : '') +
