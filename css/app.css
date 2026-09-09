@@ -299,23 +299,28 @@ main .empty{
   box-sizing:border-box;
   isolation:isolate;
   overflow:visible;
-  /* Highly transparent, near-neutral surface with an extremely subtle icy tint (like clear water) */
-  background: rgba(245, 249, 252, 0.45);
-  /* Very subtle border to define the surface without glass effect */
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  /* Subtle outer shadow only for separation from the nav */
-  box-shadow: 0 2px 8px rgba(26,38,52,.06);
+  /* Neutral translucent surface — present, watery, not blue/cyan */
+  background: rgba(247, 248, 250, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  /* Soft low elevation + faint inner top light */
+  box-shadow:
+    0 2px 10px rgba(26,38,52,.09),
+    0 1px 2px rgba(26,38,52,.04),
+    inset 0 1px 0 rgba(255,255,255,.72);
+  /* Very restrained translucency — clarity over blur */
+  -webkit-backdrop-filter: saturate(130%) blur(6px);
+  backdrop-filter: saturate(130%) blur(6px);
   transform:translate3d(0,0,0) scale(1,1);
   transform-origin:center center;
   will-change:transform;
 }
 .bn-indicator.is-traveling{
-  background: rgba(245, 249, 252, 0.45);
+  background: rgba(247, 248, 250, 0.72);
 }
 .bn-indicator.is-settling{
-  background: rgba(245, 249, 252, 0.45);
+  background: rgba(247, 248, 250, 0.72);
 }
-/* Internal refraction / highlight */
+/* Internal refraction / highlight — slightly clearer watery cue */
 .bn-indicator::before{
   content:"";
   position:absolute;
@@ -323,8 +328,8 @@ main .empty{
   border-radius:12px 13px 10px 11px;
   background:
     linear-gradient(160deg,
-      rgba(255,255,255,.35) 0%,
-      rgba(230,240,248,.05) 50%,
+      rgba(255,255,255,.48) 0%,
+      rgba(255,255,255,.08) 45%,
       transparent 100%);
   pointer-events:none;
   z-index:0;
@@ -341,7 +346,7 @@ main .empty{
   background:
     linear-gradient(180deg,
       transparent 0%,
-      rgba(40,70,100,.02) 100%);
+      rgba(26,38,52,.045) 100%);
   pointer-events:none;
   z-index:0;
 }
@@ -3985,14 +3990,20 @@ button#save-tx{
   .inv-line-del{ width:30px; height:30px; min-width:30px; flex-basis:30px; }
 }
 
-/* Jelly: slightly more visible (alpha + subtle icy tint only) */
+/* Jelly: alive, refined, restrained — neutral watery presence (no blue/cyan shift) */
 .bn-indicator{
-  background: rgba(236, 246, 252, 0.58);
-  border: 1px solid rgba(255, 255, 255, 0.78);
+  background: rgba(247, 248, 250, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 2px 10px rgba(26,38,52,.09),
+    0 1px 2px rgba(26,38,52,.04),
+    inset 0 1px 0 rgba(255,255,255,.72);
+  -webkit-backdrop-filter: saturate(130%) blur(6px);
+  backdrop-filter: saturate(130%) blur(6px);
 }
 .bn-indicator.is-traveling{
-  background: rgba(236, 246, 252, 0.58);
+  background: rgba(247, 248, 250, 0.72);
 }
 .bn-indicator.is-settling{
-  background: rgba(236, 246, 252, 0.58);
+  background: rgba(247, 248, 250, 0.72);
 }
