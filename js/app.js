@@ -1857,6 +1857,52 @@ function openCustomerDetail(cid){
   });
 }
 
+/* Invoice-linked payment/check persistence helpers.
+   These are the single source of truth for the payment records created by
+   Invoice V6.  They intentionally live with the invoice workflow because
+   invoice creation/edit/delete all depend on the same linkage contract. */
+function pushInvoicePayments(cid, inv, cashPaid, cardPaid, transferPaid, checkPaid, checkDue, checkMeta){
+  if(!inv || !inv.id || !cid) return;
+  data.payments = data.payments || [];
+  data.checks = data.checks || [];
+  const date = inv.date || todayISO();
+  const addPayment = function(method, amount){
+    amount = Number(amount)||0;
+    if(amount<=0) return;
+    data.payments.push({
+      id: uid(),
+      customerId: cid,
+      date,
+      amount,
+      method,
+      note: 'دریافت همراه فاکتور #'+(inv.number || '—'),
+      invoiceId: inv.id,
+    });
+  };
+  addPayment('cash', cashPaid);
+  addPayment('card', cardPaid);
+  addPayment('transfer', transferPaid);
+
+  const checkAmount = Number(checkPaid)||0;
+  if(checkAmount>0){
+    data.checks.push({
+      id: uid(),
+      customerId: cid,
+      amount: checkAmount,
+      dueDate: checkDue || date,
+      checkNumber: checkMeta && checkMeta.checkNumber ? checkMeta.checkNumber : '',
+      status: checkMeta && checkMeta.status ? checkMeta.status : 'pending',
+      invoiceId: inv.id,
+    });
+  }
+}
+
+function revertInvoicePayments(inv){
+  if(!inv || !inv.id) return;
+  data.payments = (data.payments||[]).filter(function(p){ return p.invoiceId !== inv.id; });
+  data.checks = (data.checks||[]).filter(function(c){ return c.invoiceId !== inv.id; });
+}
+
 function openInvoiceDetail(invId, cid){
   if (typeof isSpaShell === 'function' && isSpaShell() && typeof AppRouter !== 'undefined' && AppRouter.navigate) {
     AppRouter.navigate('/invoice', { id: invId });
