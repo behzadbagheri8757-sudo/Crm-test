@@ -575,18 +575,38 @@ a.tx-row:active{
   border-radius:10px;
 }
 
-/* Customer row composition */
+/* Customer row composition — 2 groups: customer info | financial */
 .customer-list-row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto 44px 108px;
-  align-items:start;
-  gap:8px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  min-width:0;
 }
-.customer-list-row .name{
+.customer-row-main{
+  flex:1 1 auto;
+  min-width:0;
   display:flex;
   flex-direction:column;
   gap:2px;
   line-height:1.3;
+}
+.customer-row-title-line{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  min-width:0;
+}
+.customer-row-name{
+  font-weight:700;
+  font-size:1rem;
+  color:#1F2937;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  max-width:100%;
 }
 .customer-list-row .customer-row-meta{
   font-size:.72rem;
@@ -594,7 +614,7 @@ a.tx-row:active{
   font-weight:500;
 }
 .customer-row-status{
-  align-self:center;
+  flex:0 0 auto;
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -604,43 +624,40 @@ a.tx-row:active{
   font-weight:700;
   border-radius:999px;
   padding:2px 7px;
+  white-space:nowrap;
 }
 .customer-row-watch{
-  width:44px;
-  min-width:44px;
-  min-height:44px;
+  flex:0 0 auto;
+  width:18px;
+  height:18px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   color:#F5A131;
 }
 .customer-row-watch svg{
-  width:19px;
-  height:19px;
+  width:18px;
+  height:18px;
   stroke:currentColor;
-  stroke-width:1.9;
-}
-.customer-row-watch-placeholder{
-  width:44px;
-  min-width:44px;
-  min-height:44px;
+  fill:none;
 }
 .customer-row-balance{
-  width:108px;
-  min-width:108px;
-  max-width:108px;
+  flex:0 0 auto;
   display:flex;
   flex-direction:column;
-  align-items:flex-start;
+  align-items:flex-end;
   justify-content:center;
   gap:2px;
-  text-align:right;
+  text-align:left;
   line-height:1.2;
+  min-width:0;
+  max-width:42%;
 }
 .customer-row-balance-label{
   font-size:.66rem;
   font-weight:700;
   color:#667085;
+  white-space:nowrap;
 }
 .customer-row-balance-value{
   font-size:.86rem;
@@ -3248,13 +3265,10 @@ button.inv-header-save.btn{
     padding:12px 10px calc(84px + env(safe-area-inset-bottom,0px));
   }
   .customer-list-row{
-    grid-template-columns:minmax(0,1fr) auto 44px 100px;
-    gap:6px;
+    gap:8px;
   }
   .customer-row-balance{
-    width:100px;
-    min-width:100px;
-    max-width:100px;
+    max-width:46%;
   }
   .tx-toolbar-select{
     min-width:100px;
@@ -3669,21 +3683,15 @@ a.ledger-row:active,
    FINAL UI/UX PATCH (Issues 1–24 + Jelly) — minimal, composition-only
    ========================================================================== */
 
-/* 1 — Customers: status badge alignment between name and financials */
+/* 1 — Customers: 2-group list cell (info | financial); no watch placeholder */
 .customer-list-row{
   align-items:center;
 }
 .customer-row-status{
-  align-self:center;
   flex-shrink:0;
-  white-space:nowrap;
   max-width:5.5rem;
   overflow:hidden;
   text-overflow:ellipsis;
-}
-.customer-row-watch,
-.customer-row-watch-placeholder{
-  align-self:center;
 }
 
 /* 2 — Products: reduce visual weight of total value */
