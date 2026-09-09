@@ -299,8 +299,8 @@ main .empty{
   box-sizing:border-box;
   isolation:isolate;
   overflow:visible;
-  /* Solid icy white */
-  background:rgba(255,255,255,.95);
+  /* Solid icy blue (Aqua/Icy) */
+  background: #D9ECFA;
   /* Subtle outer shadow only */
   box-shadow:0 2px 8px rgba(26,38,52,.06);
   transform:translate3d(0,0,0) scale(1,1);
@@ -308,10 +308,10 @@ main .empty{
   will-change:transform;
 }
 .bn-indicator.is-traveling{
-  background:rgba(255,255,255,.95);
+  background: #D9ECFA;
 }
 .bn-indicator.is-settling{
-  background:rgba(255,255,255,.95);
+  background: #D9ECFA;
 }
 
 /* More menu (composition + visibility) */
