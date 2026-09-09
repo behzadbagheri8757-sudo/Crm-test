@@ -675,7 +675,7 @@ function openAddProduct(editId){
       <div style="flex:1;"><label>قیمت عمده</label><input id="f-wholesale" type="text" inputmode="decimal" value="${p?p.wholesale:''}"></div>
       <div style="flex:1;"><label>قیمت مصرف‌کننده</label><input id="f-retail" type="text" inputmode="decimal" value="${p?p.retail:''}"></div>
     </div>
-    ${profitPct!==null?`<div class="empty" style="padding:0 0 8px;text-align:right;font-size:.8rem;">درصد سود تقریبی (نسبت به قیمت مصرف‌کننده): ${profitPct}٪</div>`:''}
+    ${profitPct!==null?`<div class="product-profit-pct">درصد سود تقریبی: <b>${profitPct}٪</b></div>`:''}
     ${p?`<div class="empty" style="padding:0 0 8px;text-align:right;font-size:.78rem;">قیمت خرید واقعی به روش FIFO الان: <b>${toman(productFifoUnitCost(p.id))} ت</b> (میانگین وزنی لایه‌های موجود در انبار — «قیمت خرید» بالا فقط مبنای پیش‌فرض برای خریدهای بدون قیمت مشخص است) — ارزش این کالا در انبار: <b>${toman(productInventoryValue(p.id))} ت</b></div>`:''}
 
     <h2 class="section-title">موجودی انبار</h2>
@@ -697,6 +697,7 @@ function openAddProduct(editId){
     </div>
     ${history.length?`
       <h2 class="section-title">تاریخچه قیمت</h2>
+      <div class="product-price-history">
       ${history.map(h=>`
         <div class="ledger-row">
           <span class="name">${faDate(h.date)}</span>
@@ -704,6 +705,7 @@ function openAddProduct(editId){
           <span class="amount">خرید ${toman(h.buy)} / عمده ${toman(h.wholesale!==undefined?h.wholesale:h.sell)} / مصرف‌کننده ${toman(h.retail!==undefined?h.retail:h.sell)}</span>
         </div>
       `).join('')}
+      </div>
     `:''}
     ${stockLog.length?`
       <h2 class="section-title">تاریخچه موجودی</h2>
@@ -1507,7 +1509,7 @@ function openAddVisit(cid){
         '<div class="visit-card visit-card-enter" data-visit-step="product">' +
           '<div class="q-title">چه محصولی پیشنهاد/بررسی شد؟</div>' +
           (avail.length
-            ? '<div class="chip-wrap">' + avail.map(function (p) {
+            ? '<div class="visit-product-grid chip-wrap">' + avail.map(function (p) {
                 return chipBtn('product', p.id, p.name || '—');
               }).join('') + '</div>'
             : '<div class="empty" style="padding:12px 0;">همه محصولات فعال قبلاً ثبت شدند یا کالایی نیست.</div>') +
@@ -2059,7 +2061,7 @@ function openInvoiceForm(cid, editInv){
     const sellRef = (prod.retail!=null && prod.retail!=='') ? prod.retail : (prod.sell||0);
     return `
       <div class="inv-row-meta">
-        <div class="inv-row-profit-line" style="color:${profitColor};">سود این قلم: ${profitTotal<0?'−':''}${toman(Math.abs(profitTotal))} ت (${pct}٪)</div>
+        <div class="inv-row-profit-line" data-profit-toggle="1" style="color:${profitColor};">سود این قلم: <span class="inv-profit-private">${profitTotal<0?'−':''}${toman(Math.abs(profitTotal))} ت (${pct}٪)</span></div>
         <button type="button" class="inv-price-info-btn" data-row="${idx}" aria-expanded="false">اطلاعات قیمت</button>
         <div class="inv-price-info-panel" data-row="${idx}" hidden>
           <div class="inv-price-info-grid">
@@ -2530,12 +2532,19 @@ function openInvoiceForm(cid, editInv){
       }, true);
     }
 
-    // Price-info panel: delegation survives updateRowInfo()
+    // Price-info panel + profit privacy toggle: delegation survives updateRowInfo()
     (function bindInvPriceInfoDelegation(){
       const root = document.getElementById('modalRoot');
       if(!root || root._invPriceInfoBound) return;
       root._invPriceInfoBound = true;
       root.addEventListener('click', function(e){
+        const profitLine = e.target.closest('.inv-row-profit-line');
+        if(profitLine && root.contains(profitLine)){
+          e.preventDefault();
+          e.stopPropagation();
+          profitLine.classList.toggle('is-revealed');
+          return;
+        }
         const btn = e.target.closest('.inv-price-info-btn');
         if(!btn || !root.contains(btn)) return;
         e.preventDefault();
