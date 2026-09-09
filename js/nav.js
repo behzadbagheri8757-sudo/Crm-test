@@ -171,10 +171,16 @@ function pinBottomNav(){
   try{
     if(window.visualViewport){
       const vv = window.visualViewport;
-      const gap = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-      el.style.setProperty('bottom', gap + 'px', 'important');
+      const keyboardHeight = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      // Only apply inline positioning when keyboard is actually open
+      if(keyboardHeight > 80){
+        el.style.setProperty('bottom', keyboardHeight + 'px', 'important');
+      } else {
+        // Clear inline bottom so CSS safe-area rule takes over
+        el.style.removeProperty('bottom');
+      }
     }else{
-      el.style.setProperty('bottom', '0px', 'important');
+      el.style.removeProperty('bottom');
     }
   }catch(e){
     /* ignore — bar still uses CSS bottom:0 */
