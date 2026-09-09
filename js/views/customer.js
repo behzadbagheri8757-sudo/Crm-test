@@ -443,6 +443,8 @@
 
   function drawCustomerPage(root) {
     if (!root) return;
+    root.classList.add('customer-detail-view'); // UPDATED: Added for CSS scoping
+
     const id = currentCustomerId;
 
     if (!id) {
@@ -1017,6 +1019,7 @@
       ViewHost.clearRefresh(refreshToken);
       refreshToken = null;
       currentCustomerId = null;
+      root.classList.remove('customer-detail-view'); // UPDATED: Added for CSS scoping cleanup
       root.innerHTML = '';
       rootEl = null;
     };
