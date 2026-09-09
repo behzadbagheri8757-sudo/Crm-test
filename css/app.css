@@ -575,46 +575,54 @@ a.tx-row:active{
   border-radius:10px;
 }
 
-/* Customer row composition — 2 groups: customer info | financial */
+/* Customer row composition — exactly 2 groups: identity | financial */
 .customer-list-row{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:10px;
+  justify-content:space-between; /* only between .customer-row-main and .customer-row-balance */
+  gap:12px;
   min-width:0;
 }
 .customer-row-main{
   flex:1 1 auto;
-  min-width:0;
+  min-width:0; /* allows identity group to shrink so name can ellipsize */
   display:flex;
   flex-direction:column;
+  align-items:flex-start;
   gap:2px;
   line-height:1.3;
 }
+/* Compact identity line: name + badge + optional warning stay adjacent */
 .customer-row-title-line{
   display:flex;
   align-items:center;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
+  justify-content:flex-start;
   gap:6px;
   min-width:0;
+  max-width:100%;
 }
 .customer-row-name{
+  flex:0 1 auto; /* shrink before badge/warning; grow only with content */
+  min-width:0;
   font-weight:700;
   font-size:1rem;
   color:#1F2937;
-  min-width:0;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
-  max-width:100%;
 }
 .customer-list-row .customer-row-meta{
   font-size:.72rem;
   color:#667085;
   font-weight:500;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 .customer-row-status{
-  flex:0 0 auto;
+  flex:0 0 auto; /* never shrink; stays glued after name */
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -625,9 +633,12 @@ a.tx-row:active{
   border-radius:999px;
   padding:2px 7px;
   white-space:nowrap;
+  max-width:5.5rem;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .customer-row-watch{
-  flex:0 0 auto;
+  flex:0 0 auto; /* never shrink; stays after badge */
   width:18px;
   height:18px;
   display:inline-flex;
@@ -641,6 +652,7 @@ a.tx-row:active{
   stroke:currentColor;
   fill:none;
 }
+/* Financial group: content-sized, not a wide percentage column */
 .customer-row-balance{
   flex:0 0 auto;
   display:flex;
@@ -650,8 +662,7 @@ a.tx-row:active{
   gap:2px;
   text-align:left;
   line-height:1.2;
-  min-width:0;
-  max-width:42%;
+  white-space:nowrap;
 }
 .customer-row-balance-label{
   font-size:.66rem;
@@ -3265,10 +3276,7 @@ button.inv-header-save.btn{
     padding:12px 10px calc(84px + env(safe-area-inset-bottom,0px));
   }
   .customer-list-row{
-    gap:8px;
-  }
-  .customer-row-balance{
-    max-width:46%;
+    gap:10px;
   }
   .tx-toolbar-select{
     min-width:100px;
@@ -3683,16 +3691,7 @@ a.ledger-row:active,
    FINAL UI/UX PATCH (Issues 1–24 + Jelly) — minimal, composition-only
    ========================================================================== */
 
-/* 1 — Customers: 2-group list cell (info | financial); no watch placeholder */
-.customer-list-row{
-  align-items:center;
-}
-.customer-row-status{
-  flex-shrink:0;
-  max-width:5.5rem;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
+/* 1 — Customers: identity group + financial group (see composition block) */
 
 /* 2 — Products: reduce visual weight of total value */
 .product-row-value .tx-row-total{
