@@ -114,8 +114,7 @@ function ensureBottomNavDOM(){
     bar.className = 'bottom-nav';
     bar.setAttribute('aria-label', 'منوی پایین');
     document.body.appendChild(bar);
-  }
-  if(!document.getElementById('more-sheet-root')){
+  }  if(!document.getElementById('more-sheet-root')){
     const root = document.createElement('div');
     root.id = 'more-sheet-root';
     root.innerHTML = `
@@ -179,6 +178,7 @@ function pinBottomNav(){
   }catch(e){
     /* ignore — bar still uses CSS bottom:0 */
   }
+  repositionBnIndicator();
 }
 
 function ensureBottomNavPinned(){
@@ -203,6 +203,71 @@ function ensureBottomNavPinned(){
   window.addEventListener('orientationchange', function(){
     setTimeout(schedule, 50);
   }, {passive:true});
+}
+
+/* --------------------------------------------------------------------------
+   Bottom nav — single persistent liquid-glass indicator (section 11).
+   One DOM node, created once, moved (not recreated) into the bar on every
+   render, and animated between tab positions with a spring transition.
+   -------------------------------------------------------------------------- */
+let _bnIndicatorEl = null;
+let _bnIndicatorPositionedOnce = false;
+
+function getBnIndicator(){
+  if(!_bnIndicatorEl){
+    _bnIndicatorEl = document.createElement('div');
+    _bnIndicatorEl.className = 'bn-indicator';
+    _bnIndicatorEl.setAttribute('aria-hidden', 'true');
+  }
+  return _bnIndicatorEl;
+}
+
+function prefersReducedMotion(){
+  try{
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }catch(e){
+    return false;
+  }
+}
+
+/** Move+resize the single indicator onto activeEl's icon. jump=true skips the spring transition (first paint, resize/orientation snaps). */
+function positionBnIndicator(activeEl, jump){
+  const bar = document.getElementById('bottom-nav');
+  const indicator = _bnIndicatorEl;
+  if(!bar || !indicator) return;
+  if(!activeEl){
+    indicator.classList.remove('is-ready');
+    return;
+  }
+  const icon = activeEl.querySelector('.bn-ico') || activeEl;
+  const iconBox = icon.getBoundingClientRect();
+  const barBox = bar.getBoundingClientRect();
+  if(iconBox.width === 0 && iconBox.height === 0) return; // not laid out yet
+
+  const size = Math.round(Math.max(iconBox.width, iconBox.height) + 20);
+  const centerX = iconBox.left + iconBox.width / 2 - barBox.left;
+  const centerY = iconBox.top + iconBox.height / 2 - barBox.top;
+  const x = Math.round(centerX - size / 2);
+  const y = Math.round(centerY - size / 2);
+
+  const shouldJump = !!jump || !_bnIndicatorPositionedOnce || prefersReducedMotion();
+  indicator.classList.toggle('is-jump', shouldJump);
+  indicator.style.width = size + 'px';
+  indicator.style.height = size + 'px';
+  indicator.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+
+  requestAnimationFrame(function(){
+    indicator.classList.add('is-ready');
+  });
+  _bnIndicatorPositionedOnce = true;
+}
+
+/** Re-snap the indicator to whichever tab is currently active (resize/orientation/keyboard). */
+function repositionBnIndicator(){
+  const bar = document.getElementById('bottom-nav');
+  if(!bar) return;
+  const active = bar.querySelector('.bottom-nav-item.active');
+  if(active) positionBnIndicator(active, true);
 }
 
 function renderBottomNav(activeId){
@@ -251,6 +316,16 @@ function renderBottomNav(activeId){
   }
 
   fillMoreSheetList(activeId);
+
+  // Re-parent the SAME indicator node into the freshly-built bar (innerHTML
+  // above just destroyed any previous copy of it) instead of creating a new
+  // one, so it is one persistent object that moves — never disappears and
+  // rematerializes on the destination tab.
+  bar.appendChild(getBnIndicator());
+  const activeItemEl = bar.querySelector('.bottom-nav-item.active');
+  requestAnimationFrame(function(){
+    positionBnIndicator(activeItemEl, false);
+  });
 
   ensureBottomNavPinned();
   pinBottomNav();
