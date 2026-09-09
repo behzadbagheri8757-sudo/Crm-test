@@ -575,25 +575,41 @@ a.tx-row:active{
   border-radius:10px;
 }
 
-/* Customer row composition — exactly 2 groups: identity | financial */
+/* Customer row composition — 2-group / 2-line shared vertical rhythm */
 .customer-list-row{
   display:flex;
-  align-items:center;
-  justify-content:space-between; /* only between .customer-row-main and .customer-row-balance */
+  align-items:stretch;
+  justify-content:space-between;
   gap:12px;
   min-width:0;
 }
 .customer-row-main{
   flex:1 1 auto;
-  min-width:0; /* allows identity group to shrink so name can ellipsize */
+  min-width:0;
   display:flex;
   flex-direction:column;
-  align-items:flex-start;
-  gap:2px;
+  justify-content:center;
+  gap:4px;
   line-height:1.3;
 }
-/* Compact identity line: name + badge + optional warning stay adjacent */
 .customer-row-title-line{
+  display:block;
+  min-width:0;
+  min-height:1.35em;
+}
+.customer-row-name,
+.customer-row-name.tx-row-title{
+  display:block;
+  min-width:0;
+  font-weight:700;
+  font-size:1rem;
+  color:#1F2937;
+  line-height:1.35;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.customer-row-meta-line{
   display:flex;
   align-items:center;
   flex-wrap:nowrap;
@@ -601,33 +617,15 @@ a.tx-row:active{
   gap:6px;
   min-width:0;
   max-width:100%;
-}
-.customer-row-name{
-  flex:0 1 auto; /* shrink before badge/warning; grow only with content */
-  min-width:0;
-  font-weight:700;
-  font-size:1rem;
-  color:#1F2937;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.customer-list-row .customer-row-meta{
-  font-size:.72rem;
-  color:#667085;
-  font-weight:500;
-  max-width:100%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+  min-height:1.35em;
 }
 .customer-row-status{
-  flex:0 0 auto; /* never shrink; stays glued after name */
+  flex:0 0 auto;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   line-height:1.2;
-  min-height:28px;
+  min-height:22px;
   font-size:.7rem;
   font-weight:700;
   border-radius:999px;
@@ -637,31 +635,41 @@ a.tx-row:active{
   overflow:hidden;
   text-overflow:ellipsis;
 }
+.customer-row-meta,
+.customer-list-row .customer-row-meta{
+  flex:0 1 auto;
+  min-width:0;
+  font-size:.72rem;
+  color:#667085;
+  font-weight:500;
+  line-height:1.35;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 .customer-row-watch{
-  flex:0 0 auto; /* never shrink; stays after badge */
-  width:18px;
-  height:18px;
+  flex:0 0 auto;
+  width:16px;
+  height:16px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   color:#F5A131;
 }
 .customer-row-watch svg{
-  width:18px;
-  height:18px;
+  width:16px;
+  height:16px;
   stroke:currentColor;
   fill:none;
 }
-/* Financial group: content-sized, not a wide percentage column */
 .customer-row-balance{
   flex:0 0 auto;
   display:flex;
   flex-direction:column;
-  align-items:flex-end;
   justify-content:center;
-  gap:2px;
-  text-align:left;
-  line-height:1.2;
+  align-items:flex-end;
+  gap:4px; /* same as identity: shared vertical rhythm */
+  line-height:1.3;
   white-space:nowrap;
 }
 .customer-row-balance-label{
@@ -669,11 +677,15 @@ a.tx-row:active{
   font-weight:700;
   color:#667085;
   white-space:nowrap;
+  line-height:1.35;
+  min-height:1.35em;
 }
 .customer-row-balance-value{
   font-size:.86rem;
   font-weight: var(--fw-value-strong, 700);
   white-space:nowrap;
+  line-height:1.35;
+  min-height:1.35em;
 }
 
 /* Invoice / product row composition (for lists) */
