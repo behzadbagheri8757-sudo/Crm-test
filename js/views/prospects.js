@@ -56,7 +56,7 @@
     const el = document.getElementById('prospect-target');
     if (!el) return;
     const dt = prospectState.dailyTarget || { target: 0, count: 0 };
-    /* Presentation-only redesign (Compact Stacked Hero).
+    /* Presentation-only: iOS-like Hero Activity Card.
        Logic (target/count/percentage/remaining) and edit flow unchanged.
        Progress bar stays empty while count is 0 (is-idle). */
     if (!dt.target) {
@@ -80,15 +80,17 @@
         <div class="pdt-head">
           <span class="pdt-label">هدف ارزیابی امروز</span>
           <span class="pdt-pct">${pctLabel}٪</span>
-          <button type="button" class="pdt-edit" id="set-target-btn">ویرایش</button>
         </div>
         <div class="pdt-hero">
           <span class="pdt-count">${count}</span>
+          <span class="pdt-caption">ارزیابی انجام شد</span>
           <span class="pdt-of">از ${target}</span>
         </div>
-        <div class="pdt-caption">ارزیابی انجام شد</div>
         <div class="pdt-bar-wrap"><div class="pdt-bar" role="progressbar" aria-valuenow="${count}" aria-valuemin="0" aria-valuemax="${target}"><span style="width:${barW}%"></span></div></div>
-        <div class="pdt-remain">${remaining} ارزیابی باقی مانده</div>
+        <div class="pdt-foot">
+          <span class="pdt-remain">${remaining} ارزیابی باقی مانده</span>
+          <button type="button" class="pdt-edit" id="set-target-btn">ویرایش</button>
+        </div>
       </div>`;
     }
     const b = document.getElementById('set-target-btn');
