@@ -155,17 +155,21 @@
           (watchTitle ? ' title="' + esc(watchTitle) + '"' : '') + '>' +
           '<span class="customer-row-main">' +
           '<span class="customer-row-title-line">' +
-          '<span class="customer-row-name">' + esc(c.name) + '</span>' +
+          '<span class="customer-row-name tx-row-title">' + esc(c.name) + '</span>' +
+          '</span>' +
+          '<span class="customer-row-meta-line">' +
           '<span class="customer-row-status badge tone-' + badgeTone + '">' + esc(badgeLabel) + '</span>' +
+          '<span class="customer-row-meta">' + esc(daysText) + '</span>' +
           (watchCount > 0
             ? '<span class="customer-row-watch" aria-label="هشدار فعال" title="' + esc(watchTitle) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></span>'
             : '') +
           '</span>' +
-          '<span class="sub customer-row-meta">' + esc(daysText) + '</span>' +
           '</span>' +
           '<span class="customer-row-balance ' + color + '">' +
           '<span class="customer-row-balance-label">' + esc(word) + '</span>' +
-          (t.balance !== 0 ? '<span class="customer-row-balance-value">' + toman(Math.abs(t.balance)) + ' ت</span>' : '') +
+          '<span class="customer-row-balance-value">' +
+          (t.balance !== 0 ? toman(Math.abs(t.balance)) + ' ت' : '') +
+          '</span>' +
           '</span></a>'
         );
       })
