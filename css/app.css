@@ -18,15 +18,6 @@
   --line:rgba(31,41,55,.08);
   --accent-dark:#D94725;
   --accent-soft:#FFF0EC;
-
-  /* Typography hierarchy tokens (iOS26 polish, section 1).
-     Replaces scattered 700/800/900 weights in ordinary list/report rows
-     with a small coherent scale. KPI/target numbers that should stay
-     visually prominent use --fw-value-strong, not the removed 900. */
-  --fw-title:650;        /* primary list/row title (customer, product, tx name) */
-  --fw-value:600;        /* ordinary numeric values in lists/rows */
-  --fw-value-strong:700; /* KPI / report / game-center numbers — prominent, not headline */
-  --fw-meta-strong:600;  /* small labels/capsules, secondary-but-readable text */
 }
 
 /* --------------------------------------------------------------------------
@@ -103,7 +94,7 @@ h3.sub-title{
 }
 .value{
   font-size:1.02rem;
-  font-weight:var(--fw-value-strong);
+  font-weight:800;
   color:#1F2937;
   line-height:1.35;
   font-variant-numeric:tabular-nums;
@@ -216,18 +207,6 @@ main > .field{
 main > .chip-row{
   margin-bottom:12px;
 }
-/* Chips had no declared display/gap at all in the base rule (only some
-   route-specific overrides existed, and Reports wasn't among them), so
-   capsules sat edge-to-edge with only inline whitespace between them —
-   the "touching capsules" issue in sections 3 and 5C. Establishing one
-   baseline here (not a second spacing system) fixes both Customers'
-   filter row and the Reports period row; the existing Customers-page
-   override below still wins by specificity, so it's bumped too. */
-.chip-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:var(--vg-space-related,10px);
-}
 main > .tx-toolbar{
   margin:0 0 14px;
 }
@@ -282,6 +261,7 @@ main .empty{
 
 /* Floating Detached Glass Bottom Navigation (owned by VG) - restrained refinements only */
 .bottom-nav{
+  position:relative;
   bottom:calc(16px + env(safe-area-inset-bottom,0px));
   background:rgba(255,255,255,.82);
   box-shadow:0 8px 28px rgba(26,38,52,.14),0 1px 3px rgba(26,38,52,.06);
@@ -290,20 +270,66 @@ main .empty{
   position:relative;
   z-index:1;
   border-radius:999px;
-  transition:color .2s ease,transform .12s ease;
+  transition:color .2s ease,transform .12s ease,opacity .12s ease;
+  background:transparent;
 }
 .bottom-nav-item:active{
   transform:scale(.96);
   opacity:.88;
 }
 .bottom-nav-item.active{
-  /* Per-item background tint removed (section 11) — a single shared
-     .bn-indicator element now shows selection; this class only tints
-     the icon/label. */
+  background:transparent;
   color:#0070D2;
 }
 .bottom-nav-item.active .bn-ico{
   color:#0070D2;
+}
+/* Single persistent liquid/glass jelly indicator (not per-item, not circle/ring/capsule) */
+.bn-indicator{
+  position:absolute;
+  left:0;
+  top:0;
+  width:34px;
+  height:34px;
+  border-radius:11px;
+  pointer-events:none;
+  z-index:0;
+  opacity:0;
+  box-sizing:border-box;
+  /* Neutral translucent jelly with internal depth — almost colorless */
+  background:
+    linear-gradient(152deg,
+      rgba(255,255,255,.52) 0%,
+      rgba(255,255,255,.14) 38%,
+      rgba(245,247,250,.28) 72%,
+      rgba(255,255,255,.20) 100%);
+  border:1px solid rgba(255,255,255,.36);
+  box-shadow:
+    inset 0 1.5px 2px rgba(255,255,255,.58),
+    inset 0 -1.5px 3px rgba(31,41,55,.055),
+    inset 1px 0 2px rgba(255,255,255,.18),
+    0 1px 2px rgba(26,38,52,.035);
+  backdrop-filter:saturate(150%) blur(12px);
+  -webkit-backdrop-filter:saturate(150%) blur(12px);
+  transform:translate3d(0,0,0) scale(1,1);
+  transform-origin:center center;
+  will-change:transform;
+}
+.bn-indicator.is-traveling{
+  /* Slight tonal shift while in motion — still neutral */
+  background:
+    linear-gradient(152deg,
+      rgba(255,255,255,.58) 0%,
+      rgba(255,255,255,.16) 40%,
+      rgba(245,247,250,.30) 100%);
+}
+.bn-indicator.is-settling{
+  background:
+    linear-gradient(152deg,
+      rgba(255,255,255,.52) 0%,
+      rgba(255,255,255,.14) 38%,
+      rgba(245,247,250,.28) 72%,
+      rgba(255,255,255,.20) 100%);
 }
 
 /* More menu (composition + visibility) */
@@ -454,7 +480,7 @@ body.modal-open{
 .ledger-row .name,
 .tx-row .name,
 .customer-list-row .name{
-  font-weight:var(--fw-title);
+  font-weight:700;
   font-size:1rem;
   color:#1F2937;
   min-width:0;
@@ -465,7 +491,7 @@ body.modal-open{
   gap:3px;
 }
 .tx-row-title{
-  font-weight:var(--fw-title);
+  font-weight:700;
   font-size:1rem;
   color:#1F2937;
   line-height:1.35;
@@ -506,7 +532,7 @@ body.modal-open{
 .tx-row-total,
 .tx-row-amount,
 .customer-row-balance-value{
-  font-weight:var(--fw-value);
+  font-weight:800;
   font-size:.9rem;
   color:#1F2937;
   white-space:nowrap;
@@ -556,7 +582,7 @@ a.tx-row:active{
   line-height:1.2;
   min-height:28px;
   font-size:.7rem;
-  font-weight:var(--fw-meta-strong);
+  font-weight:700;
   border-radius:999px;
   padding:2px 7px;
 }
@@ -599,7 +625,7 @@ a.tx-row:active{
 }
 .customer-row-balance-value{
   font-size:.86rem;
-  font-weight:var(--fw-value);
+  font-weight:900;
   white-space:nowrap;
 }
 
@@ -835,7 +861,8 @@ details[open] > .customer-behavior-summary::after{
   background:#FFF0EC;
   border:1px solid #FFF0EC;
 }
-/* Financial health — three compact data surfaces (not buttons) */
+/* Financial health — three compact data surfaces (not buttons)
+   Card geometry stays substantial; value remains primary, not tiny. */
 .dash-health{
   margin-bottom:20px;
 }
@@ -853,9 +880,9 @@ details[open] > .customer-behavior-summary::after{
   flex-direction:column;
   align-items:flex-start;
   justify-content:center;
-  gap:4px;
-  padding:11px 12px;
-  min-height:64px;
+  gap:5px;
+  padding:12px 12px;
+  min-height:68px;
   background:#FFFFFF;
   border:1px solid rgba(31,41,55,.08);
   border-radius:14px;
@@ -864,25 +891,22 @@ details[open] > .customer-behavior-summary::after{
   color:inherit;
 }
 .dash-health-label{
-  font-size:.66rem;
+  font-size:.64rem;
   font-weight:600;
   color:#667085;
   line-height:1.3;
+  letter-spacing:.01em;
 }
 .dash-health-value{
-  /* Was fixed .95rem + nowrap/ellipsis, which silently truncated real
-     8-digit Toman figures (proven defect, section 2C). Financial values
-     must never be clipped, so this now shrinks fluidly with the card's
-     own width instead of cutting the number off. */
-  font-size:clamp(.7rem,6.6cqi,.95rem);
-  font-weight:var(--fw-value-strong);
+  font-size:.98rem;
+  font-weight:700;
   color:#1F2937;
   font-variant-numeric:tabular-nums;
-  letter-spacing:-.2px;
-  line-height:1.25;
+  letter-spacing:-.25px;
+  line-height:1.2;
   white-space:nowrap;
-  overflow:visible;
-  text-overflow:clip;
+  overflow:hidden;
+  text-overflow:ellipsis;
   max-width:100%;
 }
 .dash-health-value.debt{
@@ -892,24 +916,10 @@ details[open] > .customer-behavior-summary::after{
   transform:scale(.98);
   background:#F8FAFC;
 }
-.dash-health-row{
-  container-type:inline-size;
-}
-@supports not (font-size:1cqi){
-  /* Fallback for engines without container query units: allow the value
-     to wrap onto a second line rather than clip, and step the size down
-     on the narrowest phones. The three-card layout and card height are
-     unaffected since .dash-health-row already grows with its content. */
-  .dash-health-value{
-    white-space:normal;
-    overflow-wrap:anywhere;
-    line-height:1.2;
-  }
-}
 @media(max-width:360px){
   .dash-health-surface{gap:5px;}
-  .dash-health-row{padding:10px 8px;min-height:60px;}
-  .dash-health-value{font-size:clamp(.66rem,7.4cqi,.88rem);}
+  .dash-health-row{padding:11px 8px;min-height:64px;}
+  .dash-health-value{font-size:.9rem;}
 }
 /* Monthly target block */
 .dash-target-block{
@@ -1113,7 +1123,7 @@ details[open] > .customer-behavior-summary::after{
 .biz-stat-value.debt{
   color:#D52B36;
 }
-/* Quick actions */
+/* Quick actions — same card geometry; content optical balance only */
 .dash-quick-actions-block{
   margin-bottom:16px;
 }
@@ -1134,7 +1144,7 @@ details[open] > .customer-behavior-summary::after{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:5px;
+  gap:6px;
   flex:1 0 auto;
   min-width:70px;
   padding:11px 8px;
@@ -1154,23 +1164,25 @@ details[open] > .customer-behavior-summary::after{
   background:#F2F2F7;
 }
 .dash-qa-ico{
-  width:32px;
-  height:32px;
+  width:30px;
+  height:30px;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  background:rgba(0,112,210,.12);
+  background:rgba(0,112,210,.08);
   color:#0070D2;
 }
 .dash-qa-ico svg{
-  width:17px;
-  height:17px;
+  width:16px;
+  height:16px;
+  stroke-width:1.6;
 }
 .dash-qa-label{
   font-size:.66rem;
   font-weight:600;
   color:#3A3A3C;
+  line-height:1.25;
 }
 /* Action queue */
 .dash-action-queue{
@@ -1200,27 +1212,29 @@ details[open] > .customer-behavior-summary::after{
 .action-row-high::after{
   background:#F5A131;
 }
+/* Suggested actions hierarchy: name > action > reason > meta */
 .action-person{
   display:inline;
   color:#1F2937;
-  font-size:.83rem;
-  font-weight:var(--fw-title);
+  font-size:.82rem;
+  font-weight:650;
 }
 .action-badge{
   display:inline-flex;
   padding:2px 6px;
   border-radius:999px;
   font-size:.58rem;
-  font-weight:var(--fw-meta-strong);
+  font-weight:600;
   color:#667085;
   background:rgba(31,41,55,.05);
 }
 .action-main{
   display:block;
-  margin-top:5px;
+  margin-top:4px;
   color:#1F2937;
-  font-size:.77rem;
-  font-weight:500;
+  font-size:.76rem;
+  font-weight:600;
+  line-height:1.4;
 }
 .action-why,
 .action-why-now{
@@ -1229,10 +1243,11 @@ details[open] > .customer-behavior-summary::after{
   color:#667085;
   font-size:.63rem;
   font-weight:500;
+  line-height:1.45;
 }
 .action-why-now{
   color:#D94725;
-  font-weight:var(--fw-meta-strong);
+  font-weight:600;
 }
 .action-urgency{
   height:32px;
@@ -1289,13 +1304,30 @@ details[open] > .customer-behavior-summary::after{
 .dash-action-toggle.is-open .dash-action-toggle-ico{
   transform:rotate(-90deg);
 }
-/* Activity sections */
+/* Activity sections — list-row weight, not headline typography */
 .dash-activity{
   padding:2px 10px 4px;
 }
 .dash-activity .ledger-row{
-  min-height:52px;
-  padding:10px 2px;
+  min-height:48px;
+  padding:9px 2px;
+}
+.dash-activity .ledger-row .name{
+  font-size:.86rem;
+  font-weight:600;
+  line-height:1.35;
+  gap:2px;
+}
+.dash-activity .ledger-row .sub{
+  font-size:.68rem;
+  font-weight:500;
+  color:#667085;
+  line-height:1.4;
+}
+.dash-activity .ledger-row .amount{
+  font-size:.8rem;
+  font-weight:650;
+  color:#1F2937;
 }
 .dash-activity-group{
   margin-bottom:18px;
@@ -2088,7 +2120,7 @@ button.inv-header-save.btn{
 }
 .report-summary-value{
   font-size:1.05rem;
-  font-weight:var(--fw-value-strong);
+  font-weight:800;
   color:#1F2937;
   line-height:1.3;
   font-variant-numeric:tabular-nums;
@@ -2197,15 +2229,10 @@ button.inv-header-save.btn{
   padding:10px 12px;
   font-size:.8rem;
   line-height:1.55;
-  /* Was orange text + orange-tinted bg + orange border (orange stacked on
-     orange, section 10A). Keep the accent only as a small semantic cue —
-     a left rule — on a neutral warm-grey surface, and set body text back
-     to normal ink so it reads as calm guidance, not an alarm. */
-  color:#1F2937;
-  background:#F7F5F2;
-  border:1px solid rgba(31,41,55,.08);
-  border-inline-start:3px solid rgba(255,92,53,.55);
-  border-radius:12px;
+  color:#D94725;
+  background:#FFF0EC;
+  border:1px solid rgba(255,92,53,.2);
+  border-radius:8px;
   text-align:right;
 }
 .mgmt-section{
@@ -2258,7 +2285,7 @@ button.inv-header-save.btn{
 }
 .prospect-daily-target .pdt-label{
   font-size:.72rem;
-  font-weight:var(--fw-meta-strong);
+  font-weight:700;
   color:rgba(245,230,184,.95);
   white-space:nowrap;
   flex:none;
@@ -2287,7 +2314,7 @@ button.inv-header-save.btn{
 }
 .prospect-daily-target .pdt-meta{
   font-size:.75rem;
-  font-weight:var(--fw-value-strong);
+  font-weight:800;
   color:#FF5C35;
   white-space:nowrap;
 }
@@ -2303,24 +2330,6 @@ button.inv-header-save.btn{
   border-radius:999px;
   cursor:pointer;
   min-height:32px;
-}
-/* Completed state (section 8): presentation only — target/count math is
-   untouched. Calm success cue, no glow: a soft green wash on the border
-   and bar, not a full green repaint. */
-.prospect-daily-target.is-complete{
-  border-color:rgba(0,160,104,.4);
-}
-.prospect-daily-target.is-complete .pdt-bar{
-  background:rgba(0,160,104,.22);
-}
-.prospect-daily-target.is-complete .pdt-bar>span{
-  background:linear-gradient(90deg,#00C888,#00A068);
-}
-.prospect-daily-target.is-complete .pdt-meta{
-  color:#5EEAB0;
-}
-.prospect-daily-target.is-complete .pdt-edit{
-  color:#5EEAB0;
 }
 .rank-pill{
   display:inline-block;
@@ -2555,7 +2564,7 @@ button.inv-header-save.btn{
 .gc-section-title{
   margin:0;
   font-size:.9rem;
-  font-weight:var(--fw-title);
+  font-weight:800;
   color:#1F2937;
 }
 .gc-panel{
@@ -2627,12 +2636,12 @@ button.inv-header-save.btn{
 }
 .gc-mission-title{
   font-size:.9rem;
-  font-weight:var(--fw-title);
+  font-weight:800;
   color:#1F2937;
 }
 .gc-mission-count{
   font-size:.88rem;
-  font-weight:var(--fw-value);
+  font-weight:700;
   color:#667085;
 }
 .gc-track{
@@ -2738,7 +2747,7 @@ button.inv-header-save.btn{
 }
 .gc-xp-num{
   font-size:1.35rem;
-  font-weight:var(--fw-value-strong);
+  font-weight:800;
   color:#1F2937;
 }
 .gc-kpi-grid{
@@ -2755,7 +2764,7 @@ button.inv-header-save.btn{
 }
 .gc-kpi-num{
   font-size:1.15rem;
-  font-weight:var(--fw-value-strong);
+  font-weight:800;
   color:#1F2937;
 }
 
@@ -3344,19 +3353,15 @@ main.route-transition{
   transition:color var(--ios-control) var(--ios-ease-out),
              transform var(--ios-touch) var(--ios-ease-out),
              opacity var(--ios-touch) ease;
+  background:transparent;
 }
-/* Per-item ::before capsule removed (section 11): it materialized fresh
-   on whichever item became active instead of one object moving between
-   tabs. Selection is now shown by the single persistent .bn-indicator
-   element (js/nav.js), positioned/animated in JS. The icon keeps its
-   own subtle settle response below. */
+/* Per-item ::before active backgrounds removed — single .bn-indicator owns selection. */
+.bottom-nav-item.active{
+  background:transparent;
+  color:#0070D2;
+}
 .bottom-nav-item.active .bn-ico{
-  animation:iosTabIconSettle 340ms var(--ios-ease-spring) both;
-}
-@keyframes iosTabIconSettle{
-  0%{transform:scale(.86);}
-  55%{transform:scale(1.08);}
-  100%{transform:scale(1);}
+  color:#0070D2;
 }
 .bottom-nav-item:active{
   transform:scale(.965);
@@ -3481,7 +3486,7 @@ a.ledger-row:active,
   box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
 }
 
-/* Dashboard quick actions: slightly larger icon material + glass surface. */
+/* Dashboard quick actions: glass surface only — do not enlarge cards/icons. */
 .dash-qa-btn{
   transition:transform var(--ios-touch) var(--ios-ease-out),
              box-shadow var(--ios-control) var(--ios-ease-out),
@@ -3499,15 +3504,7 @@ a.ledger-row:active,
              0 1px 5px rgba(26,38,52,.06);
 }
 .dash-qa-ico{
-  width:36px;
-  height:36px;
-  background:rgba(0,112,210,.10);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
-}
-.dash-qa-ico svg{
-  width:20px;
-  height:20px;
-  stroke-width:1.7;
+  background:rgba(0,112,210,.08);
 }
 
 /* Cards: slightly more elevated, without turning the content layer into glass. */
@@ -3521,45 +3518,10 @@ a.ledger-row:active,
 
 /* Respect reduced-motion users; iOS does the same for motion-sensitive settings. */
 @media (prefers-reduced-motion:reduce){
-  main.route-transition,
-  .bottom-nav-item.active .bn-ico{
+  main.route-transition{
     animation:none!important;
   }
   .bn-indicator{
     transition:none!important;
   }
-}
-
-/* --------------------------------------------------------------------------
-   BOTTOM NAV — single persistent liquid-glass indicator (section 11)
-   One element, created once and moved between tabs by js/nav.js. It is
-   re-appended (not re-created) into #bottom-nav after every render, so
-   it never disappears/rebuilds like the old per-item ::before capsule.
-   -------------------------------------------------------------------------- */
-.bn-indicator{
-  position:absolute;
-  left:0;
-  top:0;
-  z-index:0;
-  pointer-events:none;
-  will-change:transform,width,height;
-  background:rgba(255,255,255,.42);
-  border:1px solid rgba(255,255,255,.55);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),
-             0 2px 6px rgba(26,38,52,.05);
-  backdrop-filter:saturate(160%) blur(6px);
-  -webkit-backdrop-filter:saturate(160%) blur(6px);
-  /* Organic/liquid shape rather than a plain circle. */
-  border-radius:46% 54% 52% 48%/48% 46% 54% 52%;
-  opacity:0;
-  transition:transform 340ms cubic-bezier(.34,1.56,.64,1),
-             width 340ms cubic-bezier(.34,1.56,.64,1),
-             height 340ms cubic-bezier(.34,1.56,.64,1),
-             opacity 160ms ease;
-}
-.bn-indicator.is-ready{
-  opacity:1;
-}
-.bn-indicator.is-jump{
-  transition:opacity 160ms ease;
 }
