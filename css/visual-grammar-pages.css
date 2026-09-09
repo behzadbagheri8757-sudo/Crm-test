@@ -85,7 +85,7 @@ main .empty{margin:14px 0;}
 .vg-route-suppliers .chip-row,
 .vg-route-checks .chip-row,
 .vg-route-prospects .chip-row{
-  gap:6px;
+  gap:var(--vg-space-related);
 }
 
 /* ---------- Customer detail ---------- */

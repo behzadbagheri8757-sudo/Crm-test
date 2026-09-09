@@ -18,6 +18,15 @@
   --line:rgba(31,41,55,.08);
   --accent-dark:#D94725;
   --accent-soft:#FFF0EC;
+
+  /* Typography hierarchy tokens (iOS26 polish, section 1).
+     Replaces scattered 700/800/900 weights in ordinary list/report rows
+     with a small coherent scale. KPI/target numbers that should stay
+     visually prominent use --fw-value-strong, not the removed 900. */
+  --fw-title:650;        /* primary list/row title (customer, product, tx name) */
+  --fw-value:600;        /* ordinary numeric values in lists/rows */
+  --fw-value-strong:700; /* KPI / report / game-center numbers — prominent, not headline */
+  --fw-meta-strong:600;  /* small labels/capsules, secondary-but-readable text */
 }
 
 /* --------------------------------------------------------------------------
@@ -94,7 +103,7 @@ h3.sub-title{
 }
 .value{
   font-size:1.02rem;
-  font-weight:800;
+  font-weight:var(--fw-value-strong);
   color:#1F2937;
   line-height:1.35;
   font-variant-numeric:tabular-nums;
@@ -207,6 +216,18 @@ main > .field{
 main > .chip-row{
   margin-bottom:12px;
 }
+/* Chips had no declared display/gap at all in the base rule (only some
+   route-specific overrides existed, and Reports wasn't among them), so
+   capsules sat edge-to-edge with only inline whitespace between them —
+   the "touching capsules" issue in sections 3 and 5C. Establishing one
+   baseline here (not a second spacing system) fixes both Customers'
+   filter row and the Reports period row; the existing Customers-page
+   override below still wins by specificity, so it's bumped too. */
+.chip-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--vg-space-related,10px);
+}
 main > .tx-toolbar{
   margin:0 0 14px;
 }
@@ -267,15 +288,18 @@ main .empty{
 }
 .bottom-nav-item{
   position:relative;
+  z-index:1;
   border-radius:999px;
-  transition:color .2s ease,background-color .22s cubic-bezier(0.32,0.72,0,1),transform .12s ease;
+  transition:color .2s ease,transform .12s ease;
 }
 .bottom-nav-item:active{
   transform:scale(.96);
   opacity:.88;
 }
 .bottom-nav-item.active{
-  background:rgba(0,112,210,.11);
+  /* Per-item background tint removed (section 11) — a single shared
+     .bn-indicator element now shows selection; this class only tints
+     the icon/label. */
   color:#0070D2;
 }
 .bottom-nav-item.active .bn-ico{
@@ -430,7 +454,7 @@ body.modal-open{
 .ledger-row .name,
 .tx-row .name,
 .customer-list-row .name{
-  font-weight:700;
+  font-weight:var(--fw-title);
   font-size:1rem;
   color:#1F2937;
   min-width:0;
@@ -441,7 +465,7 @@ body.modal-open{
   gap:3px;
 }
 .tx-row-title{
-  font-weight:700;
+  font-weight:var(--fw-title);
   font-size:1rem;
   color:#1F2937;
   line-height:1.35;
@@ -482,7 +506,7 @@ body.modal-open{
 .tx-row-total,
 .tx-row-amount,
 .customer-row-balance-value{
-  font-weight:800;
+  font-weight:var(--fw-value);
   font-size:.9rem;
   color:#1F2937;
   white-space:nowrap;
@@ -532,7 +556,7 @@ a.tx-row:active{
   line-height:1.2;
   min-height:28px;
   font-size:.7rem;
-  font-weight:700;
+  font-weight:var(--fw-meta-strong);
   border-radius:999px;
   padding:2px 7px;
 }
@@ -575,7 +599,7 @@ a.tx-row:active{
 }
 .customer-row-balance-value{
   font-size:.86rem;
-  font-weight:900;
+  font-weight:var(--fw-value);
   white-space:nowrap;
 }
 
@@ -846,15 +870,19 @@ details[open] > .customer-behavior-summary::after{
   line-height:1.3;
 }
 .dash-health-value{
-  font-size:.95rem;
-  font-weight:800;
+  /* Was fixed .95rem + nowrap/ellipsis, which silently truncated real
+     8-digit Toman figures (proven defect, section 2C). Financial values
+     must never be clipped, so this now shrinks fluidly with the card's
+     own width instead of cutting the number off. */
+  font-size:clamp(.7rem,6.6cqi,.95rem);
+  font-weight:var(--fw-value-strong);
   color:#1F2937;
   font-variant-numeric:tabular-nums;
   letter-spacing:-.2px;
   line-height:1.25;
   white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  overflow:visible;
+  text-overflow:clip;
   max-width:100%;
 }
 .dash-health-value.debt{
@@ -864,10 +892,24 @@ details[open] > .customer-behavior-summary::after{
   transform:scale(.98);
   background:#F8FAFC;
 }
+.dash-health-row{
+  container-type:inline-size;
+}
+@supports not (font-size:1cqi){
+  /* Fallback for engines without container query units: allow the value
+     to wrap onto a second line rather than clip, and step the size down
+     on the narrowest phones. The three-card layout and card height are
+     unaffected since .dash-health-row already grows with its content. */
+  .dash-health-value{
+    white-space:normal;
+    overflow-wrap:anywhere;
+    line-height:1.2;
+  }
+}
 @media(max-width:360px){
   .dash-health-surface{gap:5px;}
   .dash-health-row{padding:10px 8px;min-height:60px;}
-  .dash-health-value{font-size:.88rem;}
+  .dash-health-value{font-size:clamp(.66rem,7.4cqi,.88rem);}
 }
 /* Monthly target block */
 .dash-target-block{
@@ -1162,14 +1204,14 @@ details[open] > .customer-behavior-summary::after{
   display:inline;
   color:#1F2937;
   font-size:.83rem;
-  font-weight:700;
+  font-weight:var(--fw-title);
 }
 .action-badge{
   display:inline-flex;
   padding:2px 6px;
   border-radius:999px;
   font-size:.58rem;
-  font-weight:700;
+  font-weight:var(--fw-meta-strong);
   color:#667085;
   background:rgba(31,41,55,.05);
 }
@@ -1178,7 +1220,7 @@ details[open] > .customer-behavior-summary::after{
   margin-top:5px;
   color:#1F2937;
   font-size:.77rem;
-  font-weight:700;
+  font-weight:500;
 }
 .action-why,
 .action-why-now{
@@ -1190,7 +1232,7 @@ details[open] > .customer-behavior-summary::after{
 }
 .action-why-now{
   color:#D94725;
-  font-weight:700;
+  font-weight:var(--fw-meta-strong);
 }
 .action-urgency{
   height:32px;
@@ -2046,7 +2088,7 @@ button.inv-header-save.btn{
 }
 .report-summary-value{
   font-size:1.05rem;
-  font-weight:800;
+  font-weight:var(--fw-value-strong);
   color:#1F2937;
   line-height:1.3;
   font-variant-numeric:tabular-nums;
@@ -2155,10 +2197,15 @@ button.inv-header-save.btn{
   padding:10px 12px;
   font-size:.8rem;
   line-height:1.55;
-  color:#D94725;
-  background:#FFF0EC;
-  border:1px solid rgba(255,92,53,.2);
-  border-radius:8px;
+  /* Was orange text + orange-tinted bg + orange border (orange stacked on
+     orange, section 10A). Keep the accent only as a small semantic cue —
+     a left rule — on a neutral warm-grey surface, and set body text back
+     to normal ink so it reads as calm guidance, not an alarm. */
+  color:#1F2937;
+  background:#F7F5F2;
+  border:1px solid rgba(31,41,55,.08);
+  border-inline-start:3px solid rgba(255,92,53,.55);
+  border-radius:12px;
   text-align:right;
 }
 .mgmt-section{
@@ -2211,7 +2258,7 @@ button.inv-header-save.btn{
 }
 .prospect-daily-target .pdt-label{
   font-size:.72rem;
-  font-weight:700;
+  font-weight:var(--fw-meta-strong);
   color:rgba(245,230,184,.95);
   white-space:nowrap;
   flex:none;
@@ -2240,7 +2287,7 @@ button.inv-header-save.btn{
 }
 .prospect-daily-target .pdt-meta{
   font-size:.75rem;
-  font-weight:800;
+  font-weight:var(--fw-value-strong);
   color:#FF5C35;
   white-space:nowrap;
 }
@@ -2256,6 +2303,24 @@ button.inv-header-save.btn{
   border-radius:999px;
   cursor:pointer;
   min-height:32px;
+}
+/* Completed state (section 8): presentation only — target/count math is
+   untouched. Calm success cue, no glow: a soft green wash on the border
+   and bar, not a full green repaint. */
+.prospect-daily-target.is-complete{
+  border-color:rgba(0,160,104,.4);
+}
+.prospect-daily-target.is-complete .pdt-bar{
+  background:rgba(0,160,104,.22);
+}
+.prospect-daily-target.is-complete .pdt-bar>span{
+  background:linear-gradient(90deg,#00C888,#00A068);
+}
+.prospect-daily-target.is-complete .pdt-meta{
+  color:#5EEAB0;
+}
+.prospect-daily-target.is-complete .pdt-edit{
+  color:#5EEAB0;
 }
 .rank-pill{
   display:inline-block;
@@ -2490,7 +2555,7 @@ button.inv-header-save.btn{
 .gc-section-title{
   margin:0;
   font-size:.9rem;
-  font-weight:800;
+  font-weight:var(--fw-title);
   color:#1F2937;
 }
 .gc-panel{
@@ -2562,12 +2627,12 @@ button.inv-header-save.btn{
 }
 .gc-mission-title{
   font-size:.9rem;
-  font-weight:800;
+  font-weight:var(--fw-title);
   color:#1F2937;
 }
 .gc-mission-count{
   font-size:.88rem;
-  font-weight:700;
+  font-weight:var(--fw-value);
   color:#667085;
 }
 .gc-track{
@@ -2673,7 +2738,7 @@ button.inv-header-save.btn{
 }
 .gc-xp-num{
   font-size:1.35rem;
-  font-weight:800;
+  font-weight:var(--fw-value-strong);
   color:#1F2937;
 }
 .gc-kpi-grid{
@@ -2690,7 +2755,7 @@ button.inv-header-save.btn{
 }
 .gc-kpi-num{
   font-size:1.15rem;
-  font-weight:800;
+  font-weight:var(--fw-value-strong);
   color:#1F2937;
 }
 
@@ -3273,39 +3338,20 @@ main.route-transition{
 }
 .bottom-nav-item{
   position:relative;
+  z-index:1;
   isolation:isolate;
   overflow:visible;
   transition:color var(--ios-control) var(--ios-ease-out),
              transform var(--ios-touch) var(--ios-ease-out),
              opacity var(--ios-touch) ease;
 }
-.bottom-nav-item::before{
-  content:"";
-  position:absolute;
-  inset:3px 5px;
-  z-index:-1;
-  border-radius:18px;
-  background:rgba(0,112,210,.105);
-  border:1px solid rgba(255,255,255,.42);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.52),
-             0 2px 8px rgba(0,112,210,.055);
-  opacity:0;
-  transform:scale(.72);
-  transform-origin:center;
-}
-.bottom-nav-item.active::before{
-  opacity:1;
-  transform:scale(1);
-  animation:iosTabMaterialize 360ms var(--ios-ease-spring) both;
-}
+/* Per-item ::before capsule removed (section 11): it materialized fresh
+   on whichever item became active instead of one object moving between
+   tabs. Selection is now shown by the single persistent .bn-indicator
+   element (js/nav.js), positioned/animated in JS. The icon keeps its
+   own subtle settle response below. */
 .bottom-nav-item.active .bn-ico{
   animation:iosTabIconSettle 340ms var(--ios-ease-spring) both;
-}
-@keyframes iosTabMaterialize{
-  0%{opacity:0;transform:scale(.72);}
-  55%{opacity:1;transform:scale(1.045);}
-  78%{transform:scale(.985);}
-  100%{opacity:1;transform:scale(1);}
 }
 @keyframes iosTabIconSettle{
   0%{transform:scale(.86);}
@@ -3453,14 +3499,15 @@ a.ledger-row:active,
              0 1px 5px rgba(26,38,52,.06);
 }
 .dash-qa-ico{
-  width:34px;
-  height:34px;
+  width:36px;
+  height:36px;
   background:rgba(0,112,210,.10);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
 }
 .dash-qa-ico svg{
-  width:18px;
-  height:18px;
+  width:20px;
+  height:20px;
+  stroke-width:1.7;
 }
 
 /* Cards: slightly more elevated, without turning the content layer into glass. */
@@ -3475,8 +3522,44 @@ a.ledger-row:active,
 /* Respect reduced-motion users; iOS does the same for motion-sensitive settings. */
 @media (prefers-reduced-motion:reduce){
   main.route-transition,
-  .bottom-nav-item.active::before,
   .bottom-nav-item.active .bn-ico{
     animation:none!important;
   }
+  .bn-indicator{
+    transition:none!important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   BOTTOM NAV — single persistent liquid-glass indicator (section 11)
+   One element, created once and moved between tabs by js/nav.js. It is
+   re-appended (not re-created) into #bottom-nav after every render, so
+   it never disappears/rebuilds like the old per-item ::before capsule.
+   -------------------------------------------------------------------------- */
+.bn-indicator{
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:0;
+  pointer-events:none;
+  will-change:transform,width,height;
+  background:rgba(255,255,255,.42);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),
+             0 2px 6px rgba(26,38,52,.05);
+  backdrop-filter:saturate(160%) blur(6px);
+  -webkit-backdrop-filter:saturate(160%) blur(6px);
+  /* Organic/liquid shape rather than a plain circle. */
+  border-radius:46% 54% 52% 48%/48% 46% 54% 52%;
+  opacity:0;
+  transition:transform 340ms cubic-bezier(.34,1.56,.64,1),
+             width 340ms cubic-bezier(.34,1.56,.64,1),
+             height 340ms cubic-bezier(.34,1.56,.64,1),
+             opacity 160ms ease;
+}
+.bn-indicator.is-ready{
+  opacity:1;
+}
+.bn-indicator.is-jump{
+  transition:opacity 160ms ease;
 }
