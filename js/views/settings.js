@@ -73,7 +73,7 @@
       <div class="settings-section mgmt-section">
         <h3 class="mgmt-section-title">داده و بکاپ</h3>
         <div class="settings-warn">
-          فایل JSON را در جایی امن نگه دارید (Files / ابر / کامپیوتر). روی iPhone معمولاً برگه Share و «Save to Files» باز می‌شود.
+          فایل JSON را در جایی امن نگه دارید (Files / ابر). روی iPhone معمولاً Share → Save to Files.
         </div>
         <div class="btn-row tx-actions-primary">
           <button type="button" class="btn" id="export-json">دریافت Backup (JSON)</button>
@@ -84,7 +84,7 @@
       <div class="settings-section mgmt-section">
         <h3 class="mgmt-section-title">بازیابی از فایل</h3>
         <div class="settings-warn">
-          بازیابی، اطلاعات فعلی را <b>جایگزین</b> می‌کند. قبل از آن، یک نسخه برای «برگشت از بازیابی» ذخیره می‌شود.
+          بازیابی اطلاعات فعلی را <b>جایگزین</b> می‌کند؛ قبلش نسخهٔ برگشت ذخیره می‌شود.
         </div>
         <div class="field"><label>انتخاب فایل بکاپ JSON</label>
           <input type="file" id="import-file" accept="application/json,.json">

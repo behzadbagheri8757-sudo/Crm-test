@@ -221,17 +221,17 @@
       '<div class="report-section">' +
       '<h3>سود</h3>' +
       '<div class="cards">' +
-      '<div class="card wide"><div class="label">سود کل (منطق customerProfit روی همه مشتریان)</div>' +
+      '<div class="card wide report-profit-primary"><div class="label">سود کل</div>' +
       '<div class="value accent-olive">' +
       toman(g.totalProfit) +
       ' ت</div></div>' +
-      '<div class="card wide"><div class="label">سود ناخالص فاکتورهای دوره «' +
+      '<div class="card wide report-profit-secondary"><div class="label">سود ناخالص فاکتورهای دوره «' +
       esc(periodLabel) +
       '»</div>' +
       '<div class="value">' +
       toman(periodGrossProfit) +
       ' ت</div>' +
-      '<div class="report-note">همان فرمول ردیف فاکتور (قیمت − buyPrice تاریخی − تخفیف). برگشت/تخفیف تراکنشی فقط در «سود کل» لحاظ شده است.</div>' +
+      '<div class="report-note">سود ردیف فاکتور (قیمت − خرید تاریخی − تخفیف). برگشت/تخفیف تراکنشی فقط در سود کل.</div>' +
       '</div>' +
       '<div class="card"><div class="label">دریافت نقد/کارت/انتقال — ' +
       esc(periodLabel) +
