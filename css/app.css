@@ -2299,6 +2299,18 @@ button.inv-header-save.btn{
 /* --------------------------------------------------------------------------
    15. PROSPECTSCOUT / EVALUATION (Protected)
    -------------------------------------------------------------------------- */
+/* Prospect list: clear gap under action buttons (overlap fix) */
+.prospect-subnav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+#prospect-target.cards{
+  margin-top:0;
+  margin-bottom:14px;
+}
+
 /* Prospect daily evaluation target — Compact Stacked Hero (presentation only) */
 #prospect-target.cards > .prospect-daily-target{
   grid-column:1 / -1;
@@ -2307,20 +2319,19 @@ button.inv-header-save.btn{
   display:flex;
   flex-direction:column;
   align-items:stretch;
-  gap:4px;
-  padding:10px 12px 11px;
-  border-radius:14px;
+  gap:0;
+  padding:12px 14px 12px;
+  border-radius:16px;
   background:#FFFFFF;
   border:1px solid rgba(31,41,55,.08);
-  box-shadow:0 2px 8px rgba(26,38,52,.04);
+  box-shadow:0 1px 3px rgba(26,38,52,.04),0 4px 12px rgba(26,38,52,.035);
   color:#1F2937;
   min-width:0;
   box-sizing:border-box;
 }
 .prospect-daily-target.is-unset{
-  flex-direction:column;
-  gap:6px;
-  padding:12px;
+  gap:8px;
+  padding:14px;
 }
 .prospect-daily-target.is-idle{
   opacity:1;
@@ -2330,58 +2341,63 @@ button.inv-header-save.btn{
 .prospect-daily-target .pdt-head{
   display:flex;
   align-items:center;
-  gap:8px;
+  justify-content:space-between;
+  gap:10px;
   min-width:0;
+  margin-bottom:8px;
 }
 .prospect-daily-target .pdt-label{
   flex:1 1 auto;
   min-width:0;
-  font-size:.72rem;
+  font-size:.78rem;
   font-weight:700;
-  color:#667085;
+  color:#1F2937;
+  letter-spacing:-.1px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 .prospect-daily-target .pdt-pct{
   flex:none;
-  font-size:.78rem;
-  font-weight:800;
-  color:#FF5C35;
+  font-size:.72rem;
+  font-weight:700;
+  color:#667085;
   font-variant-numeric:tabular-nums;
-  letter-spacing:-.2px;
+  letter-spacing:-.1px;
 }
 .prospect-daily-target .pdt-hero{
   display:flex;
-  align-items:baseline;
-  gap:6px;
-  margin-top:2px;
-  line-height:1.15;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:2px;
+  padding:2px 0 6px;
+  line-height:1.2;
 }
 .prospect-daily-target .pdt-count{
-  font-size:1.45rem;
+  font-size:2rem;
   font-weight:800;
   color:#1F2937;
-  letter-spacing:-.4px;
+  letter-spacing:-.6px;
   font-variant-numeric:tabular-nums;
-  line-height:1.1;
+  line-height:1.05;
+}
+.prospect-daily-target .pdt-caption{
+  font-size:.72rem;
+  font-weight:600;
+  color:#667085;
+  margin:0;
 }
 .prospect-daily-target .pdt-of{
-  font-size:.82rem;
+  font-size:.78rem;
   font-weight:600;
   color:#667085;
   font-variant-numeric:tabular-nums;
 }
-.prospect-daily-target .pdt-caption{
-  font-size:.68rem;
-  font-weight:500;
-  color:#667085;
-  margin-top:-1px;
-}
 .prospect-daily-target .pdt-bar-wrap{
   width:100%;
   min-width:0;
-  margin-top:4px;
+  margin:6px 0 8px;
 }
 .prospect-daily-target .pdt-bar{
   height:5px;
@@ -2403,11 +2419,20 @@ button.inv-header-save.btn{
 .prospect-daily-target.is-idle .pdt-bar>span{
   width:0!important;
 }
+.prospect-daily-target .pdt-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  min-width:0;
+}
 .prospect-daily-target .pdt-remain{
-  font-size:.68rem;
+  flex:1 1 auto;
+  min-width:0;
+  font-size:.72rem;
   font-weight:600;
   color:#667085;
-  margin-top:2px;
+  margin:0;
 }
 .prospect-daily-target .pdt-unset-msg{
   font-size:.84rem;
@@ -2421,20 +2446,23 @@ button.inv-header-save.btn{
 }
 .prospect-daily-target .pdt-edit{
   flex:none;
-  border:1px solid rgba(31,41,55,.1);
-  background:rgba(31,41,55,.03);
-  color:#4B5563;
+  border:none;
+  background:transparent;
+  color:#0070D2;
   font-family:inherit;
-  font-size:.68rem;
+  font-size:.78rem;
   font-weight:700;
-  padding:4px 10px;
-  border-radius:999px;
+  padding:4px 2px;
+  border-radius:0;
   cursor:pointer;
   min-height:28px;
   line-height:1.2;
+  box-shadow:none;
 }
 .prospect-daily-target .pdt-edit:active{
-  background:rgba(31,41,55,.06);
+  opacity:.65;
+  background:transparent;
+  transform:none;
 }
 .rank-pill{
   display:inline-block;
