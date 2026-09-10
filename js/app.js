@@ -1,5 +1,5 @@
 /* app.js — screens, forms, navigation, init, QA
-   Phase 0 extract: no logic changes. Depends on models/db/calc/stock/payments/backup/ui.
+   Phase 0 extract: no logic changes. Depends on models/db/calc/stock/backup/ui.
 */
 // ---------- submit guard (double-tap on mobile) ----------
 /** Disable mutation button for one run; re-enable only on failure/validation abort. */
