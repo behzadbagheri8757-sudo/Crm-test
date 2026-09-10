@@ -120,6 +120,11 @@ input[placeholder*="جستجو"]{
   color:var(--vg-color-primary);
 }
 
+.bottom-nav-item.active .bn-ico svg{
+  stroke-width:1.9;
+  transition:stroke-width 0.2s ease;
+}
+
 /* ---------- Buttons ---------- */
 .btn{
   min-height:var(--vg-control-height);
