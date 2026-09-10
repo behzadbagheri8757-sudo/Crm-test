@@ -20,7 +20,6 @@ const PRECACHE_URLS = [
   './js/location.js',
   './js/calc.js',
   './js/stock.js',
-  './js/payments.js',
   './js/backup.js',
   './js/pin-lock.js',
   './js/nav.js',
