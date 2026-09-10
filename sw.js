@@ -7,13 +7,16 @@
  */
 'use strict';
 
-/* CHANGED: v33 -> v34 (sync precache with current index.html assets) */
-const CACHE_NAME = 'baqeri-shell-v34';
+/* CHANGED: v34 -> v35 (precache Visual Grammar CSS assets) */
+const CACHE_NAME = 'baqeri-shell-v35';
 
 /** App Shell — paths relative to this SW (same directory as index.html). */
 const PRECACHE_URLS = [
   './index.html',
   './css/app.css',
+  './css/visual-grammar.css',
+  './css/visual-grammar-components.css',
+  './css/visual-grammar-pages.css',
   './js/models.js',
   './js/ui.js',
   './js/db.js',
