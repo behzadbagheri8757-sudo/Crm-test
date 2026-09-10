@@ -2651,15 +2651,37 @@ function openInvoiceForm(cid, editInv){
         return;
       }
 
-      // اعتبارسنجی مقادیر ردیف‌های فاکتور قبل از ذخیره: تعداد باید بزرگ‌تر از صفر، قیمت/تخفیف نباید منفی باشند
-      const invalidRow = rows.find(r=> !(r.qty>0) || r.price<0 || (r.discount||0)<0);
+      // Business validation: discount invariants must hold before any stock/payment
+      // mutation or persistence. UI clamping is not sufficient protection.
+      const invalidRow = rows.find(r=> {
+        const gross = (Number(r.qty)||0) * (Number(r.price)||0);
+        const rowDiscount = Number(r.discount)||0;
+        return !(r.qty>0) || r.price<0 || rowDiscount<0 || rowDiscount>gross;
+      });
       if(invalidRow){
-        alert('مقادیر فاکتور نامعتبر است.\n\nتعداد هر ردیف باید بزرگ‌تر از صفر باشد و قیمت/تخفیف نباید منفی باشند.');
+        alert('مقادیر فاکتور نامعتبر است.\n\nتعداد باید بزرگ‌تر از صفر، قیمت و تخفیف نباید منفی باشند و تخفیف هر ردیف نباید از مبلغ همان ردیف بیشتر باشد.');
         btn.disabled = false;
         return;
       }
-      if(discount<0){
-        alert('تخفیف کلی فاکتور نمی‌تواند منفی باشد.');
+      const invoiceSubtotal = rows.reduce((s,r)=>s + (Number(r.qty)||0)*(Number(r.price)||0) - (Number(r.discount)||0), 0);
+      const normalizedDiscount = Number(discount);
+      if(!Number.isFinite(normalizedDiscount) || normalizedDiscount<0){
+        alert('تخفیف کلی فاکتور نمی‌تواند منفی یا نامعتبر باشد.');
+        btn.disabled = false;
+        return;
+      }
+      if(discountType==='fixed' && normalizedDiscount>invoiceSubtotal){
+        alert('تخفیف مبلغی فاکتور نمی‌تواند از مبلغ خالص اقلام بیشتر باشد.');
+        btn.disabled = false;
+        return;
+      }
+      if(discountType==='percent' && normalizedDiscount>100){
+        alert('درصد تخفیف فاکتور باید بین صفر تا ۱۰۰ باشد.');
+        btn.disabled = false;
+        return;
+      }
+      if(discountType!=='fixed' && discountType!=='percent'){
+        alert('نوع تخفیف فاکتور نامعتبر است.');
         btn.disabled = false;
         return;
       }

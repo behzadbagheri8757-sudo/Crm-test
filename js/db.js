@@ -412,7 +412,14 @@ function normalizeData(parsed){
     return Number.isFinite(n) ? n : fallback;
   };
   const optNum = (v) => (v === null || v === undefined || v === '' ? v : num(v));
-  d.invoiceSeq = num(parsed.invoiceSeq || 1000, 1000);
+  // Preserve legacy numbering without ever rewinding below an existing numeric invoice number.
+  const parsedInvoiceSeq = num(parsed.invoiceSeq, 1000);
+  const maxExistingInvoiceNumber = (Array.isArray(parsed.invoices) ? parsed.invoices : [])
+    .reduce((m, inv) => {
+      const n = Number(inv && inv.number);
+      return Number.isFinite(n) ? Math.max(m, n) : m;
+    }, 1000);
+  d.invoiceSeq = Math.max(parsedInvoiceSeq, maxExistingInvoiceNumber);
   d.products = (parsed.products||[]).map(p=>({
     id: p.id||uid(),
     name: p.name||'',
@@ -528,16 +535,21 @@ async function loadData(){
     if(record && record.value){
       data = normalizeData(JSON.parse(record.value));
       _lastPersistedData = JSON.parse(JSON.stringify(data));
-    } else if(window.storage){
-      // fallback: recover from an older window.storage-based save, if this
-      // file was ever previously run inside a Claude artifact sandbox
-      try{
-        const legacy = await window.storage.get('baqeri-erp-data', false);
-        if(legacy && legacy.value){
-          data = normalizeData(JSON.parse(legacy.value));
-          await saveData();
-        }
-      }catch(e){ /* no legacy data — fine */ }
+    } else {
+      // Empty DB is a valid initial state. Keep an explicit last-known-good
+      // snapshot so a first save failure can roll RAM back deterministically.
+      _lastPersistedData = JSON.parse(JSON.stringify(data));
+      if(window.storage){
+        // fallback: recover from an older window.storage-based save, if this
+        // file was ever previously run inside a Claude artifact sandbox
+        try{
+          const legacy = await window.storage.get('baqeri-erp-data', false);
+          if(legacy && legacy.value){
+            data = normalizeData(JSON.parse(legacy.value));
+            await saveData();
+          }
+        }catch(e){ /* no legacy data — fine */ }
+      }
     }
   }catch(e){
     console.error('loadData failed', e);
@@ -566,7 +578,12 @@ async function saveData(){
 }
 
 function nextInvoiceNumber(){
-  data.invoiceSeq = (data.invoiceSeq||1000) + 1;
+  const seq = Number(data.invoiceSeq);
+  const maxExisting = (data.invoices||[]).reduce((m, inv)=>{
+    const n = Number(inv && inv.number);
+    return Number.isFinite(n) ? Math.max(m, n) : m;
+  }, 1000);
+  data.invoiceSeq = Math.max(Number.isFinite(seq) ? seq : 1000, maxExisting) + 1;
   return data.invoiceSeq;
 }
 
