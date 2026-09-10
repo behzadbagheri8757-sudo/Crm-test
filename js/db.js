@@ -441,6 +441,7 @@ function normalizeData(parsed){
     openingBalance: num(c.openingBalance),
     visits: c.visits||[],
     active: c.active!==false,
+    prospectShopId: c.prospectShopId != null ? c.prospectShopId : null,
   }));
   d.invoices = (parsed.invoices||[]).map(i=>({
     id:i.id||uid(), number:optNum(i.number), customerId:i.customerId, date:i.date,
