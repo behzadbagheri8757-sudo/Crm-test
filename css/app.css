@@ -2529,6 +2529,12 @@ button.inv-header-save.btn{
   color:#fff;
   font-weight:800;
   font-size:.72rem;
+  /* FIX (discovered during Evaluation V2 work): without this, the bidi
+     algorithm reorders "A+" to display as "+A" inside RTL pages. This
+     pill is reused heavily by the new V2 rank badges, so fixing it here
+     benefits every rank pill in the app (legacy included), not just V2. */
+  direction:ltr;
+  unicode-bidi:isolate;
 }
 .rank-pill-A\+{
   background:#00A068;
@@ -3955,6 +3961,46 @@ button#save-tx{
   font-weight:700;
 }
 
+/* Evaluation V2 — optional follow-up date: keep native iOS date picker, replace only the empty-state placeholder visually. */
+.ff-date-field {
+  position: relative;
+  min-height: 44px;
+}
+
+.ff-date-field input[type="date"] {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.ff-date-placeholder {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-muted, #8b8b8b);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.ff-date-field.is-empty input[type="date"] {
+  color: transparent;
+}
+
+.ff-date-field.is-empty input[type="date"]::-webkit-datetime-edit,
+.ff-date-field.is-empty input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  color: transparent;
+}
+
+.ff-date-field:not(.is-empty) .ff-date-placeholder {
+  display: none;
+}
+
+.ff-date-field:not(.is-empty) input[type="date"] {
+  color: inherit;
+}
+
 /* 22 — Invoice product selector: compact plain (empty state already pill; selected is plain) */
 .inv-line:not(.inv-line-empty) .inv-line-name{
   font-size:.92rem;
@@ -4038,4 +4084,111 @@ button#save-tx{
 }
 .bn-indicator.is-settling{
   background: rgba(120,120,128,0.12);
+}
+
+/* ==========================================================================
+   PROSPECT EVALUATION V2 — scoped additions (Profile step, incomplete
+   state, Unknown option, Snapshot/Visit-History detail). Reuses existing
+   .card/.btn/.chip-opt/.field/.rank-pill grammar wherever possible; only
+   adds what those components genuinely don't cover.
+   ========================================================================== */
+.eval-step-label{
+  font-weight:700;
+  font-size:.88rem;
+  color:#0070D2;
+  margin-bottom:8px;
+}
+.eval-progress-bar{
+  height:4px;
+  border-radius:4px;
+  background:rgba(31,41,55,.08);
+  overflow:hidden;
+  margin-bottom:14px;
+}
+.eval-progress-fill{
+  height:100%;
+  background:var(--vg-color-primary);
+  border-radius:4px;
+  transition:width .18s ease;
+}
+.eval-profile-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:6px;
+}
+.eval-profile-card{
+  min-height:64px;
+  padding:14px 10px;
+  border-radius:14px;
+  background:var(--vg-color-surface);
+  border:1px solid var(--vg-color-border);
+  color:var(--vg-color-text);
+  font-weight:700;
+  font-size:.9rem;
+  cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,transform .1s;
+}
+.eval-profile-card:active{
+  transform:scale(.98);
+}
+.eval-profile-card.selected{
+  background:var(--vg-color-primary);
+  border-color:var(--vg-color-primary);
+  color:#fff;
+}
+.eval-q-hint{
+  margin:-2px 0 10px;
+  font-size:.74rem;
+  line-height:1.5;
+}
+/* Unknown must read as a normal, first-class option — not an error state
+   (spec §21). A quieter dashed border is enough to set it apart. */
+.eval-q-opt-unknown{
+  border-style:dashed;
+}
+.eval-incomplete-note{
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(31,41,55,.04);
+  border:1px solid rgba(31,41,55,.08);
+}
+.eval-incomplete-title{
+  font-weight:700;
+  font-size:.86rem;
+  color:#4B5563;
+  margin-bottom:2px;
+}
+/* Incomplete rank badge: calm and muted, not alarming (spec §24-§25) —
+   deliberately NOT reusing rank-pill-D's tone since it isn't a negative
+   rank, it's an absence of enough data to rank at all. */
+.rank-pill-incomplete{
+  background:rgba(31,41,55,.08);
+  color:#4B5563;
+}
+.snapshot-meta-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:8px 0 2px;
+}
+.visit-edit-note,
+.visit-next-note,
+.visit-note-text{
+  display:block;
+  color:var(--vg-color-text-muted);
+}
+.eval-summary-identity-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.answer-row-editable{
+  cursor:pointer;
+}
+.answer-edit-hint{
+  color:var(--vg-color-primary);
+  font-size:.72rem;
+  margin-inline-start:6px;
 }
