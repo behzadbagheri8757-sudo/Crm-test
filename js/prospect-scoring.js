@@ -126,8 +126,8 @@ function prospectFaDateTime(iso){
 const PROSPECT_SCORING_VERSION_V2 = 2;
 
 const PROSPECT_PROFILES = [
-  { key: 'retail', label: 'خرده‌فروشی' },
-  { key: 'foodservice', label: 'فودسرویس' },
+  { key: 'retail', label: 'مواد غذایی' },
+  { key: 'foodservice', label: 'رستوران / کافه / آشپزخانه' },
 ];
 
 const PROSPECT_BUSINESS_TYPES = {
@@ -318,7 +318,7 @@ const PROSPECT_FOLLOWUP_OUTCOMES = [
   { key: 'still_hesitant', label: 'هنوز مردد' },
   { key: 'price_blocker', label: 'مانع قیمت' },
   { key: 'has_stock', label: 'موجودی دارد' },
-  { key: 'buys_competitor', label: 'رقیب را می‌خرد' },
+  { key: 'buys_competitor', label: 'از رقیب خرید می‌کند' },
   { key: 'not_now', label: 'فعلاً نمی‌خواهد' },
   { key: 'ready_to_buy', label: 'آماده خرید' },
   { key: 'decision_maker_absent', label: 'تصمیم‌گیرنده نبود' },

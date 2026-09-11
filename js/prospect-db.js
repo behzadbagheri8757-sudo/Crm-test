@@ -46,7 +46,7 @@ function prospectDbDelete(name,key){
  * A visit is a repeatable EVENT (spec: Evaluation V2, §4). Legacy visits
  * (scoringVersion 1, no `type`) keep their original full-evaluation shape
  * and rank fallback behavior — untouched for backward compatibility.
- * V2 visits (`type` 'initial' | 'followup') carry a possibly-null
+ * V2 events (`type` 'initial' | 'followup' | 'snapshot_edit') carry a possibly-null
  * score/rank/knownCount and MUST NOT receive a computed fallback rank:
  * `rank || prospectScoreToRank(0)` would silently turn "no rank yet" into
  * a false "D", which is exactly what the V2 model forbids for incomplete
@@ -59,7 +59,8 @@ function normalizeProspectVisit(raw){
     id: raw.id || (typeof uid==='function'?uid():String(Date.now())),
     date: raw.date || prospectNowISO(),
     // 'legacy' = old full 10Q evaluation visit; 'initial' = V2 first evaluation;
-    // 'followup' = V2 lightweight follow-up event (spec §4, §13).
+    // 'followup' = V2 lightweight follow-up event; 'snapshot_edit' = targeted
+    // Snapshot answer audit event (does not count as a visit).
     type: raw.type || 'legacy',
     answers: (raw.answers && typeof raw.answers==='object') ? raw.answers : {},
     score: typeof raw.score==='number' ? raw.score : (isV2 ? null : 0),

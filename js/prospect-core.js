@@ -185,6 +185,46 @@ async function createProspectShopV2(payload){
  * Snapshot answer is changed and the score/rank/knownCount recompute —
  * everything else about the Snapshot is left untouched (spec §14-§15).
  */
+/**
+ * Targeted Snapshot answer edit from the current Snapshot UI.
+ * This records an audit/history event but does NOT count as a new prospect
+ * visit and does not increment the daily visit target.
+ */
+async function editProspectSnapshotAnswer(shopId, questionId, newValue){
+  const shop = prospectState.shops.find(s=>s.id===shopId);
+  if(!shop || !shop.snapshot || !questionId) return null;
+  const questions = (typeof PROSPECT_QUESTIONS_V2 !== 'undefined' && shop.snapshot.profile)
+    ? (PROSPECT_QUESTIONS_V2[shop.snapshot.profile] || []) : [];
+  const question = questions.find(q=>q.id===questionId);
+  if(!question || !question.options.some(o=>o.key===newValue)) return null;
+
+  const oldValue = shop.snapshot.answers ? shop.snapshot.answers[questionId] : null;
+  if(oldValue === newValue) return shop;
+
+  shop.snapshot.answers = shop.snapshot.answers || {};
+  shop.snapshot.answers[questionId] = newValue;
+  const result = prospectComputeScoreV2(shop.snapshot.profile, shop.snapshot.answers);
+  shop.snapshot.score = result.score;
+  shop.snapshot.rank = result.rank;
+  shop.snapshot.knownCount = result.knownCount;
+  shop.snapshot.updatedAt = prospectNowISO();
+  shop.latestScore = result.score != null ? result.score : 0;
+  shop.latestRank = result.rank;
+
+  const editEvent = normalizeProspectVisit({
+    date: prospectNowISO(),
+    type: 'snapshot_edit',
+    scoringVersion: PROSPECT_SCORING_VERSION_V2,
+    score: result.score,
+    rank: result.rank,
+    knownCount: result.knownCount,
+    snapshotEdit: { questionId: questionId, from: (oldValue != null ? oldValue : null), to: newValue },
+  });
+  shop.visits.push(editEvent);
+  await persistProspectShop(shop);
+  return shop;
+}
+
 async function addFollowUpVisit(shopId, payload){
   const shop = prospectState.shops.find(s=>s.id===shopId);
   if(!shop) return null;
@@ -235,6 +275,23 @@ async function addFollowUpVisit(shopId, payload){
       console.warn('Game hook failed:', e);
     }
   }
+  return shop;
+}
+
+/** Edit an existing V2 follow-up visit only inside the UI edit window. */
+async function editProspectFollowUpVisit(shopId, visitId, payload){
+  const shop = prospectState.shops.find(s=>s.id===shopId);
+  if(!shop || !Array.isArray(shop.visits)) return null;
+  const visit = shop.visits.find(v=>v && v.id===visitId);
+  if(!visit || visit.type !== 'followup') throw new Error('این ویزیت قابل ویرایش نیست');
+  const ts = new Date(visit.date).getTime();
+  if(!isFinite(ts) || Date.now() - ts < 0 || Date.now() - ts > (3 * 60 * 60 * 1000)) {
+    throw new Error('مهلت ویرایش این ویزیت تمام شده است');
+  }
+  visit.tags = Array.isArray(payload.tags) ? [...payload.tags] : [];
+  visit.note = typeof payload.note === 'string' ? payload.note : '';
+  visit.nextFollowUpDate = payload.nextFollowUpDate || null;
+  await persistProspectShop(shop);
   return shop;
 }
 
