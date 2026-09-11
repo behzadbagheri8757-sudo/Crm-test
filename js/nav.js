@@ -29,39 +29,56 @@ const NAV_ITEMS = [
   { id: 'settings',  href: '#/settings',  label: 'تنظیمات', spaPath: '/settings' },
 ];
 
-/** Primary mobile bottom bar (5 items).
- * iconKey references js/icons.js (AppIcons) — the single icon registry.
- * Each key has an outline (inactive) + solid (active) pair, matching the
- * SF-Symbols-style state change iOS tab bars use, instead of a single
- * fixed-weight glyph. */
+/** Primary mobile bottom bar (5 items). */
 const BOTTOM_NAV_ITEMS = [
-  { id: 'dashboard', href: '#/dashboard', spaPath: '/dashboard', label: 'داشبورد',  iconKey: 'home' },
-  { id: 'customers', href: '#/customers', spaPath: '/customers', label: 'مشتریان',  iconKey: 'users' },
-  { id: 'products',  href: '#/products',  spaPath: '/products',  label: 'اجناس',    iconKey: 'cube' },
-  { id: 'invoices',  href: '#/invoices',  spaPath: '/invoices',  label: 'فاکتورها', iconKey: 'documentText' },
-  { id: 'more',      href: '#more',       label: 'بیشتر',        iconKey: 'more' },
+  {
+    id: 'dashboard',
+    href: '#/dashboard',
+    spaPath: '/dashboard',
+    label: 'داشبورد',
+    icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></svg>'
+  },
+  {
+    id: 'customers',
+    href: '#/customers',
+    spaPath: '/customers',
+    label: 'مشتریان',
+    icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0 -3 -3.87"/></svg>'
+  },
+  {
+    id: 'products',
+    href: '#/products',
+    spaPath: '/products',
+    label: 'اجناس',
+    icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"/><path d="M12 12l8 -4.5"/><path d="M12 12l0 9"/><path d="M12 12l-8 -4.5"/><path d="M16 5.25l-8 4.5"/></svg>'
+  },
+  {
+    id: 'invoices',
+    href: '#/invoices',
+    spaPath: '/invoices',
+    label: 'فاکتورها',
+    icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 7l1 0"/><path d="M9 13l6 0"/><path d="M13 17l2 0"/></svg>'
+  },
+  {
+    id: 'more',
+    href: '#more',
+    label: 'بیشتر',
+    icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/></svg>'
+  },
 ];
 
-/** Secondary destinations opened from «بیشتر». iconKey references js/icons.js. */
+/** Secondary destinations opened from «بیشتر». */
 const MORE_NAV_ITEMS = [
-  { id: 'inventory', href: '#/inventory', label: 'انبار', spaPath: '/inventory', iconKey: 'archiveBox' },
-  { id: 'suppliers', href: '#/suppliers', label: 'تأمین‌کنندگان', spaPath: '/suppliers', iconKey: 'truck' },
-  { id: 'payments',  href: '#/payments',  label: 'پرداخت‌ها', spaPath: '/payments', iconKey: 'banknotes' },
-  { id: 'checks',    href: '#/checks',    label: 'چک‌ها', spaPath: '/checks', iconKey: 'documentCheck' },
-  { id: 'visits',    href: '#/visits',    label: 'ویزیت مشتریان', spaPath: '/visits', iconKey: 'mapPin' },
-  { id: 'prospects', href: '#/prospects', label: 'ارزیابی مغازه‌ها', spaPath: '/prospects', iconKey: 'buildingStorefront' },
-  { id: 'game',      href: '#/game',      label: 'مرکز بازی فروش', spaPath: '/game', iconKey: 'trophy' },
-  { id: 'reports',   href: '#/reports',   label: 'گزارش‌ها', spaPath: '/reports', iconKey: 'chartBar' },
-  { id: 'settings',  href: '#/settings',  label: 'تنظیمات و Backup', spaPath: '/settings', iconKey: 'cog' },
+  { id: 'inventory', href: '#/inventory', label: 'انبار', spaPath: '/inventory' },
+  { id: 'suppliers', href: '#/suppliers', label: 'تأمین‌کنندگان', spaPath: '/suppliers' },
+  { id: 'payments',  href: '#/payments',  label: 'پرداخت‌ها', spaPath: '/payments' },
+  { id: 'checks',    href: '#/checks',    label: 'چک‌ها', spaPath: '/checks' },
+  { id: 'visits',    href: '#/visits',    label: 'ویزیت مشتریان', spaPath: '/visits' },
+  { id: 'prospects', href: '#/prospects', label: 'ارزیابی مغازه‌ها', spaPath: '/prospects' },
+  { id: 'game',      href: '#/game',      label: 'مرکز بازی فروش', spaPath: '/game' },
+  { id: 'reports',   href: '#/reports',   label: 'گزارش‌ها', spaPath: '/reports' },
+  { id: 'settings',  href: '#/settings',  label: 'تنظیمات و Backup', spaPath: '/settings' },
 ];
-
-/** Renders an icon by key via the central AppIcons registry, falling back to
- * an empty string if icons.js failed to load (never throws, never blocks nav). */
-function navIcon(iconKey, active){
-  try {
-    return (typeof AppIcons !== 'undefined' && AppIcons.render) ? AppIcons.render(iconKey, { active: !!active, size: 22 }) : '';
-  } catch (e) { return ''; }
-}
 
 function renderSharedNav(activeId){
   const nav = document.getElementById('nav');
@@ -228,7 +245,7 @@ function positionBnIndicator(bar, animate){
   var padX = 5;
   var padY = 4;
   var w = Math.max(44, Math.round(itemRect.width - padX * 2));
-  var h = Math.max(44, Math.round(itemRect.height - padY * 2));
+  var h = Math.max(48, Math.round(itemRect.height - padY * 2));
   var left = itemRect.left - barRect.left + (itemRect.width - w) / 2;
   var top = itemRect.top - barRect.top + (itemRect.height - h) / 2;
   var reduceMotion = false;
@@ -321,17 +338,16 @@ function renderBottomNav(activeId){
     if(t.id === 'more') active = moreActive;
     else active = t.id === activeId;
     const cls = 'bottom-nav-item' + (active ? ' active' : '');
-    const ico = navIcon(t.iconKey, active);
     if(t.id === 'more'){
       return `<button type="button" class="${cls}" data-bottom-more="1" aria-label="بیشتر">
-        <span class="bn-ico">${ico}</span>
+        <span class="bn-ico">${t.icon}</span>
         <span class="bn-label">${t.label}</span>
       </button>`;
     }
     let href = t.href;
     if (spa && t.spaPath) href = '#' + t.spaPath;
     return `<a class="${cls}" href="${href}" data-spa-path="${t.spaPath || ''}">
-      <span class="bn-ico">${ico}</span>
+      <span class="bn-ico">${t.icon}</span>
       <span class="bn-label">${t.label}</span>
     </a>`;
   }).join('');
@@ -378,15 +394,10 @@ function fillMoreSheetList(activeId){
   if(!list) return;
   const spa = isSpaShell();
   list.innerHTML = MORE_NAV_ITEMS.map(t => {
-    const isActive = t.id === activeId;
+    const active = t.id === activeId ? ' active' : '';
     let href = t.href;
     if (spa && t.spaPath) href = '#' + t.spaPath;
-    const ico = navIcon(t.iconKey, isActive);
-    return `<a class="more-sheet-item${isActive ? ' active' : ''}" href="${href}" data-spa-path="${t.spaPath || ''}">
-      <span class="more-sheet-item-ico">${ico}</span>
-      <span class="more-sheet-item-label">${t.label}</span>
-      <svg class="more-sheet-item-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-    </a>`;
+    return `<a class="more-sheet-item${active}" href="${href}" data-spa-path="${t.spaPath || ''}">${t.label}</a>`;
   }).join('');
   if (spa) {
     list.querySelectorAll('a[data-spa-path]').forEach(function (a) {
