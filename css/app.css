@@ -2627,6 +2627,22 @@ button.inv-header-save.btn{
   font-size:.77rem;
   line-height:1.65;
 }
+.snapshot-answer-row{
+  width:100%;
+  appearance:none;
+  background:transparent;
+  border:0;
+  border-bottom:1px solid rgba(31,41,55,.05);
+  font:inherit;
+  text-align:right;
+}
+.snapshot-answer-row:last-child{
+  border-bottom:0;
+}
+.visit-history-edit{
+  margin-top:6px;
+  min-height:34px;
+}
 .eval-location-context{
   display:flex;
   align-items:center;
@@ -2646,16 +2662,17 @@ button.inv-header-save.btn{
   margin:8px 0 4px;
 }
 .visit-card-enter{
-  animation:visitCardIn .28s cubic-bezier(0.32,0.72,0,1);
+  animation:visitCardIn .36s cubic-bezier(.22,.61,.36,1);
 }
 @keyframes visitCardIn{
-  from{opacity:0;transform:translateX(-12px);}
+  from{opacity:0;transform:translateX(-8px);}
   to{opacity:1;transform:translateX(0);}
 }
 .q-title{
-  font-weight:700;
-  margin-bottom:8px;
-  font-size:.88rem;
+  font-weight:750;
+  margin:0 0 12px;
+  font-size:.9rem;
+  line-height:1.65;
   color:#0070D2;
 }
 .q-block{
@@ -3827,7 +3844,12 @@ a.ledger-row:active,
   border-radius:10px;
 }
 .eval-q-options{
-  gap:6px;
+  gap:8px;
+  margin-top:4px;
+}
+.eval-back-row{
+  margin-top:14px;
+  padding-top:2px;
 }
 
 /* 12 — Prospect score less dominant */
@@ -3967,38 +3989,26 @@ button#save-tx{
   min-height: 44px;
 }
 
-.ff-date-field input[type="date"] {
-  width: 100%;
-  min-height: 44px;
-  box-sizing: border-box;
+.ff-date-field .shamsi-date{
+  width:100%;
 }
-
-.ff-date-placeholder {
-  position: absolute;
-  inset-inline-start: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--text-muted, #8b8b8b);
-  font-size: 14px;
-  line-height: 1;
+.ff-date-field .shamsi-date-field{
+  width:100%;
+  min-height:44px;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  padding:10px 12px;
+  font:inherit;
+  color:#1F2937;
+  background:#F8FAFC;
+  border:1px solid rgba(31,41,55,.1);
+  border-radius:12px;
+  text-align:right;
 }
-
-.ff-date-field.is-empty input[type="date"] {
-  color: transparent;
-}
-
-.ff-date-field.is-empty input[type="date"]::-webkit-datetime-edit,
-.ff-date-field.is-empty input[type="date"]::-webkit-datetime-edit-fields-wrapper {
-  color: transparent;
-}
-
-.ff-date-field:not(.is-empty) .ff-date-placeholder {
-  display: none;
-}
-
-.ff-date-field:not(.is-empty) input[type="date"] {
-  color: inherit;
+.ff-date-field.is-empty .shamsi-date-field{
+  color:var(--text-muted,#8b8b8b);
 }
 
 /* 22 — Invoice product selector: compact plain (empty state already pill; selected is plain) */
@@ -4191,4 +4201,9 @@ button#save-tx{
   color:var(--vg-color-primary);
   font-size:.72rem;
   margin-inline-start:6px;
+}
+.snapshot-edit-option.selected{
+  background:rgba(0,112,210,.08);
+  border-color:rgba(0,112,210,.24);
+  color:#1F2937;
 }
