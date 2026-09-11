@@ -7,8 +7,8 @@
  */
 'use strict';
 
-/* CHANGED: v34 -> v35 (precache Visual Grammar CSS assets) */
-const CACHE_NAME = 'baqeri-shell-v35';
+/* CHANGED: v35 -> v36 (precache js/icons.js — central icon registry) */
+const CACHE_NAME = 'baqeri-shell-v36';
 
 /** App Shell — paths relative to this SW (same directory as index.html). */
 const PRECACHE_URLS = [
@@ -25,6 +25,7 @@ const PRECACHE_URLS = [
   './js/stock.js',
   './js/backup.js',
   './js/pin-lock.js',
+  './js/icons.js',
   './js/nav.js',
   './js/app.js',
   './js/prospect-scoring.js',
