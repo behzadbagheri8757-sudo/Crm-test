@@ -1,7 +1,9 @@
 /* ==========================================================================
    TEST/css/app.css — FINAL RECONSTRUCTED + COMPOSITION RECOVERED
    View-specific composition + protected systems + floating glass nav.
-   Visual Grammar (VG) owns shared component geometry (loaded before).
+   Visual Grammar (VG) owns shared component geometry: the three vg-*.css
+   files are linked after this one in index.html, so on shared selectors
+   their rules win the cascade tie-break over this file's, by design.
    This file owns page composition, containers, spacing, grouping, and view-specific layout.
    ========================================================================== */
 
@@ -416,8 +418,10 @@ main .empty{
   margin-bottom:12px;
 }
 .more-sheet-item{
-  display:block;
-  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
   border-radius:12px;
   text-decoration:none;
   color:#1F2937;
@@ -429,6 +433,38 @@ main .empty{
 .more-sheet-item.active{
   background:#E8F2FC;
   border-color:#0070D2;
+  color:#0070D2;
+}
+/* Leading icon tile — iOS Settings-style list row: a small tinted squircle
+   holding the icon, label filling the remaining width, trailing chevron
+   for disclosure affordance. Icons come from AppIcons (js/icons.js). */
+.more-sheet-item-ico{
+  flex:none;
+  width:30px;
+  height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:9px;
+  background:rgba(0,112,210,.10);
+  color:#0070D2;
+}
+.more-sheet-item.active .more-sheet-item-ico{
+  background:rgba(0,112,210,.16);
+}
+.more-sheet-item-ico svg{
+  width:18px;
+  height:18px;
+}
+.more-sheet-item-label{
+  flex:1 1 auto;
+  min-width:0;
+}
+.more-sheet-item-chevron{
+  flex:none;
+  color:#B4BCC7;
+}
+.more-sheet-item.active .more-sheet-item-chevron{
   color:#0070D2;
 }
 .more-sheet-close{
@@ -3522,17 +3558,10 @@ button.inv-header-save.btn{
    Interaction layer only. Visual Grammar geometry remains the source of truth.
    Timing targets: ~120ms touch response, ~220-260ms navigation/presentation,
    ~360ms spring-like active-state settling.
+   Tokens (--ios-ease-out, --ios-touch, --ios-glass, etc.) now live in
+   css/visual-grammar.css :root, loaded before this file, so this file has
+   exactly one place it reads them from instead of redefining them here.
    ============================================================================ */
-
-:root{
-  --ios-ease-out:cubic-bezier(.22,1,.36,1);
-  --ios-ease-spring:cubic-bezier(.22,1.18,.36,1);
-  --ios-touch:120ms;
-  --ios-control:180ms;
-  --ios-route:240ms;
-  --ios-glass:rgba(255,255,255,.72);
-  --ios-glass-border:rgba(255,255,255,.58);
-}
 
 /* Route changes: short, directional-feeling materialization rather than a fade-only flash. */
 main.route-transition{

@@ -64,6 +64,18 @@
 
   /* ---------- Control height (minimum touch target) ---------- */
   --vg-control-height:         44px;
+
+  /* ---------- Motion tokens (iOS 26 interaction layer) ----------
+     Moved here from css/app.css so this file remains the single
+     source of truth for tokens, per this file's own header comment.
+     Values unchanged — this is a location fix only, not a value change. */
+  --ios-ease-out:               cubic-bezier(.22,1,.36,1);
+  --ios-ease-spring:            cubic-bezier(.22,1.18,.36,1);
+  --ios-touch:                  120ms;
+  --ios-control:                180ms;
+  --ios-route:                  240ms;
+  --ios-glass:                  rgba(255,255,255,.72);
+  --ios-glass-border:           rgba(255,255,255,.58);
 }
 
 /* ---------- Base environment ---------- */
