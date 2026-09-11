@@ -60,7 +60,43 @@
     const o = (typeof PROSPECT_FOLLOWUP_OUTCOMES !== 'undefined' ? PROSPECT_FOLLOWUP_OUTCOMES : []).find(function (x) { return x.key === key; });
     if (o) return o.label;
     const t = PROSPECT_VISIT_TAGS.find(function (x) { return x.key === key; });
-    return t ? t.label : key;
+    if (t) return t.label;
+    return internalHistoryLabel(key);
+  }
+
+  function snapshotQuestion(shop, questionId) {
+    if (!shop || !shop.snapshot || typeof PROSPECT_QUESTIONS_V2 === 'undefined') return null;
+    const qs = PROSPECT_QUESTIONS_V2[shop.snapshot.profile] || [];
+    return qs.find(function (q) { return q.id === questionId; }) || null;
+  }
+
+  function snapshotOptionLabel(question, value) {
+    if (value === null || value === undefined || value === '') return '—';
+    const opt = question && question.options ? question.options.find(function (o) { return o.key === value; }) : null;
+    return opt ? opt.label : String(value);
+  }
+
+  function internalHistoryLabel(value) {
+    const map = {
+      no_supplier: 'تأمین‌کننده ثابت ندارد',
+      visit_evaluation_response: 'پاسخ ارزیابی ویزیت',
+      visit_evaluation: 'ارزیابی ویزیت',
+      supplier: 'تأمین‌کننده',
+      interviewer: 'مصاحبه‌کننده',
+      speak: 'گفت‌وگو',
+      context: 'زمینه',
+      pre: 'قبلی',
+      fee: 'هزینه',
+    };
+    return map[value] || value;
+  }
+
+  function visitCanEdit(v) {
+    if (!v || v.type !== 'followup' || !v.date) return false;
+    const ts = new Date(v.date).getTime();
+    if (!isFinite(ts)) return false;
+    const age = Date.now() - ts;
+    return age >= 0 && age <= (3 * 60 * 60 * 1000);
   }
 
   // ---------------- Snapshot block (V2 only) ----------------
@@ -76,10 +112,10 @@
     const answerRows = questions.map(function (q, idx) {
       const key = snap.answers ? snap.answers[q.id] : null;
       const opt = key ? q.options.find(function (o) { return o.key === key; }) : null;
-      return `<div class="answer-row">
-        <div class="answer-q"><span class="answer-index">${String(idx + 1).padStart(2, '0')}</span><span>${esc(q.shortLabel || q.label)}</span></div>
-        <div class="answer-a">${esc(opt ? opt.label : '—')}</div>
-      </div>`;
+      return `<button type="button" class="answer-row answer-row-editable snapshot-answer-row" data-snapshot-q="${esc(q.id)}">
+        <span class="answer-q"><span class="answer-index">${String(idx + 1).padStart(2, '0')}</span><span>${esc(q.shortLabel || q.label)}</span></span>
+        <span class="answer-a">${esc(opt ? opt.label : '—')} <span class="answer-edit-hint">ویرایش</span></span>
+      </button>`;
     }).join('');
 
     const scoreHtml = isIncomplete
@@ -152,14 +188,18 @@
   function renderVisitHistory(shop) {
     const rows = shop.visits.slice().reverse().map(function (v) {
       const tags = (v.tags || []).map(outcomeLabel).join('، ');
+      const editQuestion = v.snapshotEdit ? snapshotQuestion(shop, v.snapshotEdit.questionId) : null;
       const editNote = v.snapshotEdit
-        ? `<span class="visit-edit-note">ویرایش پاسخ: ${esc(v.snapshotEdit.questionId)} → ${esc(String(v.snapshotEdit.to))}</span>`
+        ? `<span class="visit-edit-note">ویرایش پاسخ ارزیابی اولیه: ${esc(editQuestion ? (editQuestion.shortLabel || editQuestion.label) : internalHistoryLabel(v.snapshotEdit.questionId))} — از «${esc(snapshotOptionLabel(editQuestion, v.snapshotEdit.from))}» به «${esc(snapshotOptionLabel(editQuestion, v.snapshotEdit.to))}»</span>`
         : '';
       const nextNote = v.nextFollowUpDate ? `<span class="visit-next-note">پیگیری بعدی: ${esc(prospectFaDate(v.nextFollowUpDate))}</span>` : '';
       const noteNote = v.note ? `<span class="visit-note-text">${esc(v.note)}</span>` : '';
+      const editButton = visitCanEdit(v)
+        ? `<button type="button" class="btn secondary small visit-history-edit" data-edit-visit="${esc(v.id)}">ویرایش ویزیت</button>`
+        : '';
       const scoreCol = (typeof v.score === 'number')
         ? `<span class="tx-row-total">${v.score}</span><span class="tx-row-meta">${rankPill(v.rank)}</span>`
-        : `<span class="tx-row-meta">${v.type === 'followup' ? 'پیگیری' : ''}</span>`;
+        : `<span class="tx-row-meta">${v.type === 'snapshot_edit' ? 'ویرایش ارزیابی' : (v.type === 'followup' ? 'پیگیری' : '')}</span>`;
       return `<div class="ledger-row tx-row" style="cursor:default;">
         <span class="name">
           <span class="tx-row-title">${prospectFaDateTime(v.date)}</span>
@@ -168,10 +208,51 @@
           ${editNote || nextNote ? `<span class="sub">${editNote}${editNote && nextNote ? ' · ' : ''}${nextNote}</span>` : ''}
         </span>
         <span class="filler"></span>
-        <span class="amount tx-row-amount">${scoreCol}</span>
+        <span class="amount tx-row-amount">${scoreCol}${editButton ? '<br>' + editButton : ''}</span>
       </div>`;
     }).join('') || '<div class="empty">ویزیتی ثبت نشده</div>';
     return `<h3 class="sub-title">سوابق ویزیت (${shop.visits.length})</h3><div class="tx-list">${rows}</div>`;
+  }
+
+  function openSnapshotAnswerEditSheet(shop, questionId, onSaved) {
+    const q = snapshotQuestion(shop, questionId);
+    if (!q) return;
+    const currentValue = shop.snapshot.answers ? shop.snapshot.answers[q.id] : null;
+    const options = q.options.map(function (o) {
+      return `<button type="button" class="chip-opt snapshot-edit-option${o.key === currentValue ? ' selected' : ''}" data-snapshot-edit-value="${esc(o.key)}">${esc(o.label)}</button>`;
+    }).join('');
+
+    openSheet(`
+      <h3>ویرایش پاسخ ارزیابی</h3>
+      <div class="sub" style="margin-bottom:10px;">${esc(q.shortLabel || q.label)}</div>
+      <div class="chip-wrap" id="snapshot-edit-options">${options}</div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button type="button" class="btn" id="snapshot-edit-save">ثبت تغییر</button>
+      </div>
+    `);
+
+    let selectedValue = currentValue;
+    document.querySelectorAll('#snapshot-edit-options [data-snapshot-edit-value]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        selectedValue = btn.getAttribute('data-snapshot-edit-value');
+        document.querySelectorAll('#snapshot-edit-options [data-snapshot-edit-value]').forEach(function (b) {
+          b.classList.toggle('selected', b === btn);
+        });
+      });
+    });
+
+    document.getElementById('snapshot-edit-save').addEventListener('click', async function () {
+      if (selectedValue === currentValue) { closeModal(); return; }
+      try {
+        await editProspectSnapshotAnswer(shop.id, q.id, selectedValue);
+        closeModal();
+        showToast('پاسخ ارزیابی به‌روزرسانی شد');
+        if (typeof onSaved === 'function') onSaved();
+      } catch (e) {
+        console.error(e);
+        showToast('خطا در ویرایش پاسخ');
+      }
+    });
   }
 
   // ---------------- Follow-up Visit sheet ----------------
@@ -199,9 +280,8 @@
       </div>
       <div class="field">
         <label>پیگیری بعدی (اختیاری)</label>
-        <div class="ff-date-field is-empty" id="ff-next-date-wrap">
-          <input type="date" id="ff-next-date" aria-label="تاریخ پیگیری بعدی">
-          <span class="ff-date-placeholder" aria-hidden="true">انتخاب تاریخ</span>
+        <div id="ff-next-date-wrap" class="ff-date-field is-empty">
+          ${typeof shamsiDateInputHTML === 'function' ? shamsiDateInputHTML('ff-next-date', null) : '<input type="date" id="ff-next-date" aria-label="تاریخ پیگیری بعدی">'}
         </div>
       </div>
       ${isV2 ? `
@@ -228,8 +308,16 @@
     function syncNextDateState() {
       nextDateWrap.classList.toggle('is-empty', !nextDateInput.value);
     }
-    nextDateInput.addEventListener('input', syncNextDateState);
-    nextDateInput.addEventListener('change', syncNextDateState);
+    if (nextDateInput && nextDateInput.type === 'hidden') {
+      nextDateInput.value = '';
+      const field = nextDateWrap.querySelector('[data-shamsi-field]');
+      if (field) field.value = '';
+      nextDateInput.addEventListener('input', syncNextDateState);
+      nextDateInput.addEventListener('change', syncNextDateState);
+    } else if (nextDateInput) {
+      nextDateInput.addEventListener('input', syncNextDateState);
+      nextDateInput.addEventListener('change', syncNextDateState);
+    }
     syncNextDateState();
 
     document.querySelectorAll('#ff-outcomes [data-outcome]').forEach(function (btn) {
@@ -290,6 +378,71 @@
     });
   }
 
+  function openFollowUpEditSheet(shop, visit, onSaved) {
+    if (!visitCanEdit(visit)) {
+      showToast('مهلت ویرایش این ویزیت تمام شده است');
+      return;
+    }
+    const selectedOutcomes = Array.isArray(visit.tags) ? visit.tags.slice() : [];
+    const outcomeChips = PROSPECT_FOLLOWUP_OUTCOMES.map(function (o) {
+      return `<button type="button" class="chip-opt${selectedOutcomes.includes(o.key) ? ' selected' : ''}" data-edit-outcome="${esc(o.key)}">${esc(o.label)}</button>`;
+    }).join('');
+    openSheet(`
+      <h3>ویرایش ویزیت پیگیری</h3>
+      <div class="sub" style="margin-bottom:10px;">${esc(shop.name)}</div>
+      <div class="field">
+        <label>نتیجه</label>
+        <div class="chip-wrap" id="edit-visit-outcomes">${outcomeChips}</div>
+      </div>
+      <div class="field">
+        <label>چی گفت؟ چرا؟</label>
+        <textarea id="edit-visit-note" rows="3" placeholder="یادداشت آزاد...">${esc(visit.note || '')}</textarea>
+      </div>
+      <div class="field">
+        <label>پیگیری بعدی (اختیاری)</label>
+        <div id="edit-visit-date-wrap" class="ff-date-field${visit.nextFollowUpDate ? '' : ' is-empty'}">
+          ${typeof shamsiDateInputHTML === 'function' ? shamsiDateInputHTML('edit-visit-next-date', visit.nextFollowUpDate || null) : '<input type="date" id="edit-visit-next-date" aria-label="تاریخ پیگیری بعدی">'}
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button type="button" class="btn" id="edit-visit-save">ذخیره ویرایش</button>
+      </div>
+    `);
+
+    const dateInput = document.getElementById('edit-visit-next-date');
+    const dateWrap = document.getElementById('edit-visit-date-wrap');
+    if (dateInput && dateInput.type === 'hidden' && !visit.nextFollowUpDate) {
+      dateInput.value = '';
+      const field = dateWrap.querySelector('[data-shamsi-field]');
+      if (field) field.value = '';
+    }
+    document.querySelectorAll('#edit-visit-outcomes [data-edit-outcome]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const key = btn.getAttribute('data-edit-outcome');
+        const i = selectedOutcomes.indexOf(key);
+        if (i >= 0) selectedOutcomes.splice(i, 1); else selectedOutcomes.push(key);
+        btn.classList.toggle('selected');
+      });
+    });
+
+    document.getElementById('edit-visit-save').addEventListener('click', async function () {
+      const nextDate = dateInput ? (dateInput.value || null) : null;
+      try {
+        await editProspectFollowUpVisit(shop.id, visit.id, {
+          tags: selectedOutcomes,
+          note: (document.getElementById('edit-visit-note').value || '').trim(),
+          nextFollowUpDate: nextDate,
+        });
+        closeModal();
+        showToast('ویزیت به‌روزرسانی شد');
+        if (typeof onSaved === 'function') onSaved();
+      } catch (e) {
+        console.error(e);
+        showToast(e.message || 'خطا در ویرایش ویزیت');
+      }
+    });
+  }
+
   function drawProspectDetail(root) {
     if (!root) return;
     const id = currentProspectId;
@@ -337,6 +490,19 @@
 
       ${renderVisitHistory(shop)}
     `;
+
+    root.querySelectorAll('[data-snapshot-q]').forEach(function (row) {
+      row.addEventListener('click', function () {
+        openSnapshotAnswerEditSheet(shop, row.getAttribute('data-snapshot-q'), function () { drawProspectDetail(root); });
+      });
+    });
+
+    root.querySelectorAll('[data-edit-visit]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const visit = shop.visits.find(function (v) { return v.id === btn.getAttribute('data-edit-visit'); });
+        if (visit) openFollowUpEditSheet(shop, visit, function () { drawProspectDetail(root); });
+      });
+    });
 
     const addVisitBtn = document.getElementById('btn-add-visit');
     if (addVisitBtn) {
