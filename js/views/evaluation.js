@@ -163,10 +163,78 @@
     `;
   }
 
+  function openSummaryNameEditSheet(root) {
+    openSheet(`
+      <h3>ویرایش نام فروشگاه</h3>
+      <div class="field" style="margin-top:10px;">
+        <label>نام فروشگاه</label>
+        <input id="eval-summary-name" value="${esc(formState.name)}" autocomplete="off">
+      </div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button type="button" class="btn" id="eval-summary-name-save">ذخیره نام</button>
+      </div>
+    `);
+
+    const input = document.getElementById('eval-summary-name');
+    const saveBtn = document.getElementById('eval-summary-name-save');
+    if (input) input.focus();
+    if (saveBtn) saveBtn.addEventListener('click', function () {
+      formState.name = input ? input.value : formState.name;
+      closeModal();
+      drawEvaluation(root);
+    });
+  }
+
+  function openSummaryQuestionEditSheet(root, questionId) {
+    const questions = currentQuestions();
+    const q = questions.find(function (item) { return item.id === questionId; });
+    if (!q) return;
+    const currentValue = formState.answers[q.id] || null;
+    const options = q.options.map(function (o) {
+      return `<button type="button" class="chip-opt snapshot-edit-option${o.key === currentValue ? ' selected' : ''}" data-summary-edit-value="${esc(o.key)}">${esc(o.label)}</button>`;
+    }).join('');
+
+    openSheet(`
+      <h3>ویرایش پاسخ ارزیابی</h3>
+      <div class="sub" style="margin-bottom:10px;">${esc(q.shortLabel || q.label)}</div>
+      <div class="chip-wrap" id="eval-summary-edit-options">${options}</div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button type="button" class="btn" id="eval-summary-answer-save">ثبت تغییر</button>
+      </div>
+    `);
+
+    let selectedValue = currentValue;
+    document.querySelectorAll('#eval-summary-edit-options [data-summary-edit-value]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        selectedValue = btn.getAttribute('data-summary-edit-value');
+        document.querySelectorAll('#eval-summary-edit-options [data-summary-edit-value]').forEach(function (b) {
+          b.classList.toggle('selected', b === btn);
+        });
+      });
+    });
+
+    const saveBtn = document.getElementById('eval-summary-answer-save');
+    if (saveBtn) saveBtn.addEventListener('click', function () {
+      if (selectedValue != null) formState.answers[q.id] = selectedValue;
+      closeModal();
+      drawEvaluation(root);
+    });
+  }
+
   function renderSummaryStep() {
     const result = prospectComputeScoreV2(formState.profile, formState.answers);
     const questions = currentQuestions();
     const isIncomplete = result.knownCount <= 2;
+    const missingItems = [];
+    if (!formState.name.trim()) missingItems.push('نام فروشگاه وارد نشده');
+    if (!formState.locationId) missingItems.push('موقعیت انتخاب نشده');
+    if (result.knownCount < STEP_Q_COUNT) {
+      const remaining = STEP_Q_COUNT - result.knownCount;
+      missingItems.push(`${enToFaDigits(String(result.knownCount))} سؤال پاسخ داده شده؛ ${enToFaDigits(String(remaining))} سؤال باقی مانده`);
+    }
+    const missingHtml = missingItems.length
+      ? `<div class="eval-incomplete-note" style="margin-top:8px;">${missingItems.map(function (item) { return `<div class="sub">${esc(item)}</div>`; }).join('')}</div>`
+      : '';
     const tagHtml = PROSPECT_VISIT_TAGS.map(function (t) {
       return `<button type="button" class="chip-opt${formState.tags.includes(t.key) ? ' selected' : ''}" data-tag="${esc(t.key)}">${esc(t.label)}</button>`;
     }).join('');
@@ -181,12 +249,7 @@
     }).join('');
 
     const scoreBlockHtml = isIncomplete
-      ? `<div class="eval-summary-score-row">
-           <div class="eval-incomplete-note">
-             <div class="eval-incomplete-title">پروسپکت ناقص است</div>
-             <div class="sub">${enToFaDigits(String(result.knownCount))} از ${enToFaDigits(String(STEP_Q_COUNT))} سؤال پاسخ داده شده — برای رتبه‌بندی حداقل ۳ سؤال لازم است.</div>
-           </div>
-         </div>`
+      ? `<div class="eval-summary-score-row">${missingHtml}</div>`
       : `<div class="live-score">
            <div><div class="num">${enToFaDigits(String(result.score))}</div>
              <div class="sub">${enToFaDigits(String(result.knownCount))} از ${enToFaDigits(String(STEP_Q_COUNT))} سؤال</div></div>
@@ -201,9 +264,10 @@
             <div class="tx-row-title">${esc(formState.name.trim() || 'بدون نام')}</div>
             <div class="sub">${esc(formState.locationId ? getLocationDisplayString(formState.locationId) : 'محدوده انتخاب نشده')}</div>
           </div>
-          <button type="button" class="btn secondary small" id="eval-jump-profile">ویرایش نام/محدوده</button>
+          <button type="button" class="btn secondary small" id="eval-jump-profile">ویرایش نام</button>
         </div>
       </div>
+      ${isIncomplete ? '' : missingHtml}
       ${scoreBlockHtml}
       <details class="tx-details" open style="margin-top:12px;">
         <summary>پاسخ‌ها</summary>
@@ -306,14 +370,13 @@
         drawEvaluation(root);
       });
       on(document.getElementById('eval-jump-profile'), 'click', function () {
-        goToStep(STEP_PROFILE);
-        drawEvaluation(root);
+        openSummaryNameEditSheet(root);
       });
       root.querySelectorAll('[data-jump-q]').forEach(function (row) {
         on(row, 'click', function () {
           const idx = parseInt(row.getAttribute('data-jump-q'), 10) || 0;
-          goToStep(STEP_Q_FIRST + idx);
-          drawEvaluation(root);
+          const q = currentQuestions()[idx];
+          if (q) openSummaryQuestionEditSheet(root, q.id);
         });
       });
       root.querySelectorAll('[data-tag]').forEach(function (btn) {
