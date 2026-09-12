@@ -465,3 +465,178 @@ a.ledger-row:active{
   justify-content:center;
   z-index:60;
 }
+
+
+/* ---------- Shamsi Date Picker ----------
+   Shared iOS-style Jalali date wheel. Mounted directly under body
+   so it can sit above existing modal/sheet layers without touching
+   Invoice V6 or the shared modal implementation. */
+.shamsi-sheet-overlay{
+  position:fixed;
+  inset:0;
+  z-index:90;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  box-sizing:border-box;
+  padding:0;
+  background:rgba(11,31,58,.34);
+  -webkit-backdrop-filter:saturate(120%) blur(2px);
+  backdrop-filter:saturate(120%) blur(2px);
+  overscroll-behavior:contain;
+}
+
+.shamsi-sheet{
+  position:relative;
+  width:100%;
+  max-width:720px;
+  max-height:min(82vh,calc(100dvh - env(safe-area-inset-top,0px) - 12px));
+  margin:0;
+  padding:8px 14px calc(14px + env(safe-area-inset-bottom,0px));
+  box-sizing:border-box;
+  overflow:hidden;
+  direction:rtl;
+  background:rgba(255,255,255,.97);
+  color:var(--vg-color-text,#1F2937);
+  border:1px solid rgba(31,41,55,.08);
+  border-bottom:0;
+  border-radius:var(--vg-radius-raised) var(--vg-radius-raised) 0 0;
+  box-shadow:0 -12px 32px rgba(11,31,58,.14);
+  font-family:inherit;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.shamsi-sheet-toolbar{
+  min-height:48px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:8px;
+  padding:0 2px 6px;
+  border-bottom:1px solid rgba(31,41,55,.08);
+}
+
+.shamsi-sheet-btn{
+  min-width:64px;
+  min-height:40px;
+  padding:8px 12px;
+  border:0;
+  border-radius:var(--vg-radius-control);
+  background:transparent;
+  color:var(--vg-color-primary,#0070D2);
+  font:inherit;
+  font-size:.88rem;
+  font-weight:var(--vg-weight-label,600);
+  line-height:1;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.shamsi-sheet-btn:active{
+  background:rgba(0,112,210,.08);
+}
+
+.shamsi-sheet-toolbar .shamsi-sheet-btn:first-child{
+  justify-self:start;
+}
+
+.shamsi-sheet-title{
+  justify-self:center;
+  font-size:.92rem;
+  font-weight:var(--vg-weight-title,700);
+  line-height:1.2;
+}
+
+.shamsi-sheet-done{
+  justify-self:end;
+  font-weight:var(--vg-weight-title,700);
+}
+
+.shamsi-wheels-wrap{
+  position:relative;
+  height:216px;
+  margin-top:8px;
+  overflow:hidden;
+}
+
+.shamsi-wheels{
+  position:relative;
+  z-index:1;
+  height:100%;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:stretch;
+  direction:rtl;
+}
+
+.shamsi-wheel{
+  min-width:0;
+  height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:y proximity;
+  scrollbar-width:none;
+  touch-action:pan-y;
+}
+
+.shamsi-wheel::-webkit-scrollbar{
+  display:none;
+}
+
+.shamsi-wheel-item{
+  height:36px;
+  min-height:36px;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 8px;
+  color:var(--vg-color-text-muted,#667085);
+  font-size:1rem;
+  font-weight:var(--vg-weight-body,500);
+  line-height:36px;
+  white-space:nowrap;
+  scroll-snap-align:center;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+.shamsi-wheel-item[data-selected="1"]{
+  color:var(--vg-color-text,#1F2937);
+  font-weight:var(--vg-weight-title,700);
+}
+
+.shamsi-wheel-spacer{
+  pointer-events:none;
+  visibility:hidden;
+}
+
+.shamsi-wheels-highlight{
+  position:absolute;
+  z-index:2;
+  top:50%;
+  left:8px;
+  right:8px;
+  height:36px;
+  transform:translateY(-50%);
+  box-sizing:border-box;
+  border-top:1px solid rgba(0,112,210,.18);
+  border-bottom:1px solid rgba(0,112,210,.18);
+  border-radius:10px;
+  background:rgba(0,112,210,.045);
+  pointer-events:none;
+}
+
+@media (max-width:380px){
+  .shamsi-sheet{
+    padding-left:10px;
+    padding-right:10px;
+  }
+  .shamsi-wheel-item{
+    padding-left:4px;
+    padding-right:4px;
+    font-size:.94rem;
+  }
+}
