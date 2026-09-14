@@ -3307,9 +3307,13 @@ button.inv-header-save.btn{
   align-items:center;
   justify-content:center;
   line-height:1;
+  -webkit-appearance:none;
+  appearance:none;
 }
 .fab svg{
   display:block;
+  margin:0;
+  flex:0 0 auto;
 }
 .fab:active{
   transform:scale(.94);
