@@ -203,19 +203,19 @@ input[placeholder*="جستجو"]{
 .badge.tone-success,
 .badge.cleared{
   background:var(--vg-color-success-soft);
-  color:var(--vg-color-success);
+  color:var(--vg-color-success-ink);
 }
 
 .badge.tone-warning,
 .badge.pending{
   background:var(--vg-color-warning-soft);
-  color:var(--vg-color-warning);
+  color:var(--vg-color-warning-ink);
 }
 
 .badge.tone-danger,
 .badge.low{
   background:var(--vg-color-danger-soft);
-  color:var(--vg-color-danger);
+  color:var(--vg-color-danger-ink);
 }
 
 .badge.tone-muted{
@@ -406,10 +406,10 @@ a.ledger-row:active{
 }
 
 /* ---------- Semantic accent colors (protected) ---------- */
-.accent-olive{color:var(--vg-color-success)!important;}
+.accent-olive{color:var(--vg-color-success-ink)!important;}
 .accent-rust,
-.accent-red{color:var(--vg-color-danger)!important;}
-.accent-amber{color:var(--vg-color-warning)!important;}
+.accent-red{color:var(--vg-color-danger-ink)!important;}
+.accent-amber{color:var(--vg-color-warning-ink)!important;}
 
 /* ---------- Toolbars ---------- */
 .btn-row{
@@ -526,7 +526,7 @@ a.ledger-row:active{
   color:var(--vg-color-primary,#0070D2);
   font:inherit;
   font-size:.88rem;
-  font-weight:var(--vg-weight-label,600);
+  font-weight:var(--vg-weight-label,500);
   line-height:1;
   cursor:pointer;
   touch-action:manipulation;
@@ -543,13 +543,13 @@ a.ledger-row:active{
 .shamsi-sheet-title{
   justify-self:center;
   font-size:.92rem;
-  font-weight:var(--vg-weight-title,700);
+  font-weight:var(--vg-weight-title,600);
   line-height:1.2;
 }
 
 .shamsi-sheet-done{
   justify-self:end;
-  font-weight:var(--vg-weight-title,700);
+  font-weight:var(--vg-weight-title,600);
 }
 
 .shamsi-wheels-wrap{
@@ -595,7 +595,7 @@ a.ledger-row:active{
   padding:0 8px;
   color:var(--vg-color-text-muted,#667085);
   font-size:1rem;
-  font-weight:var(--vg-weight-body,500);
+  font-weight:var(--vg-weight-medium,500);
   line-height:36px;
   white-space:nowrap;
   scroll-snap-align:center;
@@ -605,7 +605,7 @@ a.ledger-row:active{
 
 .shamsi-wheel-item[data-selected="1"]{
   color:var(--vg-color-text,#1F2937);
-  font-weight:var(--vg-weight-title,700);
+  font-weight:var(--vg-weight-title,600);
 }
 
 .shamsi-wheel-spacer{
