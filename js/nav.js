@@ -239,12 +239,14 @@ function positionBnIndicator(bar, animate){
     ind.style.opacity = '0';
     return;
   }
-  /* Cover icon + label as one group; inset so indicator is smaller than full tab */
+  /* Cover icon + label as one group; inset so indicator is smaller than full tab.
+     Capsule ratio: padX is smaller than padY so width/height lands near 1.6
+     (rounded-rect ratio reads as capsule, not square). */
   var barRect = bar.getBoundingClientRect();
   var itemRect = active.getBoundingClientRect();
-  var padX = 5;
+  var padX = 3;
   var padY = 4;
-  var w = Math.max(44, Math.round(itemRect.width - padX * 2));
+  var w = Math.max(60, Math.round(itemRect.width - padX * 2));
   var h = Math.max(48, Math.round(itemRect.height - padY * 2));
   var left = itemRect.left - barRect.left + (itemRect.width - w) / 2;
   var top = itemRect.top - barRect.top + (itemRect.height - h) / 2;
