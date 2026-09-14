@@ -6,7 +6,7 @@
 
 :root{
   /* ---------- Color roles ---------- */
-  --vg-color-bg:               #F5F7FA;
+  --vg-color-bg:               #F6F6F6;
   --vg-color-surface:          #FFFFFF;
   --vg-color-surface-soft:     #F7F8FA;
   --vg-color-text:             #1F2937;
@@ -24,6 +24,13 @@
   --vg-color-danger-soft:      #FFF0EC;
   --vg-color-neutral:          #6B7280;
   --vg-color-neutral-soft:     #F3F4F6;
+
+  /* ---------- Ink variants — readable text on soft backgrounds ---------- */
+  /* Same semantic role as --vg-color-success/warning/danger, darker for
+     text/badge/label on the corresponding -soft background. */
+  --vg-color-success-ink:      #006B44;
+  --vg-color-warning-ink:      #7A4600;
+  --vg-color-danger-ink:       #C41E2A;
 
   /* ---------- Spacing scale ---------- */
   --vg-space-tight:            6px;
@@ -54,13 +61,13 @@
   --vg-type-meta:              .64rem;
   --vg-type-action:            .88rem;
 
-  /* ---------- Font weights ---------- */
+  /* ---------- Font weights (lightened hierarchy) ---------- */
   --vg-weight-regular:         400;
   --vg-weight-medium:          500;
-  --vg-weight-label:           600;
-  --vg-weight-title:           700;
-  --vg-weight-value:           800;
-  --vg-weight-emphasis:        900;
+  --vg-weight-label:           500;
+  --vg-weight-title:           600;
+  --vg-weight-value:           700;
+  --vg-weight-emphasis:        800;
 
   /* ---------- Control height (minimum touch target) ---------- */
   --vg-control-height:         44px;
