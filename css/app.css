@@ -870,7 +870,9 @@ a.tx-row:active{
 }
 details[open] > .customer-behavior-summary::after{
   content:'⌃';
-}/* --------------------------------------------------------------------------
+}
+
+/* --------------------------------------------------------------------------
    07. DASHBOARD (Consolidated - no duplicate geometry)
    -------------------------------------------------------------------------- */
 .dashboard-shell{
@@ -1459,7 +1461,9 @@ details[open] > .customer-behavior-summary::after{
 .dash-watch-compact-chevron{
   font-size:1.2rem;
   color:#667085;
-}/* --------------------------------------------------------------------------
+}
+
+/* --------------------------------------------------------------------------
    08. CUSTOMERS (Composition continued)
    -------------------------------------------------------------------------- */
 .customer-list-row{
@@ -2127,7 +2131,9 @@ button.inv-header-save.btn{
 /* Unique V4 compatibility radius */
 .sheet.inv-sheet-host .inv-section{
   border-radius:18px;
-}/* --------------------------------------------------------------------------
+}
+
+/* --------------------------------------------------------------------------
    12. PAYMENTS / CHECKS (Already covered via ledger row composition)
    -------------------------------------------------------------------------- */
 
@@ -3303,12 +3309,17 @@ button.inv-header-save.btn{
   box-shadow:0 8px 20px rgba(0,160,104,.30),0 2px 6px rgba(0,160,104,.20);
   cursor:pointer;
   z-index:41;
-  display:flex;
+  display:flex !important; /* overrides inline display:block set by JS at runtime */
   align-items:center;
   justify-content:center;
   line-height:1;
   -webkit-appearance:none;
   appearance:none;
+}
+/* respect JS inline hide (both spaced and unspaced form, since browser normalizes) */
+.fab[style*="display: none"],
+.fab[style*="display:none"]{
+  display:none !important;
 }
 .fab svg{
   display:block;
