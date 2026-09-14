@@ -7,8 +7,8 @@
  */
 'use strict';
 
-/* CHANGED: v36 -> v37 (Shamsi Date Picker CSS; remove stale missing icons.js precache) */
-const CACHE_NAME = 'baqeri-shell-v37';
+/* CHANGED: v37 -> v38 (visual refinement: neutral bg, lighter weights, capsule indicator, FAB SVG) */
+const CACHE_NAME = 'baqeri-shell-v38';
 
 /** App Shell — paths relative to this SW (same directory as index.html). */
 const PRECACHE_URLS = [
